@@ -13,7 +13,7 @@ function Navbar() {
     <div className="d-flex">
       <nav
         id="sidebar"
-        className={`bg-secondary sidebar ${menuOpen ? "" : "active"}`}
+        className={`bg-info bg-gradient sidebar ${menuOpen ? "" : "active"}`}
         style={{ width: "210px" }}
       >
         <div className="sidebar-header d-flex align-items-center gap-1 justify-content-center my-3">
@@ -22,27 +22,31 @@ function Navbar() {
         </div>
         <ul className="list-unstyled components d-flex flex-column">
           <li className="m-1">
-            <a
-              href="#"
-              className="link-dark w-100 text-center py-2 bg-light rounded"
+            <Link
+              to="#"
+              className="link-light w-100 text-center py-2 d-flex align-items-center justify-content-center gap-2"
               style={{ display: "inline-block" }}
             >
-              <FaFileExport
-                className={`me-2 ${menuOpen ? "d-none" : "d-inline"}`}
-              />
-              <span className={menuOpen ? "d-inline" : ""}>Home</span>
-            </a>
+              <span>|</span>
+              <FaFileExport className="fs-4" />
+              <span
+                className="d-inline-block text-start"
+                style={{ width: "100px" }}
+              >
+                Facturas
+              </span>
+            </Link>
           </li>
           <li className="m-1">
             <Link
               to="/facturacion/facturas"
-              className="link-dark w-100 text-center py-2 bg-light rounded"
+              className="link-light w-100 d-flex align-items-center justify-content-center py-2 gap-2"
               style={{ display: "inline-block" }}
             >
-              <FaFileSignature
-                className={`me-2 ${menuOpen ? "d-none" : "d-inline"}`}
-              />
-              <span className={menuOpen ? "d-inline" : ""}>Profile</span>
+              <FaFileSignature className="fs-4" />
+              <span className="d-inline-block text-start">
+                Filtrar facturas
+              </span>
             </Link>
           </li>
         </ul>

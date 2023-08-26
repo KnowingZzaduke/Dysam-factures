@@ -32,15 +32,17 @@ body {
 }
 
 .sidebar.active {
-  left: 0; /* Mostrar el sidebar */
+  left: 0;
 }
 
 #content {
   transition: margin-left 0.3s ease;
+  position: fixed;
+  width: 100%;
 }
 
 #content.active {
-  margin-left: 210px; /* Espacio para el sidebar */
+  margin-left: 210px;
 }
 
 a {
@@ -48,7 +50,6 @@ a {
 }
 a:hover {
   transition: 0.25s ease;
-  box-shadow: 0 0 3px 1px black;
 }
 
 .typed span {
