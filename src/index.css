@@ -21,3 +21,42 @@ body {
   object-fit: cover;
   z-index: -1;
 }
+
+.sidebar {
+  height: 100vh; /* Altura del 100% de la ventana */
+  position: fixed; /* Fijar el sidebar */
+  top: 0;
+  left: -250px; /* Escondido por defecto */
+  width: 250px;
+  transition: all 0.3s ease;
+}
+
+.sidebar.active {
+  left: 0; /* Mostrar el sidebar */
+}
+
+#content {
+  transition: margin-left 0.3s ease;
+}
+
+#content.active {
+  margin-left: 210px; /* Espacio para el sidebar */
+}
+
+a {
+  text-decoration: none;
+}
+a:hover {
+  transition: 0.25s ease;
+  box-shadow: 0 0 3px 1px black;
+}
+
+.typed span {
+  display: none;
+}
+
+.option:hover {
+  transition: 0.25s ease;
+  padding: 1px;
+  cursor: pointer;
+}
