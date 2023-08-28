@@ -6,6 +6,9 @@ import Contabilidad from "./routes/Contabilidad";
 import Facturas from "./components/facturacion/Facturas";
 import FilterFacturas from "./components/facturacion/FiltrarFacturas";
 import Welcome from "./components/utilities/Welcome";
+import EnviarFacturas from "./components/contabilidad/EnviarFacturas";
+import CorregirFacturas from "./components/contabilidad/CorregirFacturas";
+import { DataContextProvider } from "./context/DataContext";
 import "./index.css";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 const router = createBrowserRouter([
@@ -41,11 +44,11 @@ const router = createBrowserRouter([
       },
       {
         path: "/contabilidad/enviar-facturas",
-        element: <Facturas />,
+        element: <EnviarFacturas />,
       },
       {
         path: "/contabilidad/corregir-facturas",
-        element: <FilterFacturas />,
+        element: <CorregirFacturas />,
       },
     ],
   },
@@ -53,6 +56,8 @@ const router = createBrowserRouter([
 
 ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
   <React.StrictMode>
-    <RouterProvider router={router} />
+    <DataContextProvider>
+      <RouterProvider router={router} />
+    </DataContextProvider>
   </React.StrictMode>
 );
