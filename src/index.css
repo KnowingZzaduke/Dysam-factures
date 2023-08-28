@@ -61,3 +61,15 @@ a:hover {
   padding: 1px;
   cursor: pointer;
 }
+
+.activate {
+  color: rgb(240, 243, 244);
+  box-shadow: 0 0 10px 1px white;
+  transition: 0.25s ease;
+  transform: scale(0.95);
+}
+
+.closeSesion:hover{
+  cursor: pointer;
+  padding: 1px;
+}

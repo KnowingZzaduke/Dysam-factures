@@ -1,6 +1,6 @@
-import { Outlet } from "react-router-dom";
 import Navbar from "../components/utilities/Navbar";
-function App() {
+import { Outlet } from "react-router-dom";
+function Contabilidad() {
   return (
     <>
       <Navbar />
@@ -8,5 +8,4 @@ function App() {
     </>
   );
 }
-
-export default App;
+export default Contabilidad;

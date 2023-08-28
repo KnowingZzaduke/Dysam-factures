@@ -12,7 +12,7 @@ function Facturas() {
       className="d-flex align-items-center justify-content-center"
       style={{ minHeight: "100vh" }}
     >
-      <div className="col-md-8">
+      <div className="container">
         <h1 className="my-4">
           Tabla de facturas <FaFileAlt />
         </h1>
@@ -31,18 +31,20 @@ function Facturas() {
                 <td>Por revisar</td>
                 <td>Hoy</td>
                 <td>
-                  <FaFileUpload />
+                  <FaFileUpload className="fs-4 option" title="Ver factura"/>
                 </td>
                 <td>
                   <FaCheckCircle
                     className="fs-4 option mx-1"
                     data-bs-toggle="modal"
                     data-bs-target="#modalSendFactures"
+                    title="Enviar factura"
                   />
                   <FaExclamationTriangle
                     className="fs-4 option mx-1"
                     data-bs-toggle="modal"
                     data-bs-target="#modalCorrectFactures"
+                    title="Corregir factura"
                   />
                 </td>
               </tr>

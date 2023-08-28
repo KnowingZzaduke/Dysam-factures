@@ -2,8 +2,10 @@ import React from "react";
 import ReactDOM from "react-dom/client";
 import App from "./App";
 import Facturacion from "./routes/Facturacion";
+import Contabilidad from "./routes/Contabilidad";
 import Facturas from "./components/facturacion/Facturas";
-import Welcome from "./components/facturacion/Welcome";
+import FilterFacturas from "./components/facturacion/FiltrarFacturas";
+import Welcome from "./components/utilities/Welcome";
 import "./index.css";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 const router = createBrowserRouter([
@@ -22,6 +24,28 @@ const router = createBrowserRouter([
       {
         path: "/facturacion/facturas",
         element: <Facturas />,
+      },
+      {
+        path: "/facturacion/filtrar-facturas",
+        element: <FilterFacturas />,
+      },
+    ],
+  },
+  {
+    path: "contabilidad",
+    element: <Contabilidad />,
+    children: [
+      {
+        path: "/contabilidad/bienvenida",
+        element: <Welcome />,
+      },
+      {
+        path: "/contabilidad/enviar-facturas",
+        element: <Facturas />,
+      },
+      {
+        path: "/contabilidad/corregir-facturas",
+        element: <FilterFacturas />,
       },
     ],
   },
