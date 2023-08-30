@@ -16,16 +16,18 @@ function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [linkFacture, setLinkFacture] = useState(false);
   const [linkFilterFacture, setLinkFilterFacture] = useState(false);
-  const {data} = useContext(DataContext);
+  const { data, setData, reloadData } = useContext(DataContext);
   const location = useLocation();
   const toggleMenu = () => {
     setMenuOpen(!menuOpen);
   };
   const navigate = useNavigate();
-
+  useEffect(() =>{
+    console.log(reloadData);
+  }, [])
   function closeSession() {
-    Cookies.remove("dyzam-fac");
-    console.log("Error con la cookie");
+    Cookies.remove("dysam-fac");
+    setData({ salida: "error", data: "Cerró sesión" });
     navigate("/");
   }
 
@@ -40,7 +42,6 @@ function Navbar() {
     } else {
       setLinkFilterFacture(false);
     }
-    console.log(data);
   }, [location]);
 
   return (
@@ -88,7 +89,12 @@ function Navbar() {
           </li>
         </ul>
         <div className="h-100 d-flex align-items-start justify-content-end">
-          <FaSignOutAlt className="m-2 fs-4 closeSesion" title="Cerrar sesión" style={{ position: "absolute", bottom: 0, right: 0 }} onClick={closeSession}/>
+          <FaSignOutAlt
+            className="m-2 fs-4 closeSesion"
+            title="Cerrar sesión"
+            style={{ position: "absolute", bottom: 0, right: 0 }}
+            onClick={closeSession}
+          />
         </div>
       </nav>
 
@@ -112,7 +118,7 @@ function Navbar() {
                 style={{ maxWidth: "calc(100% - 210px)" }}
               >
                 <FaRegUserCircle className="text-white fs-3" />
-                <p className="text-white m-0 mx-3">{data?.data.user}</p>
+                <p className="text-white m-0 mx-3">{reloadData?.user}</p>
               </div>
             </div>
           </div>

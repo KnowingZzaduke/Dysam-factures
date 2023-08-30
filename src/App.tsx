@@ -4,7 +4,7 @@ import imgWater from "/img-water.webp";
 import logoDysam from "/Dysam.jpg";
 import functions from "./data/request";
 import { useNavigate } from "react-router-dom";
-import { TypeSigning, SigninResponse } from "./types/login";
+import { TypeSigning } from "./types/login";
 import { FaTriangleExclamation } from "react-icons/fa6";
 import Cookies from "js-cookie";
 import { TypeCookies } from "./types/cookies";
@@ -17,6 +17,8 @@ function App() {
   const [alert, setAlert] = useState(false);
   const { data, setData } = useContext(DataContext);
   const navigate = useNavigate();
+  const [isReadyToRedirect, setIsReadyToRedirect] = useState(false);
+
   useEffect(() => {
     const video = document.createElement("video");
     video.src = videoWater;
@@ -59,24 +61,36 @@ function App() {
         };
         const cookieD = functions.encryptData(cookiesParams).toString();
         Cookies.set("dysam-fac", cookieD, {
-          sameSite: "none",
+          SameSite: "none",
           secure: true,
         });
       }
-    }else if(data?.data.salida === "error"){
+    } else if (data?.data.salida === "error") {
       setAlert(true);
     }
   }, [data]);
 
   useEffect(() => {
-    if (data?.data.salida === "exito") {
+    if (data !== undefined) {
+      if (data?.data.salida === "exito") {
+        if (data?.data.level === 0) {
+          setIsReadyToRedirect(true); // Marcar como listo para redirigir
+        } else {
+          setIsReadyToRedirect(true); // Marcar como listo para redirigir
+        }
+      }
+    }
+  }, [data]);
+
+  useEffect(() => {
+    if (isReadyToRedirect) {
       if (data?.data.level === 0) {
         navigate("/facturacion/bienvenida");
       } else {
         navigate("/contabilidad/bienvenida");
       }
     }
-  }, [data]);
+  }, [isReadyToRedirect]);
 
   return (
     <div

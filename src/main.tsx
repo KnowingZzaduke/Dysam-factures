@@ -15,11 +15,7 @@ import Autenticacion from "./components/validacion/HOC";
 const router = createBrowserRouter([
   {
     path: "/",
-    element: (
-      <Autenticacion>
-        <App />,
-      </Autenticacion>
-    ),
+    element: <App />,
   },
   {
     path: "facturacion",
