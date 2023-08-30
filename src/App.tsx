@@ -73,7 +73,7 @@ function App() {
   useEffect(() => {
     if (data !== undefined) {
       if (data?.data.salida === "exito") {
-        if (data?.data.level === 0) {
+        if (data?.data.level === 1) {
           setIsReadyToRedirect(true); // Marcar como listo para redirigir
         } else {
           setIsReadyToRedirect(true); // Marcar como listo para redirigir
@@ -84,9 +84,9 @@ function App() {
 
   useEffect(() => {
     if (isReadyToRedirect) {
-      if (data?.data.level === 0) {
+      if (data?.data.level === 1) {
         navigate("/facturacion/bienvenida");
-      } else {
+      } else if (data?.data.level === 2) {
         navigate("/contabilidad/bienvenida");
       }
     }

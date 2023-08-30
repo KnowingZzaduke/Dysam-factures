@@ -9,11 +9,23 @@ if (isset($_POST["action"]) || isset($_GET["action"])) {
         case "signin":
             $db->where("user_name", $_POST["username"]);
             $db->where("user_password", md5($_POST["password"]));
-            $usuario = $db->getOne("signin"); // Cambio aquí: "user" por "signin"
+            $usuario = $db->getOne("login"); // Cambio aquí: "user" por "signin"
             if (is_null($usuario) || empty($usuario)) {
                 echo json_encode(["salida" => "error", "data" => "Usuario o Contraseña incorrecta"]);
             } else {
                 echo json_encode(["salida" => "exito", "user" => $usuario["user_name"], "level" => 1, "iduser" => $usuario["id"]]);
+            }
+            break;
+        case "signup":
+            $db->where("user_name", $_POST["user_name"]);
+            $usuario = $db->getOne("login");
+            if (!is_null($usuario) || !empty($usuario)) {
+                echo json_encode(["salida" => "error", "data" => "El correo ya se encuentra registrado"]);
+            } else {
+                $_POST["user_level"] = $_POST["user_level"];
+                $_POST["user_password"] = md5($_POST["user_password"]);
+                $db->insert("login", $_POST);
+                echo json_encode(["salida" => "exito", "data" => "El usuario se creó correctamente"]);
             }
             break;
     }

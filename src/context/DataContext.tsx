@@ -13,8 +13,8 @@ export const DataContext = createContext<{
   data: SigninResponse | any;
   setData: React.Dispatch<React.SetStateAction<SigninResponse | any>>;
   validateSesion: () => boolean;
-  reloadData: TypeCookies | any,
-  setReloadData: React.Dispatch<React.SetStateAction<TypeCookies| any>>;
+  reloadData: TypeCookies | any;
+  setReloadData: React.Dispatch<React.SetStateAction<TypeCookies | any>>;
 }>({
   login: "false",
   setLogin: () => {},
@@ -22,13 +22,13 @@ export const DataContext = createContext<{
   setData: () => {},
   validateSesion: () => false,
   reloadData: null,
-  setReloadData: () => {}
+  setReloadData: () => {},
 });
 
 export function DataContextProvider(props: DataContextProviderProps) {
   const [login, setLogin] = useState("false");
   const [data, setData] = useState<SigninResponse | any>(null);
-  const [reloadData, setReloadData] = useState <TypeCookies | any>(null);
+  const [reloadData, setReloadData] = useState<TypeCookies | any>(null);
   function validateSesion() {
     const SESION = Cookies.get("dysam-fac");
     if (SESION !== undefined) {
@@ -52,7 +52,15 @@ export function DataContextProvider(props: DataContextProviderProps) {
 
   return (
     <DataContext.Provider
-      value={{ login, setLogin, data, setData, validateSesion, reloadData, setReloadData }}
+      value={{
+        login,
+        setLogin,
+        data,
+        setData,
+        validateSesion,
+        reloadData,
+        setReloadData,
+      }}
     >
       {props.children}
     </DataContext.Provider>

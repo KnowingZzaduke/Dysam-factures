@@ -8,21 +8,20 @@ interface AuthChildren {
   children: React.ReactNode;
 }
 function Autenticacion({ children }: AuthChildren) {
-  const { validateSesion, } = useContext(DataContext);
+  const { validateSesion } = useContext(DataContext);
   const navigate = useNavigate();
   useEffect(() => {
     const SESION = Cookies.get("dysam-fac");
     if (SESION === undefined) {
-      navigate("/");
+      console.log("No tienes cookies guardadas 😶");
     } else {
       const SESIONDECRYPT = functions.decryptdata(SESION);
       if (validateSesion()) {
-        console.log(SESIONDECRYPT);
         switch (SESIONDECRYPT.level) {
-          case 0:
+          case 1:
             navigate("/facturacion/bienvenida");
             break;
-          case 1:
+          case 2:
             navigate("/contabilidad/bienvenida");
             break;
         }
