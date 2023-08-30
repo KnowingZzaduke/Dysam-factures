@@ -11,20 +11,17 @@ import { Link } from "react-router-dom";
 import { useLocation, useNavigate } from "react-router-dom";
 import { DataContext } from "../../context/DataContext";
 import Cookies from "js-cookie";
-
+import functions from "../../data/request";
 function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [linkFacture, setLinkFacture] = useState(false);
   const [linkFilterFacture, setLinkFilterFacture] = useState(false);
-  const { data, setData, reloadData } = useContext(DataContext);
+  const { setData, reloadData, setReloadData } = useContext(DataContext);
   const location = useLocation();
   const toggleMenu = () => {
     setMenuOpen(!menuOpen);
   };
   const navigate = useNavigate();
-  useEffect(() =>{
-    console.log(reloadData);
-  }, [])
   function closeSession() {
     Cookies.remove("dysam-fac");
     setData({ salida: "error", data: "Cerró sesión" });
@@ -41,6 +38,19 @@ function Navbar() {
       setLinkFilterFacture(true);
     } else {
       setLinkFilterFacture(false);
+    }
+  }, [location]);
+
+  
+  useEffect(() => {
+    const SESSION = Cookies.get("dysam-fac");
+    if (SESSION) {
+      const SESSIONDECRYPT = functions.decryptdata(SESSION);
+      setReloadData({
+        user: SESSIONDECRYPT.user,
+        level: SESSIONDECRYPT.level,
+        iduser: SESSIONDECRYPT.iduser,
+      });
     }
   }, [location]);
 

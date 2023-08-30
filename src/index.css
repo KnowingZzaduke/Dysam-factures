@@ -73,3 +73,7 @@ a:hover {
   cursor: pointer;
   padding: 1px;
 }
+
+.registro:hover{
+  text-decoration: underline;
+}

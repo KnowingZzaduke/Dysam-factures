@@ -3,7 +3,6 @@ import { SigninResponse } from "../types/login";
 import { TypeCookies } from "../types/cookies";
 import Cookies from "js-cookie";
 import functions from "../data/request";
-type login = boolean;
 interface DataContextProviderProps {
   children: React.ReactNode;
 }
@@ -50,6 +49,7 @@ export function DataContextProvider(props: DataContextProviderProps) {
       });
     }
   }, []);
+
   return (
     <DataContext.Provider
       value={{ login, setLogin, data, setData, validateSesion, reloadData, setReloadData }}

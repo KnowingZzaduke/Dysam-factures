@@ -2,22 +2,12 @@ import { useEffect, useState } from "react";
 import videoWater from "/onda.mp4";
 import imgWater from "/img-water.webp";
 import logoDysam from "/Dysam.jpg";
-import functions from "./data/request";
-import { useNavigate } from "react-router-dom";
-import { TypeSigning } from "./types/login";
 import { FaTriangleExclamation } from "react-icons/fa6";
-import Cookies from "js-cookie";
-import { TypeCookies } from "./types/cookies";
-import { useContext } from "react";
-import { DataContext } from "./context/DataContext";
-function App() {
+function Signup() {
   const [videoLoaded, setVideoLoaded] = useState(false);
   const [userName, setUserName] = useState("");
   const [userPassword, setUserPassword] = useState("");
   const [alert, setAlert] = useState(false);
-  const { data, setData } = useContext(DataContext);
-  const navigate = useNavigate();
-  const [isReadyToRedirect, setIsReadyToRedirect] = useState(false);
 
   useEffect(() => {
     const video = document.createElement("video");
@@ -27,70 +17,9 @@ function App() {
     };
   }, []);
 
-  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+  function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    if (userName === "" || userPassword === "") {
-      setAlert(true);
-    } else {
-      const signinParams: TypeSigning = {
-        username: userName,
-        password: userPassword,
-      };
-      try {
-        const response = await functions.signin(signinParams);
-        if (response) {
-          setData(response);
-        }
-      } catch (error) {
-        console.log(error);
-      }
-    }
   }
-
-  useEffect(() => {
-    if (data?.data.salida === "exito") {
-      if (
-        data?.data.user !== null ||
-        data?.data.iduser !== null ||
-        data?.data.level !== null
-      ) {
-        const cookiesParams: TypeCookies = {
-          user: data?.data.user,
-          level: data?.data.level,
-          iduser: data?.data.iduser,
-        };
-        const cookieD = functions.encryptData(cookiesParams).toString();
-        Cookies.set("dysam-fac", cookieD, {
-          SameSite: "none",
-          secure: true,
-        });
-      }
-    } else if (data?.data.salida === "error") {
-      setAlert(true);
-    }
-  }, [data]);
-
-  useEffect(() => {
-    if (data !== undefined) {
-      if (data?.data.salida === "exito") {
-        if (data?.data.level === 0) {
-          setIsReadyToRedirect(true); // Marcar como listo para redirigir
-        } else {
-          setIsReadyToRedirect(true); // Marcar como listo para redirigir
-        }
-      }
-    }
-  }, [data]);
-
-  useEffect(() => {
-    if (isReadyToRedirect) {
-      if (data?.data.level === 0) {
-        navigate("/facturacion/bienvenida");
-      } else {
-        navigate("/contabilidad/bienvenida");
-      }
-    }
-  }, [isReadyToRedirect]);
 
   return (
     <div
@@ -154,8 +83,25 @@ function App() {
             onChange={(e) => setUserPassword(e.target.value)}
           />
         </div>
+        <div>
+          <label htmlFor="cargos" className="form-label">
+            Cargo
+          </label>
+          <select
+            className="mb-3 form-select"
+            aria-label="Default select example"
+            defaultValue="0"
+          >
+            <option value="0" disabled>
+              ¿A qué tipo de cargo perteneces?
+            </option>
+            <option value="1">Contador/a</option>
+            <option value="2">Persona encargada del visto bueno</option>
+          </select>
+        </div>
+
         <button type="submit" className="btn btn-primary w-100 mt-3">
-          Submit
+          Crear cuenta
         </button>
         {alert === true ? (
           <div
@@ -170,7 +116,7 @@ function App() {
         )}
         <div className="d-flex justify-content-end">
           <a className="registro my-2" href="/registrarse" target="_blank">
-            Crear cuenta
+            Iniciar sesión
           </a>
         </div>
       </form>
@@ -178,4 +124,4 @@ function App() {
   );
 }
 
-export default App;
+export default Signup;

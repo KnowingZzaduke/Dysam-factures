@@ -1,6 +1,7 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
 import App from "./App";
+import Signup from "./routes/form/Signup";
 import Facturacion from "./routes/Facturacion";
 import Contabilidad from "./routes/Contabilidad";
 import Facturas from "./components/facturacion/Facturas";
@@ -16,6 +17,10 @@ const router = createBrowserRouter([
   {
     path: "/",
     element: <App />,
+  },
+  {
+    path: "/registrarse",
+    element: <Signup />,
   },
   {
     path: "facturacion",
