@@ -11,14 +11,23 @@ import CorregirFacturas from "./components/contabilidad/CorregirFacturas";
 import { DataContextProvider } from "./context/DataContext";
 import "./index.css";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import Autenticacion from "./components/validacion/HOC";
 const router = createBrowserRouter([
   {
     path: "/",
-    element: <App />,
+    element: (
+      <Autenticacion>
+        <App />,
+      </Autenticacion>
+    ),
   },
   {
     path: "facturacion",
-    element: <Facturacion />,
+    element: (
+      <Autenticacion>
+        <Facturacion />
+      </Autenticacion>
+    ),
     children: [
       {
         path: "/facturacion/bienvenida",
@@ -36,7 +45,11 @@ const router = createBrowserRouter([
   },
   {
     path: "contabilidad",
-    element: <Contabilidad />,
+    element: (
+      <Autenticacion>
+        <Contabilidad />
+      </Autenticacion>
+    ),
     children: [
       {
         path: "/contabilidad/bienvenida",

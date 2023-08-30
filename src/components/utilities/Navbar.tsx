@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import {
   FaFileExport,
   FaFileSignature,
@@ -8,18 +8,26 @@ import {
 } from "react-icons/fa";
 import { BsDroplet } from "react-icons/bs";
 import { Link } from "react-router-dom";
-import { useLocation } from "react-router-dom";
-type LinksType = {
-  [name: string]: boolean;
-};
+import { useLocation, useNavigate } from "react-router-dom";
+import { DataContext } from "../../context/DataContext";
+import Cookies from "js-cookie";
+
 function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [linkFacture, setLinkFacture] = useState(false);
   const [linkFilterFacture, setLinkFilterFacture] = useState(false);
+  const {data} = useContext(DataContext);
   const location = useLocation();
   const toggleMenu = () => {
     setMenuOpen(!menuOpen);
   };
+  const navigate = useNavigate();
+
+  function closeSession() {
+    Cookies.remove("dyzam-fac");
+    console.log("Error con la cookie");
+    navigate("/");
+  }
 
   useEffect(() => {
     if (location.pathname === "/facturacion/facturas") {
@@ -32,6 +40,7 @@ function Navbar() {
     } else {
       setLinkFilterFacture(false);
     }
+    console.log(data);
   }, [location]);
 
   return (
@@ -79,7 +88,7 @@ function Navbar() {
           </li>
         </ul>
         <div className="h-100 d-flex align-items-start justify-content-end">
-          <FaSignOutAlt className="m-2 fs-4 closeSesion" title="Cerrar sesión" style={{ position: "absolute", bottom: 0, right: 0 }} />
+          <FaSignOutAlt className="m-2 fs-4 closeSesion" title="Cerrar sesión" style={{ position: "absolute", bottom: 0, right: 0 }} onClick={closeSession}/>
         </div>
       </nav>
 
@@ -103,7 +112,7 @@ function Navbar() {
                 style={{ maxWidth: "calc(100% - 210px)" }}
               >
                 <FaRegUserCircle className="text-white fs-3" />
-                <p className="text-white m-0 mx-3">José Luis</p>
+                <p className="text-white m-0 mx-3">{data?.data.user}</p>
               </div>
             </div>
           </div>
