@@ -10,6 +10,7 @@ import Cookies from "js-cookie";
 import { TypeCookies } from "./types/cookies";
 import { useContext } from "react";
 import { DataContext } from "./context/DataContext";
+
 function App() {
   const [videoLoaded, setVideoLoaded] = useState(false);
   const [userName, setUserName] = useState("");
@@ -18,6 +19,7 @@ function App() {
   const { data, setData } = useContext(DataContext);
   const navigate = useNavigate();
   const [isReadyToRedirect, setIsReadyToRedirect] = useState(false);
+  const [spiner, setSpiner] = useState(false);
 
   useEffect(() => {
     const video = document.createElement("video");
@@ -54,6 +56,7 @@ function App() {
         data?.data.iduser !== null ||
         data?.data.level !== null
       ) {
+        setSpiner(true);
         const cookiesParams: TypeCookies = {
           user: data?.data.user,
           level: data?.data.level,
@@ -84,9 +87,9 @@ function App() {
 
   useEffect(() => {
     if (isReadyToRedirect) {
-      if (data?.data.level === 1) {
+      if (data?.data.level === "1") {
         navigate("/facturacion/bienvenida");
-      } else if (data?.data.level === 2) {
+      } else if (data?.data.level === "2") {
         navigate("/contabilidad/bienvenida");
       }
     }
@@ -154,6 +157,15 @@ function App() {
             onChange={(e) => setUserPassword(e.target.value)}
           />
         </div>
+        {spiner === true ? (
+          <div className="w-100 d-flex justify-content-center my-2">
+            <div className="spinner-border text-info" role="status">
+              <span className="visually-hidden">Cargando...</span>
+            </div>
+          </div>
+        ) : (
+          <></>
+        )}
         <button type="submit" className="btn btn-primary w-100 mt-3">
           Submit
         </button>

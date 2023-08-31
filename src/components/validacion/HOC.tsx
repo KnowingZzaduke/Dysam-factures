@@ -18,10 +18,10 @@ function Autenticacion({ children }: AuthChildren) {
       const SESIONDECRYPT = functions.decryptdata(SESION);
       if (validateSesion()) {
         switch (SESIONDECRYPT.level) {
-          case 1:
+          case "1":
             navigate("/facturacion/bienvenida");
             break;
-          case 2:
+          case "2":
             navigate("/contabilidad/bienvenida");
             break;
         }

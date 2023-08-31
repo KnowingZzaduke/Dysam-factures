@@ -3,6 +3,7 @@ import { TypeSigning, SigninResponse } from "../types/login";
 import { TypeSignup } from "../types/signup";
 import CryptoJS from "crypto-js";
 import { TypeCookies } from "../types/cookies";
+import { TypeLoadFile } from "../types/loadfile";
 const functions = {
   signin: async function ({ username, password }: TypeSigning) {
     const formData = new FormData();
@@ -29,6 +30,25 @@ const functions = {
         "http://127.0.0.1/Dysam-Facturas/backend/api.php?action=signup",
         formData
       );
+      return response;
+    } catch (error) {
+      console.log(error);
+    }
+  },
+  makereport: async function (form: TypeLoadFile) {
+    const formData = new FormData();
+    if (form.file.files.name) {
+      formData.append("file", form.file.files.name);
+    }
+    formData.append("username", form.file.username);
+    formData.append("date", form.file.date);
+    formData.append("comment", form.comment);
+    try {
+      const response = await axios.post(
+        "http://127.0.0.1/Dysam-Facturas/backend/api.php?action=makereport",
+        formData
+      );
+      console.log(response);
       return response;
     } catch (error) {
       console.log(error);

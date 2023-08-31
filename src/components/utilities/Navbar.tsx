@@ -17,6 +17,7 @@ function Navbar() {
   const [linkFacture, setLinkFacture] = useState(false);
   const [linkFilterFacture, setLinkFilterFacture] = useState(false);
   const { setData, reloadData, setReloadData } = useContext(DataContext);
+  const [changeMenu, setChangeMenu] = useState<boolean>();
   const location = useLocation();
   const toggleMenu = () => {
     setMenuOpen(!menuOpen);
@@ -41,7 +42,14 @@ function Navbar() {
     }
   }, [location]);
 
-  
+  useEffect(() => {
+    if (location.pathname === "/facturacion/bienvenida") {
+      setChangeMenu(false);
+    } else if (location.pathname === "/contabilidad/bienvenida") {
+      setChangeMenu(true);
+    }
+  }, [location]);
+
   useEffect(() => {
     const SESSION = Cookies.get("dysam-fac");
     if (SESSION) {
@@ -59,7 +67,7 @@ function Navbar() {
       <nav
         id="sidebar"
         className={`bg-info bg-gradient sidebar ${menuOpen ? "" : "active"}`}
-        style={{ width: "210px" }}
+        style={{ width: "210px", zIndex: "100" }}
       >
         <div className="sidebar-header d-flex align-items-center gap-1 justify-content-center my-3">
           <h3 className="text-white mx-2">Dysam</h3>
@@ -68,7 +76,11 @@ function Navbar() {
         <ul className="list-unstyled components d-flex flex-column">
           <li className="m-1">
             <Link
-              to="/facturacion/facturas"
+              to={`${
+                changeMenu === false
+                  ? "/facturacion/facturas"
+                  : "/contabilidad/enviar-facturas"
+              }`}
               className={`link-light w-100 text-center py-2 d-flex align-items-center justify-content-center gap-2 ${
                 linkFacture === true ? "activate" : ""
               }`}
@@ -77,23 +89,32 @@ function Navbar() {
               <FaFileExport className="fs-4" />
               <span
                 className="d-inline-block text-start"
-                style={{ width: "100px" }}
+                style={{ width: "150px" }}
               >
-                Facturas
+                {changeMenu === false ? "Facturas" : "Enviar facturas"}
               </span>
             </Link>
           </li>
           <li className="m-1">
             <Link
-              to="/facturacion/filtrar-facturas"
+              to={`${
+                changeMenu === false
+                  ? "/facturacion/filtrar-facturas"
+                  : "/contabilidad/corregir-facturas"
+              }`}
               className={`link-light w-100 text-center py-2 d-flex align-items-center justify-content-center gap-2 ${
                 linkFilterFacture === true ? "activate" : ""
               }`}
               style={{ display: "inline-block" }}
             >
               <FaFileSignature className="fs-4" />
-              <span className="d-inline-block text-start">
-                Filtrar facturas
+              <span
+                className="d-inline-block text-start"
+                style={{ width: "150px" }}
+              >
+                {changeMenu === false
+                  ? "Filtrar facturas"
+                  : "Corregir facturas"}
               </span>
             </Link>
           </li>

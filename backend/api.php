@@ -13,7 +13,7 @@ if (isset($_POST["action"]) || isset($_GET["action"])) {
             if (is_null($usuario) || empty($usuario)) {
                 echo json_encode(["salida" => "error", "data" => "Usuario o Contraseña incorrecta"]);
             } else {
-                echo json_encode(["salida" => "exito", "user" => $usuario["user_name"], "level" => 1, "iduser" => $usuario["id"]]);
+                echo json_encode(["salida" => "exito", "user" => $usuario["user_name"], "level" => $usuario["user_level"], "iduser" => $usuario["id"]]);
             }
             break;
         case "signup":
@@ -26,6 +26,23 @@ if (isset($_POST["action"]) || isset($_GET["action"])) {
                 $_POST["user_password"] = md5($_POST["user_password"]);
                 $db->insert("login", $_POST);
                 echo json_encode(["salida" => "exito", "data" => "El usuario se creó correctamente"]);
+            }
+            break;
+        case "makereport":
+
+            $archivo = fopen($_FILES["file"]["tmp_name"], "rb");
+            $contenido_archivo = fread($archivo, filesize($_FILES["file"]["tmp_name"]));
+            $finfo = finfo_open(FILEINFO_MIME_TYPE);
+            $tipo_mime = finfo_file($finfo, $_FILES["file"]["tmp_name"]);
+            $base64_archivo = 'data:' . $tipo_mime . ';base64,' . base64_encode($contenido_archivo);
+            fclose($archivo);
+            $_POST["iduser"] = 1;
+            $_POST["file"] = $base64_archivo;
+            try {
+                $db->insert("files", $_POST);
+                echo json_encode(["salida" => "exito"]);
+            } catch (Exception $th) {
+                echo json_encode(["salida" => "error", "data" => $th]);
             }
             break;
     }
