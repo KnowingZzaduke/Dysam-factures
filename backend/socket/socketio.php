@@ -1,9 +1,9 @@
 <?php
-
-require './dysamSocketClass.php';
+require '../../vendor/autoload.php';
 use Ratchet\Server\IoServer;
 use Ratchet\Http\HttpServer;
 use Ratchet\WebSocket\WsServer;
+use DysamFacturas\backend\socket\dysamSocketClass;
 
 $server = IoServer::factory(
     new HttpServer(

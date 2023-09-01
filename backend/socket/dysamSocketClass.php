@@ -1,5 +1,5 @@
 <?php
-
+namespace DysamFacturas\backend\socket;
 require '../../vendor/autoload.php';
 use Ratchet\MessageComponentInterface;
 use Ratchet\ConnectionInterface;
