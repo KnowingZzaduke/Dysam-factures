@@ -6,7 +6,19 @@ import {
 } from "react-icons/fa";
 import ModalEnviarFactura from "../modals/ModalEnviarFactura";
 import ModalCorregirFactura from "../modals/ModalCorregirFactura";
+import { useEffect, useState } from "react";
+import { TypeFormFile } from "../../types/file";
+import io from "socket.io-client";
 function Facturas() {
+  const [insertData, setInsertData] = useState<TypeFormFile>();
+  useEffect(() => {
+    const socket = io("http://localhost:8080");
+
+    socket.on("dataInsert", (data) => {
+      console.log(data);
+      setInsertData(data);
+    });
+  }, []);
   return (
     <div
       className="d-flex align-items-center justify-content-center"
@@ -31,7 +43,7 @@ function Facturas() {
                 <td>Por revisar</td>
                 <td>Hoy</td>
                 <td>
-                  <FaFileUpload className="fs-4 option" title="Ver factura"/>
+                  <FaFileUpload className="fs-4 option" title="Ver factura" />
                 </td>
                 <td>
                   <FaCheckCircle

@@ -3,6 +3,11 @@ header("Access-Control-Allow-Origin: *");
 header("Access-Control-Allow-Methods: GET, POST, OPTIONS");
 header("Access-Control-Allow-Headers: Content-Type");
 require("db/MysqliDb.php");
+require '../vendor/autoload.php'; // Carga el autoloader de Composer
+use DysamFacturas\backend\socket\dysamSocketClass; 
+
+// Crear una instancia
+$socketClass = new dysamSocketClass();
 date_default_timezone_set('America/Bogota');
 if (isset($_POST["action"]) || isset($_GET["action"])) {
     switch ($_GET["action"]) {
@@ -29,20 +34,34 @@ if (isset($_POST["action"]) || isset($_GET["action"])) {
             }
             break;
         case "makereport":
+            if (isset($_FILES["file"]["tmp_name"]) && is_uploaded_file($_FILES["file"]["tmp_name"])) {
+                $archivo = fopen($_FILES["file"]["tmp_name"], "rb");
+                $contenido_archivo = fread($archivo, filesize($_FILES["file"]["tmp_name"]));
+                fclose($archivo);
 
-            $archivo = fopen($_FILES["file"]["tmp_name"], "rb");
-            $contenido_archivo = fread($archivo, filesize($_FILES["file"]["tmp_name"]));
-            $finfo = finfo_open(FILEINFO_MIME_TYPE);
-            $tipo_mime = finfo_file($finfo, $_FILES["file"]["tmp_name"]);
-            $base64_archivo = 'data:' . $tipo_mime . ';base64,' . base64_encode($contenido_archivo);
-            fclose($archivo);
-            $_POST["iduser"] = 1;
-            $_POST["file"] = $base64_archivo;
-            try {
-                $db->insert("files", $_POST);
-                echo json_encode(["salida" => "exito"]);
-            } catch (Exception $th) {
-                echo json_encode(["salida" => "error", "data" => $th]);
+                $user_name = $_POST["user_name"]; // Obtén el nombre de usuario del formulario
+                $_POST["file"] = $contenido_archivo;
+
+                try {
+                    $db->insert("files", [
+                        "user_name" => $user_name,
+                        "file" => $_POST["file"],
+                        "date" => $_POST["date"], // Asegúrate de ajustar las claves según los nombres del formulario
+                        "comment" => $_POST["comment"], // Asegúrate de ajustar las claves según los nombres del formulario
+                        // Agrega el resto de las columnas y valores aquí
+                    ]);
+                    $socketClass->emitDataInsertedEvent([
+                        "user_name" => $user_name,
+                        "file" => $_POST["file"],
+                        "date" => $_POST["date"],
+                        "comment" => $_POST["comment"],
+                    ]);
+                    echo json_encode(["salida" => "exito"]);
+                } catch (Exception $th) {
+                    echo json_encode(["salida" => "error", "data" => $th->getMessage()]);
+                }
+            } else {
+                echo json_encode(["salida" => "error", "data" => "Archivo no subido correctamente"]);
             }
             break;
     }

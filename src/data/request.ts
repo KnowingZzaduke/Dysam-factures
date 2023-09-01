@@ -40,15 +40,14 @@ const functions = {
     if (form.file.files.name) {
       formData.append("file", form.file.files.name);
     }
-    formData.append("username", form.file.username);
+    formData.append("user_name", form.file.username);
     formData.append("date", form.file.date);
     formData.append("comment", form.comment);
     try {
-      const response = await axios.post(
+      const response = await axios.post<SigninResponse>(
         "http://127.0.0.1/Dysam-Facturas/backend/api.php?action=makereport",
         formData
       );
-      console.log(response);
       return response;
     } catch (error) {
       console.log(error);

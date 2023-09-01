@@ -14,9 +14,9 @@ function EnviarFacturas() {
       name: null,
     },
   });
-  const [textareaValue, SetTextareaValue] = useState("");
+  const [textareaValue, setTextareaValue] = useState("");
   const [fileSuccess, setFileSuccess] = useState(false);
-  const [data, setData] = useState <any | any>();
+  const [data, setData] = useState<SigninResponse | any>();
   const [messageErrorFile, setMessageErrorFile] = useState(false);
 
   function handleInputChange(e: React.ChangeEvent<HTMLInputElement>) {
@@ -38,6 +38,7 @@ function EnviarFacturas() {
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
+    setMessageErrorFile(false);
     const fileparams: TypeLoadFile = {
       file: formFile,
       comment: textareaValue,
@@ -46,7 +47,6 @@ function EnviarFacturas() {
       const response = await functions.makereport(fileparams);
       if (response) {
         setData(response);
-        console.log(response);
       }
     } catch (error) {
       console.log(error);
@@ -58,10 +58,15 @@ function EnviarFacturas() {
       setFileSuccess(true);
       setTimeout(() => {
         setFileSuccess(false);
+        setFormFile({ ...formFile, date: "", files: { name: null } });
+        setTextareaValue("");
       }, 2000);
     } else if (data?.data.salida === "error") {
       setFileSuccess(false);
       setMessageErrorFile(true);
+      setTimeout(() => {
+        setMessageErrorFile(false);
+      }, 2000);
     }
   }, [data]);
   return (
@@ -69,7 +74,11 @@ function EnviarFacturas() {
       className="d-flex align-items-center justify-content-center"
       style={{ minHeight: "100vh" }}
     >
-      <form className="was-validated border border-dark p-5 rounded bg-light" onSubmit={handleSubmit}>
+      <form
+        className="was-validated border border-dark p-5 rounded bg-light"
+        onSubmit={handleSubmit}
+        encType="multipart/form-data"
+      >
         <h1>Enviar facturas</h1>
         <div className="my-4">
           <label htmlFor="username" className="form-label">
@@ -119,7 +128,7 @@ function EnviarFacturas() {
             name="comment"
             required
             value={textareaValue}
-            onChange={(e) => SetTextareaValue(e.target.value)}
+            onChange={(e) => setTextareaValue(e.target.value)}
           ></textarea>
           <label htmlFor="floatingTextarea">Comentarios</label>
         </div>
@@ -145,7 +154,7 @@ function EnviarFacturas() {
             role="alert"
           >
             <FaTriangleExclamation />
-            <div className="text-center">Hubo un erro al subir el archivo</div>
+            <div className="text-center">Hubo un error al subir el archivo</div>
           </div>
         ) : (
           <></>
