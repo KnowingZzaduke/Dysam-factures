@@ -1,11 +1,9 @@
 <?php
 
-require '../backend/vendor/autoload.php'; // Ajusta la ruta a tu archivo autoload.php
-
+require './dysamSocketClass.php';
 use Ratchet\Server\IoServer;
 use Ratchet\Http\HttpServer;
 use Ratchet\WebSocket\WsServer;
-use DysamFacturas\backend\socket\dysamSocketClass; // Utiliza el espacio de nombres adecuado
 
 $server = IoServer::factory(
     new HttpServer(

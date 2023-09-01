@@ -12,7 +12,7 @@ const functions = {
 
     try {
       const response = await axios.post<SigninResponse>(
-        "http://127.0.0.1/Dysam-Facturas/backend/api.php?action=signin",
+        "http://127.0.0.1/DysamFacturas/backend/api.php?action=signin",
         formData
       );
       return response;
@@ -27,7 +27,7 @@ const functions = {
     formData.append("user_level", position); // Cambio aquí: "position" por "user_level"
     try {
       const response = await axios.post<SigninResponse>(
-        "http://127.0.0.1/Dysam-Facturas/backend/api.php?action=signup",
+        "http://127.0.0.1/DysamFacturas/backend/api.php?action=signup",
         formData
       );
       return response;
@@ -45,7 +45,7 @@ const functions = {
     formData.append("comment", form.comment);
     try {
       const response = await axios.post<SigninResponse>(
-        "http://127.0.0.1/Dysam-Facturas/backend/api.php?action=makereport",
+        "http://127.0.0.1/DysamFacturas/backend/api.php?action=makereport",
         formData
       );
       return response;

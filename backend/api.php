@@ -3,8 +3,7 @@ header("Access-Control-Allow-Origin: *");
 header("Access-Control-Allow-Methods: GET, POST, OPTIONS");
 header("Access-Control-Allow-Headers: Content-Type");
 require("db/MysqliDb.php");
-require '../vendor/autoload.php'; // Carga el autoloader de Composer
-use DysamFacturas\backend\socket\dysamSocketClass; 
+require './socket/dysamSocketClass.php'; // Carga el autoloader de Composer
 
 // Crear una instancia
 $socketClass = new dysamSocketClass();
@@ -14,7 +13,7 @@ if (isset($_POST["action"]) || isset($_GET["action"])) {
         case "signin":
             $db->where("user_name", $_POST["username"]);
             $db->where("user_password", md5($_POST["password"]));
-            $usuario = $db->getOne("login"); // Cambio aquí: "user" por "signin"
+            $usuario = $db->getOne("login"); 
             if (is_null($usuario) || empty($usuario)) {
                 echo json_encode(["salida" => "error", "data" => "Usuario o Contraseña incorrecta"]);
             } else {
@@ -46,9 +45,8 @@ if (isset($_POST["action"]) || isset($_GET["action"])) {
                     $db->insert("files", [
                         "user_name" => $user_name,
                         "file" => $_POST["file"],
-                        "date" => $_POST["date"], // Asegúrate de ajustar las claves según los nombres del formulario
-                        "comment" => $_POST["comment"], // Asegúrate de ajustar las claves según los nombres del formulario
-                        // Agrega el resto de las columnas y valores aquí
+                        "date" => $_POST["date"], 
+                        "comment" => $_POST["comment"], 
                     ]);
                     $socketClass->emitDataInsertedEvent([
                         "user_name" => $user_name,
