@@ -10,7 +10,7 @@ import { useEffect, useState } from "react";
 import { TypeFormFile } from "../../types/file";
 import functions from "../../data/request";
 import { useLocation } from "react-router-dom";
-import $ from 'jquery';
+import $ from "jquery";
 function Facturas() {
   const [insertData, setInsertData] = useState<any>();
   const location = useLocation();
@@ -18,7 +18,8 @@ function Facturas() {
     try {
       const response = await functions.loadingreport();
       if (response) {
-        setInsertData(response);
+        console.log(response);
+        setInsertData(response.data.data);
       } else {
         console.log("Error");
       }
@@ -26,12 +27,10 @@ function Facturas() {
       console.log("Error");
     }
   }
-  
+
   useEffect(() => {
-    if (insertData?.data.salida === "exito") {
-      console.log("usar datos");
-    }
-  }, [insertData]);
+    loadReports();
+  }, []);
   return (
     <div
       className="d-flex align-items-center justify-content-center"
@@ -52,31 +51,34 @@ function Facturas() {
               </tr>
             </thead>
             <tbody>
-              <tr className="table-secondary text-center">
-                <td>Por revisar</td>
-                <td>Hoy</td>
-                <td>
-                  <FaFileUpload
-                    className="fs-4 option"
-                    title="Ver factura"
-                    onClick={loadReports}
-                  />
-                </td>
-                <td>
-                  <FaCheckCircle
-                    className="fs-4 option mx-1"
-                    data-bs-toggle="modal"
-                    data-bs-target="#modalSendFactures"
-                    title="Enviar factura"
-                  />
-                  <FaExclamationTriangle
-                    className="fs-4 option mx-1"
-                    data-bs-toggle="modal"
-                    data-bs-target="#modalCorrectFactures"
-                    title="Corregir factura"
-                  />
-                </td>
-              </tr>
+              {insertData?.map((data: any) => (
+                <tr className="table-secondary text-center" key={data.id_files}>
+                  <td>{data.status_file}</td>
+                  <td>{data.date}</td>
+                  <td>
+                    <a href={data.file_path} target="_blank">
+                      <FaFileUpload
+                        className="fs-4 option"
+                        title="Ver factura"
+                      />
+                    </a>
+                  </td>
+                  <td>
+                    <FaCheckCircle
+                      className="fs-4 option mx-1"
+                      data-bs-toggle="modal"
+                      data-bs-target="#modalSendFactures"
+                      title="Enviar factura"
+                    />
+                    <FaExclamationTriangle
+                      className="fs-4 option mx-1"
+                      data-bs-toggle="modal"
+                      data-bs-target="#modalCorrectFactures"
+                      title="Corregir factura"
+                    />
+                  </td>
+                </tr>
+              ))}
             </tbody>
           </table>
         </div>

@@ -42,10 +42,11 @@ if (isset($_POST["action"]) || isset($_GET["action"])) {
                 try {
                     $db->insert("files", [
                         "user_name" => $user_name,
-                        "id_file" => $_["idfile"],
+                        "id_files" => $_POST["idfile"],
                         "file_path" => $ruta_destino, // Almacena la ruta en lugar del contenido
                         "date" => $_POST["date"],
                         "comment" => $_POST["comment"],
+                        "status_file" => $_POST["statusfile"]
                     ]);
 
                     echo json_encode(["salida" => "exito"]);

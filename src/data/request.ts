@@ -44,6 +44,7 @@ const functions = {
     formData.append("user_name", form.file.username);
     formData.append("date", form.file.date);
     formData.append("comment", form.comment);
+    formData.append("statusfile", form.file.statusfile)
     try {
       const response = await axios.post<SigninResponse>(
         "http://127.0.0.1/DysamFacturas/backend/api.php?action=makereport",

@@ -15,6 +15,7 @@ function EnviarFacturas() {
     files: {
       name: null,
     },
+    statusfile: "Pendiente"
   });
   const [textareaValue, setTextareaValue] = useState("");
   const [fileSuccess, setFileSuccess] = useState(false);

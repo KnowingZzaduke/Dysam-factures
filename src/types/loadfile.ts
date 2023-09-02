@@ -6,6 +6,7 @@ export type TypeLoadFile = {
     files: {
       name: File | null;
     };
+    statusfile: "Pendiente" | "Verificado"
   };
   comment: string;
 };

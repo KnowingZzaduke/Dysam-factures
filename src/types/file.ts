@@ -5,4 +5,5 @@ export interface TypeFormFile {
     files: {
         name: File | null;
     }
+    statusfile: "Pendiente" | "Verificado"
 }
