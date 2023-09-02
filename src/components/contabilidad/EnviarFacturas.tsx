@@ -5,9 +5,11 @@ import { TypeLoadFile } from "../../types/loadfile";
 import { SigninResponse } from "../../types/login";
 import { FaTriangleExclamation } from "react-icons/fa6";
 import functions from "../../data/request";
+import { v4 as uuidv4 } from "uuid";
 function EnviarFacturas() {
   const { reloadData } = useContext(DataContext);
   const [formFile, setFormFile] = useState<TypeFormFile>({
+    idfile: uuidv4(),
     username: reloadData?.user,
     date: "",
     files: {
@@ -23,7 +25,6 @@ function EnviarFacturas() {
     const { name, value, files } = e.target;
     if (name === "files") {
       const newFiles: File | null = files ? files[0] : null;
-      console.log(newFiles);
       setFormFile({
         ...formFile,
         files: {
@@ -54,6 +55,7 @@ function EnviarFacturas() {
   }
 
   useEffect(() => {
+    console.log(data);
     if (data?.data.salida === "exito") {
       setFileSuccess(true);
       setTimeout(() => {

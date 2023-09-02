@@ -1,5 +1,6 @@
 export type TypeLoadFile = {
   file: {
+    idfile: string
     username: string;
     date: string;
     files: {

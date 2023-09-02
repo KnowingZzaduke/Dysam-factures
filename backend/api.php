@@ -3,17 +3,14 @@ header("Access-Control-Allow-Origin: *");
 header("Access-Control-Allow-Methods: GET, POST, OPTIONS");
 header("Access-Control-Allow-Headers: Content-Type");
 require("db/MysqliDb.php");
-require './socket/dysamSocketClass.php'; // Carga el autoloader de Composer
-use DysamFacturas\backend\socket\dysamSocketClass;
 // Crear una instancia
-$socketClass = new dysamSocketClass();
 date_default_timezone_set('America/Bogota');
 if (isset($_POST["action"]) || isset($_GET["action"])) {
     switch ($_GET["action"]) {
         case "signin":
             $db->where("user_name", $_POST["username"]);
             $db->where("user_password", md5($_POST["password"]));
-            $usuario = $db->getOne("login"); 
+            $usuario = $db->getOne("login");
             if (is_null($usuario) || empty($usuario)) {
                 echo json_encode(["salida" => "error", "data" => "Usuario o Contraseña incorrecta"]);
             } else {
@@ -39,27 +36,46 @@ if (isset($_POST["action"]) || isset($_GET["action"])) {
                 fclose($archivo);
 
                 $user_name = $_POST["user_name"]; // Obtén el nombre de usuario del formulario
-                $_POST["file"] = $contenido_archivo;
 
                 try {
                     $db->insert("files", [
                         "user_name" => $user_name,
-                        "file" => $_POST["file"],
-                        "date" => $_POST["date"], 
-                        "comment" => $_POST["comment"], 
-                    ]);
-                    $socketClass->emitDataInsertedEvent([
-                        "user_name" => $user_name,
-                        "file" => $_POST["file"],
+                        "file" => $contenido_archivo,
                         "date" => $_POST["date"],
                         "comment" => $_POST["comment"],
                     ]);
+
                     echo json_encode(["salida" => "exito"]);
                 } catch (Exception $th) {
                     echo json_encode(["salida" => "error", "data" => $th->getMessage()]);
                 }
             } else {
                 echo json_encode(["salida" => "error", "data" => "Archivo no subido correctamente"]);
+            }
+            break;
+        case "loadingreport":
+            $mysqli = new mysqli("localhost", "root", "", "dysam_facturas");
+
+            if ($mysqli->connect_error) {
+                echo json_encode(["salida" => "error", "data" => "Error de conexión a la base de datos: " . $mysqli->connect_error]);
+            } else {
+                $sql = "SELECT * FROM files"; // Seleccionar todos los datos de la tabla "archivos"
+                $result = $mysqli->query($sql);
+
+                if ($result->num_rows > 0) {
+                    $data = array();
+                    while ($row = $result->fetch_assoc()) {
+                        $data[] = $row;
+                    }
+                    if (empty($data)) {
+                        echo json_encode(["salida" => "exito", "data" => "No se encontraron registros en la tabla archivos"]);
+                    } else {
+                        // Serializa los datos como JSON antes de enviarlos
+                        echo json_encode(["salida" => "exito", "data" => $data]);
+                    }
+                } else {
+                    echo json_encode(["salida" => "error", "data" => "Error en la consulta SQL: " . $mysqli->error]);
+                }
             }
             break;
     }

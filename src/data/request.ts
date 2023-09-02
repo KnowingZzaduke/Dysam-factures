@@ -40,6 +40,7 @@ const functions = {
     if (form.file.files.name) {
       formData.append("file", form.file.files.name);
     }
+    formData.append("idfile", form.file.idfile);
     formData.append("user_name", form.file.username);
     formData.append("date", form.file.date);
     formData.append("comment", form.comment);
@@ -51,6 +52,15 @@ const functions = {
       return response;
     } catch (error) {
       console.log(error);
+    }
+  },
+  loadingreport: async function () {
+    try {
+      const response = await axios.get("http://127.0.0.1/DysamFacturas/backend/api.php?action=loadingreport");
+      console.log(response);
+      return response;
+    } catch (error) {
+      console.error(error);
     }
   },
   decryptdata: function (data: string) {

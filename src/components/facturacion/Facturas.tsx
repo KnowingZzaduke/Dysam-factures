@@ -8,17 +8,29 @@ import ModalEnviarFactura from "../modals/ModalEnviarFactura";
 import ModalCorregirFactura from "../modals/ModalCorregirFactura";
 import { useEffect, useState } from "react";
 import { TypeFormFile } from "../../types/file";
-import io from "socket.io-client";
+import functions from "../../data/request";
+import { useLocation } from "react-router-dom";
 function Facturas() {
-  const [insertData, setInsertData] = useState<TypeFormFile>();
-  useEffect(() => {
-    const socket = io("http://localhost:8080");
+  const [insertData, setInsertData] = useState<any>();
+  const location = useLocation();
+  async function loadReports() {
+    try {
+      const response = await functions.loadingreport();
+      if (response) {
+        setInsertData(response);
+      } else {
+        console.log("Error");
+      }
+    } catch (error) {
+      console.log("Error");
+    }
+  }
 
-    socket.on("dataInsert", (data) => {
-      console.log(data);
-      setInsertData(data);
-    });
-  }, []);
+  useEffect(() => {
+    if (insertData?.data.salida === "exito") {
+      console.log("usar datos");
+    }
+  }, [insertData]);
   return (
     <div
       className="d-flex align-items-center justify-content-center"
@@ -43,7 +55,11 @@ function Facturas() {
                 <td>Por revisar</td>
                 <td>Hoy</td>
                 <td>
-                  <FaFileUpload className="fs-4 option" title="Ver factura" />
+                  <FaFileUpload
+                    className="fs-4 option"
+                    title="Ver factura"
+                    onClick={loadReports}
+                  />
                 </td>
                 <td>
                   <FaCheckCircle

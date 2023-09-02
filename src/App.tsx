@@ -50,7 +50,6 @@ function App() {
   }
 
   useEffect(() => {
-    console.log(data);
     if (data?.data.salida === "exito") {
       if (
         data?.data.user !== null ||
