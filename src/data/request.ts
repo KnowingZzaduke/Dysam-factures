@@ -56,7 +56,9 @@ const functions = {
   },
   loadingreport: async function () {
     try {
-      const response = await axios.get("http://127.0.0.1/DysamFacturas/backend/api.php?action=loadingreport");
+      const response = await axios.get<SigninResponse>(
+        "http://127.0.0.1/DysamFacturas/backend/api.php?action=loadingreport"
+      );
       console.log(response);
       return response;
     } catch (error) {

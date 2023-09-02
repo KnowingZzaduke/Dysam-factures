@@ -10,6 +10,7 @@ import { useEffect, useState } from "react";
 import { TypeFormFile } from "../../types/file";
 import functions from "../../data/request";
 import { useLocation } from "react-router-dom";
+import $ from 'jquery';
 function Facturas() {
   const [insertData, setInsertData] = useState<any>();
   const location = useLocation();
@@ -25,7 +26,7 @@ function Facturas() {
       console.log("Error");
     }
   }
-
+  
   useEffect(() => {
     if (insertData?.data.salida === "exito") {
       console.log("usar datos");
