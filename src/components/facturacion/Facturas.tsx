@@ -4,24 +4,17 @@ import {
   FaFileUpload,
   FaFileAlt,
 } from "react-icons/fa";
-import ModalEnviarFactura from "../modals/ModalEnviarFactura";
-import ModalCorregirFactura from "../modals/ModalCorregirFactura";
 import { useEffect, useState } from "react";
-import { TypeFormFile } from "../../types/file";
+import { DataTableResponse } from "../../types/table";
 import functions from "../../data/request";
-import { useLocation } from "react-router-dom";
-import $ from "jquery";
 function Facturas() {
-  const [insertData, setInsertData] = useState<any>();
-  const location = useLocation();
+  const [insertData, setInsertData] = useState<DataTableResponse | any>();
+  const [selectedItems, setSelectedItems] = useState<DataTableResponse | any>();
   async function loadReports() {
     try {
       const response = await functions.loadingreport();
       if (response) {
-        console.log(response);
-        setInsertData(response.data.data);
-      } else {
-        console.log("Error");
+        setInsertData(response);
       }
     } catch (error) {
       console.log("Error");
@@ -51,7 +44,7 @@ function Facturas() {
               </tr>
             </thead>
             <tbody>
-              {insertData?.map((data: any) => (
+              {insertData?.data.data.map((data: any) => (
                 <tr className="table-secondary text-center" key={data.id_files}>
                   <td>{data.status_file}</td>
                   <td>{data.date}</td>
@@ -75,6 +68,7 @@ function Facturas() {
                       data-bs-toggle="modal"
                       data-bs-target="#modalCorrectFactures"
                       title="Corregir factura"
+                      onClick={() => setSelectedItems(data)}
                     />
                   </td>
                 </tr>
@@ -82,8 +76,120 @@ function Facturas() {
             </tbody>
           </table>
         </div>
-        <ModalEnviarFactura />
-        <ModalCorregirFactura />
+        {/* //Modal corregir */}
+        <div
+          className="modal"
+          id="modalCorrectFactures"
+          aria-labelledby="exampleModalLabel"
+          tabIndex="-1"
+          aria-hidden="true"
+        >
+          <div className="modal-dialog">
+            <div className="modal-content">
+              <div className="modal-header">
+                <h5 className="modal-title">Corregir factura</h5>
+                <button
+                  type="button"
+                  className="btn-close"
+                  data-bs-dismiss="modal"
+                  aria-label="Close"
+                ></button>
+              </div>
+              <div className="modal-body">
+                <form>
+                  <div className="mb-3">
+                    <label htmlFor="recipient-name" className="col-form-label">
+                      Nombre del contador
+                    </label>
+                    <select className="form-select" defaultValue="0">
+                      {selectedItems && (
+                        <option value={selectedItems.id_files}>
+                          {selectedItems.user_name}
+                        </option>
+                      )}
+                    </select>
+                  </div>
+                  <div className="mb-3">
+                    <label htmlFor="message-text" className="col-form-label">
+                      Mensaje
+                    </label>
+                    <textarea
+                      className="form-control"
+                      id="message-text"
+                    ></textarea>
+                  </div>
+                </form>
+              </div>
+              <div className="modal-footer">
+                <button
+                  type="button"
+                  className="btn btn-secondary"
+                  data-bs-dismiss="modal"
+                >
+                  Cerrar
+                </button>
+                <button type="button" className="btn btn-primary">
+                  Regresar factura
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+        {/* //Modal enviar */}
+        <div
+          className="modal fade"
+          id="modalSendFactures"
+          tabIndex="-1"
+          aria-hidden="true"
+        >
+          <div className="modal-dialog">
+            <div className="modal-content">
+              <div className="modal-header">
+                <h5 className="modal-title">Enviar factura</h5>
+                <button
+                  type="button"
+                  className="btn-close"
+                  data-bs-dismiss="modal"
+                  aria-label="Close"
+                ></button>
+              </div>
+              <div className="modal-body">
+                <form>
+                  <div className="mb-3">
+                    <label htmlFor="recipient-name" className="col-form-label">
+                      Seleccionar facturador
+                    </label>
+                    <select className="form-select" defaultValue="0">
+                      <option value="0">Selecciona un facturador</option>
+                      <option value="1">Leo Luna</option>
+                    </select>
+                  </div>
+                  <div className="mb-3">
+                    <label htmlFor="message-text" className="col-form-label">
+                      Mensaje
+                    </label>
+                    <textarea
+                      className="form-control"
+                      id="message-text"
+                    ></textarea>
+                  </div>
+                </form>
+              </div>
+              <div className="modal-footer">
+                <button
+                  type="button"
+                  className="btn btn-secondary"
+                  data-bs-dismiss="modal"
+                >
+                  Cerrar
+                </button>
+                <button type="button" className="btn btn-primary">
+                  Enviar factura
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   );
