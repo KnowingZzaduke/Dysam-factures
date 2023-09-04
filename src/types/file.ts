@@ -1,5 +1,4 @@
 export interface TypeFormFile {
-    idfile: string,
     username: string,
     date: string,
     files: {

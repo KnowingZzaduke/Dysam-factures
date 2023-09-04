@@ -9,7 +9,6 @@ import { v4 as uuidv4 } from "uuid";
 function EnviarFacturas() {
   const { reloadData } = useContext(DataContext);
   const [formFile, setFormFile] = useState<TypeFormFile>({
-    idfile: uuidv4(),
     username: reloadData?.user,
     date: "",
     files: {

@@ -4,12 +4,14 @@ import {
   FaFileUpload,
   FaFileAlt,
 } from "react-icons/fa";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { DataTableResponse } from "../../types/table";
 import functions from "../../data/request";
+import { TypeUpdateReports } from "../../types/updateFile";
 function Facturas() {
   const [insertData, setInsertData] = useState<DataTableResponse | any>();
   const [selectedItems, setSelectedItems] = useState<DataTableResponse | any>();
+  const [textareaComment, settextareaComment] = useState<string>("Pendiente");
   async function loadReports() {
     try {
       const response = await functions.loadingreport();
@@ -18,6 +20,24 @@ function Facturas() {
       }
     } catch (error) {
       console.log("Error");
+    }
+  }
+
+  async function updateReports(
+    e: React.FormEvent<HTMLFormElement>,
+    { status, user, file, comment }: { status: string; user: string, file: string, comment: string }
+  ) {
+    e.preventDefault();
+    const updateReportsParams: TypeUpdateReports = {
+      status: status,
+      username: user,
+      filepath: file,
+      comment: comment,
+    };
+    try {
+      const response = await functions.updatereport(updateReportsParams);
+    } catch (error) {
+      console.log(error);
     }
   }
 
@@ -44,7 +64,7 @@ function Facturas() {
               </tr>
             </thead>
             <tbody>
-              {insertData?.data.data.map((data: any) => (
+              {insertData?.data?.data?.map((data: any) => (
                 <tr className="table-secondary text-center" key={data.id_files}>
                   <td>{data.status_file}</td>
                   <td>{data.date}</td>
@@ -96,9 +116,21 @@ function Facturas() {
                 ></button>
               </div>
               <div className="modal-body">
-                <form>
+                <form
+                  onSubmit={(e) =>
+                    updateReports(e, {
+                      status: { ...selectedItems, status_file: "Corregir" },
+                      user: selectedItems.user_name,
+                      file: selectedItems.file_path,
+                      comment: textareaComment,
+                    })
+                  }
+                >
                   <div className="mb-3">
-                    <label htmlFor="recipient-name" className="col-form-label">
+                    <label
+                      htmlFor="recipient-name"
+                      className="col-for  m-label"
+                    >
                       Nombre del contador
                     </label>
                     <select className="form-select" defaultValue="0">
@@ -116,21 +148,22 @@ function Facturas() {
                     <textarea
                       className="form-control"
                       id="message-text"
+                      onChange={(e) => settextareaComment(e.target.value)}
                     ></textarea>
                   </div>
+                  <div className="modal-footer">
+                    <button
+                      type="button"
+                      className="btn btn-secondary"
+                      data-bs-dismiss="modal"
+                    >
+                      Cerrar
+                    </button>
+                    <button className="btn btn-primary">
+                      Regresar factura
+                    </button>
+                  </div>
                 </form>
-              </div>
-              <div className="modal-footer">
-                <button
-                  type="button"
-                  className="btn btn-secondary"
-                  data-bs-dismiss="modal"
-                >
-                  Cerrar
-                </button>
-                <button type="button" className="btn btn-primary">
-                  Regresar factura
-                </button>
               </div>
             </div>
           </div>

@@ -36,14 +36,11 @@ if (isset($_POST["action"]) || isset($_GET["action"])) {
             $ruta_destino = "../uploads/" . uniqid() . "_" . $nombre_original;
 
             if (move_uploaded_file($archivo_temporal, $ruta_destino)) {
-                // El archivo se ha guardado correctamente
-                // Ahora, puedes almacenar la ruta en la base de datos
                 $user_name = $_POST["user_name"];
                 try {
                     $db->insert("files", [
                         "user_name" => $user_name,
-                        "id_files" => $_POST["idfile"],
-                        "file_path" => $ruta_destino, // Almacena la ruta en lugar del contenido
+                        "file_path" => $ruta_destino,
                         "date" => $_POST["date"],
                         "comment" => $_POST["comment"],
                         "status_file" => $_POST["statusfile"]
@@ -63,7 +60,7 @@ if (isset($_POST["action"]) || isset($_GET["action"])) {
             if ($mysqli->connect_error) {
                 echo json_encode(["salida" => "error", "data" => "Error de conexión a la base de datos: " . $mysqli->connect_error]);
             } else {
-                $sql = "SELECT * FROM files"; // Seleccionar todos los datos de la tabla "files"
+                $sql = "SELECT * FROM files";
                 $result = $mysqli->query($sql);
 
                 if ($result) {
@@ -75,10 +72,7 @@ if (isset($_POST["action"]) || isset($_GET["action"])) {
                     if (empty($data)) {
                         echo json_encode(["salida" => "exito", "data" => "No se encontraron registros en la tabla archivos"]);
                     } else {
-                        // No serialices el contenido del archivo, simplemente proporciona la ruta
-                        // Puedes modificar la estructura de datos si es necesario
                         foreach ($data as &$row) {
-                            // Cambia la columna "file_path" a la ruta completa en el servidor
                             $row["file_path"] = "" . $row["file_path"];
                         }
                         header('Content-Type: application/json');
@@ -87,6 +81,29 @@ if (isset($_POST["action"]) || isset($_GET["action"])) {
                 } else {
                     echo json_encode(["salida" => "error", "data" => "Error en la consulta SQL: " . $mysqli->error]);
                 }
+            }
+            break;
+        case "updatereport":
+            $db->where("user_name", $_POST["user_name"]);
+            $db->where("file_path", $_POST["file_path"]);
+            $file = $db->getOne("files");
+
+            if (is_null($file) || empty($file)) {
+                echo json_encode(["salida" => "error", "data" => "El archivo no existe"]);
+            } else {
+                $updateData = array(
+                    "status_file" => $_POST["status"],
+                );
+
+                $commentF = array(
+                    "commentf" => $_POST["commentf"],
+                );
+                $db->where("user_name", $_POST["user_name"]);
+                $db->where("file_path", $_POST["file_path"]);
+                $db->update("files", $updateData);
+                $db->insert("commentf", $commentF);
+
+                echo json_encode(["salida" => "exito", "data" => "Los datos del archivo se actualizaron correctamente"]);
             }
             break;
     }
