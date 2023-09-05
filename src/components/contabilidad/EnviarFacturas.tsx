@@ -14,7 +14,7 @@ function EnviarFacturas() {
     files: {
       name: null,
     },
-    statusfile: "Pendiente"
+    statusfile: "Pendiente",
   });
   const [textareaValue, setTextareaValue] = useState("");
   const [fileSuccess, setFileSuccess] = useState(false);
@@ -25,11 +25,12 @@ function EnviarFacturas() {
     const { name, value, files } = e.target;
     if (name === "files") {
       const newFiles: File | null = files ? files[0] : null;
+      const newFilesNoSpace: File | null = newFiles ? new File([newFiles], newFiles.name.replace(/\s+/g, "")) : null;
       setFormFile({
         ...formFile,
         files: {
           ...formFile.files,
-          name: newFiles,
+          name: newFilesNoSpace,
         },
       });
     } else {
@@ -40,6 +41,7 @@ function EnviarFacturas() {
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     setMessageErrorFile(false);
+    const filePathNoSpaces = formFile;
     const fileparams: TypeLoadFile = {
       file: formFile,
       comment: textareaValue,

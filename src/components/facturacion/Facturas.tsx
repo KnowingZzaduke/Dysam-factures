@@ -25,7 +25,10 @@ function Facturas() {
   const [dataBillers, setDataBillers] = useState<SigninResponse | any>();
   const form = useRef<HTMLFormElement | null>(null);
   const [selectedValue, setSelectedValue] = useState<string | null>(null);
-  const [selectedPath, setSelectedPath] = useState("");
+  const [selectedEmail, setSelectedEmail] = useState("");
+  const serverUrl = "http://127.0.0.1:5173/";
+  const [sendEmailSuccess, setSendEmailSuccess] = useState(false);
+  import { TypeVerifyReport } from "../../types/verify";
   //Cargar facturas pendientes
   const loadReports = useCallback(async () => {
     try {
@@ -87,22 +90,25 @@ function Facturas() {
     }
   }
 
+  useEffect(() => {
+    loadReports();
+  }, []);
+
   function handleSelectedChange(e: React.ChangeEvent<HTMLSelectElement>) {
     const selectedOption = e.target.value;
     setSelectedValue(selectedOption);
-    const selectedBiller = dataBillers?.data?.data?.find((biller: any) => biller.id_billers === selectedOption);
-    if(selectedBiller){
-      setSelectedPath(selectedBiller.billers.email);
+    const selectedBiller = dataBillers?.data?.data?.find(
+      (biller: any) => biller.id_billers === selectedOption
+    );
+    if (selectedBiller) {
+      console.log(selectedBiller);
+      setSelectedEmail(selectedBiller.billers_email);
     }
   }
 
   useEffect(() => {
     loadBillers();
   }, []);
-
-  useEffect(() => {
-    console.log(dataBillers);
-  }, [dataBillers]);
 
   async function updateReports(
     e: React.FormEvent<HTMLFormElement>,
@@ -159,7 +165,12 @@ function Facturas() {
         )
         .then(
           (result) => {
-            console.log(result);
+            if (result) {
+              setSendEmailSuccess(true);
+              setTimeout(() => {
+                setSendEmailSuccess(false);
+              }, 3000);
+            }
           },
           (error) => {
             console.log(error);
@@ -170,9 +181,20 @@ function Facturas() {
     }
   };
 
-  useEffect(() => {
-    loadReports();
-  }, []);
+  async function verifyReports() {
+    const verifyReportsParams: TypeVerifyReport = {
+      status: selectedItems.status_file,
+      username: selectedItems.user_name,
+      id_file: selectedItems.id_files,
+    };
+    try {
+      const response = await functions.verifyreport(verifyReportsParams);
+      console.log(response);
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
   return (
     <div
       className="d-flex align-items-center justify-content-center"
@@ -407,19 +429,32 @@ function Facturas() {
                     <select
                       className="form-select"
                       defaultValue="0"
-                      onChange={(e) => setSelectedValue(e.target.textContent)}
+                      onChange={(e) => handleSelectedChange(e)}
+                      required
                     >
                       <option value="0">Selecciona un facturador</option>
                       {dataBillers?.data?.data?.map((billers: any) => (
-                        <option key={billers.id} value={billers.id_billers}>
+                        <option
+                          key={billers.id_billers}
+                          value={billers.id_billers}
+                        >
                           {billers.billers_name}
                         </option>
                       ))}
                     </select>
                     <input
                       type="hidden"
+                      name="user_email"
+                      value={selectedEmail}
+                      required
+                      readOnly
+                    />
+                    <input
+                      type="hidden"
                       name="file_path"
-                      value={selectedItems?.file_path}
+                      value={serverUrl + selectedItems?.file_path}
+                      required
+                      readOnly
                     />
                   </div>
                   <div className="mb-3">
@@ -435,15 +470,26 @@ function Facturas() {
                   </div>
                   <div className="modal-footer">
                     <button
+                      type="button"
                       className="btn btn-secondary"
                       data-bs-dismiss="modal"
                     >
                       Cerrar
                     </button>
-                    <button type="button" className="btn btn-primary">
-                      Enviar factura
-                    </button>
+                    <button className="btn btn-primary">Enviar factura</button>
                   </div>
+                  {sendEmailSuccess === true ? (
+                    <div
+                      className="alert alert-success d-flex align-items-center gap-2 my-3"
+                      role="alert"
+                    >
+                      <div className="text-center">
+                        Reporte enviado correctamente
+                      </div>
+                    </div>
+                  ) : (
+                    <></>
+                  )}
                 </form>
               </div>
             </div>

@@ -6,7 +6,7 @@ import { TypeCookies } from "../types/cookies";
 import { TypeLoadFile } from "../types/loadfile";
 import { DataTableResponse } from "../types/table";
 import { TypeCorrectReports } from "../types/correctFile";
-import { TypeBillers } from "../types/billers";
+import { TypeVerifyReport } from "../types/verify";
 const functions = {
   signin: async function ({ username, password }: TypeSigning) {
     const formData = new FormData();
@@ -62,7 +62,6 @@ const functions = {
       const response = await axios.get<DataTableResponse>(
         "http://127.0.0.1/DysamFacturas/backend/api.php?action=loadingreport"
       );
-      console.log(response)
       return response;
     } catch (error) {
       console.error(error);
@@ -85,14 +84,26 @@ const functions = {
       console.log(error);
     }
   },
-  loadingbillers: async function(){
+  loadingbillers: async function () {
     try {
-      const response = await axios.get<SigninResponse>("http://127.0.0.1/DysamFacturas/backend/api.php?action=loadingbillers");
-      return response
+      const response = await axios.get<SigninResponse>(
+        "http://127.0.0.1/DysamFacturas/backend/api.php?action=loadingbillers"
+      );
+      return response;
     } catch (error) {
       console.log(error);
     }
-
+  },
+  verifyreport: async function (form: TypeVerifyReport) {
+    const formData = new FormData();
+    formData.append("idfile", form.id_file);
+    formData.append("statusfile", form.status);
+    formData.append("username", form.username);
+    try {
+      const response = await axios.post<SigninResponse>("http://127.0.0.1/DysamFacturas/backend/api.php?action=loadingbillers", formData)
+    } catch (error) {
+      console.log(error)
+    }
   },
   decryptdata: function (data: string) {
     const bytes = CryptoJS.AES.decrypt(data, "FDhfd678GHSDFS23");

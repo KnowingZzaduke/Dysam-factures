@@ -89,7 +89,6 @@ if (isset($_POST["action"]) || isset($_GET["action"])) {
             $statusfile = $_POST["statusfile"];
             $comment = $_POST["comment"];
 
-            // Verifica si la factura existe
             $db->where("id_files", $idfile);
             $db->where("user_name", $username);
             $db->where("file_path", $_POST["filepath"]);
@@ -105,19 +104,22 @@ if (isset($_POST["action"]) || isset($_GET["action"])) {
                     "commentf" => $comment,
                 );
 
-                // Actualiza el estado de status_file
                 $db->where("id_files", $idfile);
                 $db->where("user_name", $username);
                 $db->update("files", $updateData);
 
-                // Inserta el comentario en la misma fila
                 $db->where("id_files", $idfile);
                 $db->where("user_name", $username);
                 $db->update("files", $commentF);
 
-                // Devuelve el ID del archivo en la respuesta JSON
                 echo json_encode(["salida" => "exito", "data" => "Los datos del archivo se actualizaron correctamente", "id_file" => $idfile]);
             }
+            break;
+        case "verifyreport" :
+            $idfile = $_POST["idfile"];
+            $username = $_POST["username"];
+            $statusfile = $_POST["statusfile"];
+                
             break;
         case "loadingbillers":
             $mysqli = new mysqli("localhost", "root", "", "dysam_facturas");
@@ -137,7 +139,6 @@ if (isset($_POST["action"]) || isset($_GET["action"])) {
                     if (empty($data)) {
                         echo json_encode(["salida" => "exito", "data" => "No se encontraron registros en la tabla billers"]);
                     } else {
-                        // No es necesario convertir file_path a una cadena en blanco, ya que es un campo de texto.
                         header('Content-Type: application/json');
                         echo json_encode(["salida" => "exito", "data" => $data]);
                     }
