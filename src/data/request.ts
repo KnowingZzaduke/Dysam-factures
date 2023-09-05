@@ -99,10 +99,16 @@ const functions = {
     formData.append("idfile", form.id_file);
     formData.append("statusfile", form.status);
     formData.append("username", form.username);
+    formData.append("commentf", form.comment);
     try {
-      const response = await axios.post<SigninResponse>("http://127.0.0.1/DysamFacturas/backend/api.php?action=loadingbillers", formData)
+      const response = await axios.post<SigninResponse>(
+        "http://127.0.0.1/DysamFacturas/backend/api.php?action=verifyreport",
+        formData
+      );
+      console.log(response);
+      return response;
     } catch (error) {
-      console.log(error)
+      console.log(error);
     }
   },
   decryptdata: function (data: string) {

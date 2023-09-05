@@ -12,6 +12,7 @@ import { useCallback } from "react";
 import { FaTriangleExclamation } from "react-icons/fa6";
 import emailjs from "@emailjs/browser";
 import { SigninResponse } from "../../types/login";
+import { TypeVerifyReport } from "../../types/verify";
 
 function Facturas() {
   const [insertData, setInsertData] = useState<DataTableResponse | any>();
@@ -28,7 +29,6 @@ function Facturas() {
   const [selectedEmail, setSelectedEmail] = useState("");
   const serverUrl = "http://127.0.0.1:5173/";
   const [sendEmailSuccess, setSendEmailSuccess] = useState(false);
-  import { TypeVerifyReport } from "../../types/verify";
   //Cargar facturas pendientes
   const loadReports = useCallback(async () => {
     try {
@@ -52,7 +52,6 @@ function Facturas() {
     }
   }, []);
 
-  //Cargar facturas por corregir
 
   const loadReports2 = useCallback(async () => {
     try {
@@ -76,7 +75,6 @@ function Facturas() {
     }
   }, []);
 
-  //Cargar facturadores
 
   async function loadBillers() {
     try {
@@ -94,14 +92,13 @@ function Facturas() {
     loadReports();
   }, []);
 
-  function handleSelectedChange(e: React.ChangeEvent<HTMLSelectElement>) {
+    function handleSelectedChange(e: React.ChangeEvent<HTMLSelectElement>) {
     const selectedOption = e.target.value;
     setSelectedValue(selectedOption);
     const selectedBiller = dataBillers?.data?.data?.find(
       (biller: any) => biller.id_billers === selectedOption
     );
     if (selectedBiller) {
-      console.log(selectedBiller);
       setSelectedEmail(selectedBiller.billers_email);
     }
   }
@@ -153,6 +150,21 @@ function Facturas() {
     }
   }
 
+  async function verifyReports() {
+    const verifyReportsParams: TypeVerifyReport = {
+      status: "Verificado",
+      username: selectedItems.user_name,
+      id_file: selectedItems.id_files,
+      comment: ""
+    };
+    console.log(verifyReportsParams);
+    try {
+      const response = await functions.verifyreport(verifyReportsParams);
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
   const sendEmail = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (form.current) {
@@ -166,9 +178,11 @@ function Facturas() {
         .then(
           (result) => {
             if (result) {
+              verifyReports();
               setSendEmailSuccess(true);
               setTimeout(() => {
                 setSendEmailSuccess(false);
+                location.reload();
               }, 3000);
             }
           },
@@ -180,20 +194,6 @@ function Facturas() {
       console.log("La referencia al formulario es null.");
     }
   };
-
-  async function verifyReports() {
-    const verifyReportsParams: TypeVerifyReport = {
-      status: selectedItems.status_file,
-      username: selectedItems.user_name,
-      id_file: selectedItems.id_files,
-    };
-    try {
-      const response = await functions.verifyreport(verifyReportsParams);
-      console.log(response);
-    } catch (error) {
-      console.log(error);
-    }
-  }
 
   return (
     <div

@@ -115,12 +115,6 @@ if (isset($_POST["action"]) || isset($_GET["action"])) {
                 echo json_encode(["salida" => "exito", "data" => "Los datos del archivo se actualizaron correctamente", "id_file" => $idfile]);
             }
             break;
-        case "verifyreport" :
-            $idfile = $_POST["idfile"];
-            $username = $_POST["username"];
-            $statusfile = $_POST["statusfile"];
-                
-            break;
         case "loadingbillers":
             $mysqli = new mysqli("localhost", "root", "", "dysam_facturas");
 
@@ -147,6 +141,37 @@ if (isset($_POST["action"]) || isset($_GET["action"])) {
                 }
                 // Cierra la conexión a la base de datos.
                 $mysqli->close();
+            }
+            break;
+        case "verifyreport":
+            $idfile = $_POST["idfile"];
+            $username = $_POST["username"];
+            $statusfile = $_POST["statusfile"];
+            $comment = $_POST["commentf"];
+
+            $db->where("id_files", $idfile);
+            $db->where("user_name", $username);
+            $file = $db->getOne("files");
+
+            if (is_null($file) || empty($file)) {
+                echo json_encode(["salida" => "error", "data" => "El archivo no existe"]);
+            } else {
+                $updateData = array(
+                    "status_file" => $statusfile,
+                );
+
+                $commentF = array(
+                    "commentf" => $comment,
+                );
+
+                $db->where("id_files", $idfile);
+                $db->where("user_name", $username);
+                $db->update("files", $updateData);
+
+                $db->where("id_files", $idfile);
+                $db->where("user_name", $username);
+                $db->update("files", $commentF);
+                echo json_encode(["salida" => "exito", "data" => "Los datos del archivo se actualizaron correctamente", "id_file" => $idfile]);
             }
             break;
     }
