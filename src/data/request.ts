@@ -5,7 +5,7 @@ import CryptoJS from "crypto-js";
 import { TypeCookies } from "../types/cookies";
 import { TypeLoadFile } from "../types/loadfile";
 import { DataTableResponse } from "../types/table";
-import { TypeUpdateReports } from "../types/updateFile";
+import { TypeCorrectReports } from "../types/correctFile";
 const functions = {
   signin: async function ({ username, password }: TypeSigning) {
     const formData = new FormData();
@@ -61,24 +61,24 @@ const functions = {
       const response = await axios.get<DataTableResponse>(
         "http://127.0.0.1/DysamFacturas/backend/api.php?action=loadingreport"
       );
-      console.log(response);
+      console.log(response)
       return response;
     } catch (error) {
       console.error(error);
     }
   },
-  updatereport: async function (form: TypeUpdateReports) {
+  correctreport: async function (form: TypeCorrectReports) {
     const formData = new FormData();
-    formData.append("status", form.status);
-    formData.append("file_path", form.filepath);
-    formData.append("user_name", form.username);
-    formData.append("commentf", form.comment);
-
+    formData.append("idfile", form.id_file);
+    formData.append("statusfile", form.status);
+    formData.append("username", form.username);
+    formData.append("filepath", form.file_path);
+    formData.append("comment", form.comment);
     try {
       const response = await axios.post<SigninResponse>(
-        "http://127.0.0.1/DysamFacturas/backend/api.php?action=updatereport"
+        "http://127.0.0.1/DysamFacturas/backend/api.php?action=correctreport",
+        formData
       );
-      console.log(response);
       return response;
     } catch (error) {
       console.log(error);

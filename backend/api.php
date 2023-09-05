@@ -83,27 +83,40 @@ if (isset($_POST["action"]) || isset($_GET["action"])) {
                 }
             }
             break;
-        case "updatereport":
-            $db->where("user_name", $_POST["user_name"]);
-            $db->where("file_path", $_POST["file_path"]);
+        case "correctreport":
+            $idfile = $_POST["idfile"];
+            $username = $_POST["username"];
+            $statusfile = $_POST["statusfile"];
+            $comment = $_POST["comment"];
+
+            // Verifica si la factura existe
+            $db->where("id_files", $idfile);
+            $db->where("user_name", $username);
+            $db->where("file_path", $_POST["filepath"]);
             $file = $db->getOne("files");
 
             if (is_null($file) || empty($file)) {
                 echo json_encode(["salida" => "error", "data" => "El archivo no existe"]);
             } else {
                 $updateData = array(
-                    "status_file" => $_POST["status"],
+                    "status_file" => $statusfile,
                 );
-
                 $commentF = array(
-                    "commentf" => $_POST["commentf"],
+                    "commentf" => $comment,
                 );
-                $db->where("user_name", $_POST["user_name"]);
-                $db->where("file_path", $_POST["file_path"]);
-                $db->update("files", $updateData);
-                $db->insert("commentf", $commentF);
 
-                echo json_encode(["salida" => "exito", "data" => "Los datos del archivo se actualizaron correctamente"]);
+                // Actualiza el estado de status_file
+                $db->where("id_files", $idfile);
+                $db->where("user_name", $username);
+                $db->update("files", $updateData);
+
+                // Inserta el comentario en la misma fila
+                $db->where("id_files", $idfile);
+                $db->where("user_name", $username);
+                $db->update("files", $commentF);
+
+                // Devuelve el ID del archivo en la respuesta JSON
+                echo json_encode(["salida" => "exito", "data" => "Los datos del archivo se actualizaron correctamente", "id_file" => $idfile]);
             }
             break;
     }

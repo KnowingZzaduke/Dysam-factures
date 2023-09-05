@@ -4,37 +4,42 @@ import {
   FaFileUpload,
   FaFileAlt,
 } from "react-icons/fa";
+import {useState, useEffect, useCallback} from 'react';
+import { DataTableResponse } from "../../types/table";
+import functions from "../../data/request";
 function FilterFacturas() {
+  const [insertData, setInsertData] = useState<DataTableResponse | any>();
+  const [selectedItems, setSelectedItems] = useState<DataTableResponse | any>();
+
+  const loadReports = useCallback(async () => {
+    try {
+      const response = await functions.loadingreport();
+      if (response) {
+        const originalData = response;
+        const filterData = originalData?.data?.data?.filter(
+          (data: any) => data.status_file === "Corregir"
+        );
+        console.log(filterData.commentF);
+        if (filterData.length === 0) {
+          console.log("No hay resultados en la tabla");
+        } else {
+          setInsertData(filterData);
+        }
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  }, []);
+
+  useEffect(() => {
+    loadReports();
+  }, []);
   return (
     <div
       className="d-flex align-items-center justify-content-center"
       style={{ minHeight: "100vh" }}
     >
-      <div className="container">
-        <div className=" border border-dark p-2 rounded mb-4">
-          <div className="d-flex flex-column flex-md-row gap-3 w-100 ">
-            <div className="d-flex align-items-center">
-              <p className="m-0">Filtrar por:</p>
-            </div>
-            <div className="d-flex justify-content-between justify-content-md-end mt-md-0 mt-2">
-              <div>{/* Agrega otros elementos aquí si es necesario */}</div>
-              <div className="d-flex gap-2">
-                <button
-                  className="btn bg-primary text-white btn-outline-primary px-md-4"
-                  type="button"
-                >
-                  Verificados
-                </button>
-                <button
-                  className="btn bg-danger text-white px-md-4"
-                  type="button"
-                >
-                  Corregidos
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
+      <div className="container">¿
         <div className="my-5">
           <h1 className="my-4">
             Tabla de facturas <FaFileAlt />

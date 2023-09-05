@@ -7,35 +7,100 @@ import {
 import React, { useEffect, useState } from "react";
 import { DataTableResponse } from "../../types/table";
 import functions from "../../data/request";
-import { TypeUpdateReports } from "../../types/updateFile";
+import { TypeCorrectReports } from "../../types/correctFile";
+import { useCallback } from "react";
+import { FaTriangleExclamation } from "react-icons/fa6";
+
 function Facturas() {
   const [insertData, setInsertData] = useState<DataTableResponse | any>();
   const [selectedItems, setSelectedItems] = useState<DataTableResponse | any>();
+  const [fileSuccess, setFileSuccess] = useState(false);
+  const [messageErrorFile, setMessageErrorFile] = useState(false);
   const [textareaComment, settextareaComment] = useState<string>("Pendiente");
-  async function loadReports() {
+  const [messageErrorPending, setMessageErrorPending] = useState(false);
+  const [messageErrorCorrect, setMessageErrorCorrect] = useState(false);
+  const loadReports = useCallback(async () => {
     try {
       const response = await functions.loadingreport();
       if (response) {
-        setInsertData(response);
+        const originalData = response;
+        const filterData = originalData?.data?.data?.filter(
+          (data: any) => data.status_file === "Pendiente"
+        );
+        if (filterData.length === 0) {
+          setMessageErrorPending(true);
+          setTimeout(() => {
+            setMessageErrorPending(false);
+          }, 4000);
+        } else {
+          setInsertData(filterData);
+        }
       }
     } catch (error) {
-      console.log("Error");
+      console.log(error);
     }
-  }
+  }, []);
+
+  const loadReports2 = useCallback(async () => {
+    try {
+      const response = await functions.loadingreport();
+      if (response) {
+        const originalData = response;
+        const filterData = originalData?.data?.data?.filter(
+          (data: any) => data.status_file === "Corregir"
+        );
+        if (filterData.length === 0) {
+          setMessageErrorCorrect(true);
+          setTimeout(() => {
+            setMessageErrorCorrect(false);
+          }, 4000);
+        } else {
+          setInsertData(filterData);
+        }
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  }, []);
 
   async function updateReports(
     e: React.FormEvent<HTMLFormElement>,
-    { status, user, file, comment }: { status: string; user: string, file: string, comment: string }
+    {
+      status,
+      user,
+      id,
+      comment,
+      path,
+    }: {
+      status: string;
+      user: string;
+      id: string;
+      path: string;
+      comment: string;
+    }
   ) {
     e.preventDefault();
-    const updateReportsParams: TypeUpdateReports = {
+    const updateReportsParams: TypeCorrectReports = {
       status: status,
       username: user,
-      filepath: file,
+      id_file: id,
       comment: comment,
+      file_path: path,
     };
     try {
-      const response = await functions.updatereport(updateReportsParams);
+      const response = await functions.correctreport(updateReportsParams);
+      if (response) {
+        setFileSuccess(true);
+        setTimeout(() => {
+          setFileSuccess(false);
+        }, 3000);
+        loadReports();
+      } else {
+        setMessageErrorFile(true);
+        setTimeout(() => {
+          setMessageErrorFile(false);
+        }, 3000);
+      }
     } catch (error) {
       console.log(error);
     }
@@ -53,6 +118,31 @@ function Facturas() {
         <h1 className="my-4">
           Tabla de facturas <FaFileAlt />
         </h1>
+        <div className=" border border-dark p-2 rounded mb-4">
+          <div className="d-flex flex-column flex-md-row gap-3 w-100 ">
+            <div className="d-flex align-items-center">
+              <p className="m-0">Filtrar por:</p>
+            </div>
+            <div className="d-flex justify-content-between justify-content-md-end mt-md-0 mt-2">
+              <div className="d-flex gap-2">
+                <button
+                  className="btn bg-primary text-white btn-outline-primary px-md-4"
+                  type="button"
+                  onClick={loadReports}
+                >
+                  Pendientes
+                </button>
+                <button
+                  className="btn bg-danger text-white px-md-4"
+                  type="button"
+                  onClick={loadReports2}
+                >
+                  Corregir
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
         <div className="table-responsive">
           <table className="table table-light">
             <thead>
@@ -64,7 +154,7 @@ function Facturas() {
               </tr>
             </thead>
             <tbody>
-              {insertData?.data?.data?.map((data: any) => (
+              {insertData?.map((data: any) => (
                 <tr className="table-secondary text-center" key={data.id_files}>
                   <td>{data.status_file}</td>
                   <td>{data.date}</td>
@@ -77,24 +167,52 @@ function Facturas() {
                     </a>
                   </td>
                   <td>
-                    <FaCheckCircle
-                      className="fs-4 option mx-1"
-                      data-bs-toggle="modal"
-                      data-bs-target="#modalSendFactures"
-                      title="Enviar factura"
-                    />
-                    <FaExclamationTriangle
-                      className="fs-4 option mx-1"
-                      data-bs-toggle="modal"
-                      data-bs-target="#modalCorrectFactures"
-                      title="Corregir factura"
-                      onClick={() => setSelectedItems(data)}
-                    />
+                    {data.status_file === "Pendiente" ? (
+                      <div>
+                        <FaCheckCircle
+                          className="fs-4 option mx-1"
+                          data-bs-toggle="modal"
+                          data-bs-target="#modalSendFactures"
+                          title="Enviar factura"
+                        />
+                        <FaExclamationTriangle
+                          className="fs-4 option mx-1"
+                          data-bs-toggle="modal"
+                          data-bs-target="#modalCorrectFactures"
+                          title="Corregir factura"
+                          onClick={() => setSelectedItems(data)}
+                        />
+                      </div>
+                    ) : (
+                      <><p>No Aplica</p></>
+                    )}
                   </td>
                 </tr>
               ))}
             </tbody>
           </table>
+          {messageErrorPending === true ? (
+            <div
+              className="alert alert-danger d-flex align-items-center gap-2 my-3"
+              role="alert"
+            >
+              <FaTriangleExclamation />
+              <div className="text-center">No hay facturas pendientes</div>
+            </div>
+          ) : (
+            <></>
+          )}
+          {messageErrorCorrect === true ? (
+            <div
+              className="alert alert-danger d-flex align-items-center gap-2 my-3"
+              role="alert"
+            >
+              <FaTriangleExclamation />
+              <div className="text-center">No hay facturas por corregir</div>
+            </div>
+          ) : (
+            <></>
+          )}
         </div>
         {/* //Modal corregir */}
         <div
@@ -119,9 +237,10 @@ function Facturas() {
                 <form
                   onSubmit={(e) =>
                     updateReports(e, {
-                      status: { ...selectedItems, status_file: "Corregir" },
+                      id: selectedItems.id_files,
+                      status: "Corregir",
+                      path: selectedItems.file_path,
                       user: selectedItems.user_name,
-                      file: selectedItems.file_path,
                       comment: textareaComment,
                     })
                   }
@@ -156,6 +275,7 @@ function Facturas() {
                       type="button"
                       className="btn btn-secondary"
                       data-bs-dismiss="modal"
+                      onClick={loadReports}
                     >
                       Cerrar
                     </button>
@@ -163,6 +283,31 @@ function Facturas() {
                       Regresar factura
                     </button>
                   </div>
+                  {fileSuccess === true ? (
+                    <div
+                      className="alert alert-success d-flex align-items-center gap-2 my-3"
+                      role="alert"
+                    >
+                      <div className="text-center">
+                        Reporte enviado correctamente
+                      </div>
+                    </div>
+                  ) : (
+                    <></>
+                  )}
+                  {messageErrorFile === true ? (
+                    <div
+                      className="alert alert-danger d-flex align-items-center gap-2 my-3"
+                      role="alert"
+                    >
+                      <FaTriangleExclamation />
+                      <div className="text-center">
+                        Hubo un error al enviar el archivo
+                      </div>
+                    </div>
+                  ) : (
+                    <></>
+                  )}
                 </form>
               </div>
             </div>

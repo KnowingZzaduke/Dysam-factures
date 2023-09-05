@@ -43,7 +43,7 @@ export interface Data {
 }
 
 export interface Datum {
-    id_files:    string;
+    id_files:    number;
     file_path:   string;
     id_user:     string;
     user_name:   string;
