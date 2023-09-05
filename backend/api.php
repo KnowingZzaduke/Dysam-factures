@@ -119,6 +119,35 @@ if (isset($_POST["action"]) || isset($_GET["action"])) {
                 echo json_encode(["salida" => "exito", "data" => "Los datos del archivo se actualizaron correctamente", "id_file" => $idfile]);
             }
             break;
+        case "loadingbillers":
+            $mysqli = new mysqli("localhost", "root", "", "dysam_facturas");
+
+            if ($mysqli->connect_error) {
+                echo json_encode(["salida" => "error", "data" => "Error de conexión a la base de datos: " . $mysqli->connect_error]);
+            } else {
+                $sql = "SELECT * FROM billers";
+                $result = $mysqli->query($sql);
+
+                if ($result) {
+                    $data = array();
+                    while ($row = $result->fetch_assoc()) {
+                        $data[] = $row;
+                    }
+
+                    if (empty($data)) {
+                        echo json_encode(["salida" => "exito", "data" => "No se encontraron registros en la tabla billers"]);
+                    } else {
+                        // No es necesario convertir file_path a una cadena en blanco, ya que es un campo de texto.
+                        header('Content-Type: application/json');
+                        echo json_encode(["salida" => "exito", "data" => $data]);
+                    }
+                } else {
+                    echo json_encode(["salida" => "error", "data" => "Error en la consulta SQL: " . $mysqli->error]);
+                }
+                // Cierra la conexión a la base de datos.
+                $mysqli->close();
+            }
+            break;
     }
     exit;
 }

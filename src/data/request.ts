@@ -6,6 +6,7 @@ import { TypeCookies } from "../types/cookies";
 import { TypeLoadFile } from "../types/loadfile";
 import { DataTableResponse } from "../types/table";
 import { TypeCorrectReports } from "../types/correctFile";
+import { TypeBillers } from "../types/billers";
 const functions = {
   signin: async function ({ username, password }: TypeSigning) {
     const formData = new FormData();
@@ -83,6 +84,15 @@ const functions = {
     } catch (error) {
       console.log(error);
     }
+  },
+  loadingbillers: async function(){
+    try {
+      const response = await axios.get<SigninResponse>("http://127.0.0.1/DysamFacturas/backend/api.php?action=loadingbillers");
+      return response
+    } catch (error) {
+      console.log(error);
+    }
+
   },
   decryptdata: function (data: string) {
     const bytes = CryptoJS.AES.decrypt(data, "FDhfd678GHSDFS23");

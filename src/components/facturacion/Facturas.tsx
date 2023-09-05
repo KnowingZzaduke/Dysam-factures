@@ -4,12 +4,14 @@ import {
   FaFileUpload,
   FaFileAlt,
 } from "react-icons/fa";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { DataTableResponse } from "../../types/table";
 import functions from "../../data/request";
 import { TypeCorrectReports } from "../../types/correctFile";
 import { useCallback } from "react";
 import { FaTriangleExclamation } from "react-icons/fa6";
+import emailjs from "@emailjs/browser";
+import { SigninResponse } from "../../types/login";
 
 function Facturas() {
   const [insertData, setInsertData] = useState<DataTableResponse | any>();
@@ -19,6 +21,12 @@ function Facturas() {
   const [textareaComment, settextareaComment] = useState<string>("Pendiente");
   const [messageErrorPending, setMessageErrorPending] = useState(false);
   const [messageErrorCorrect, setMessageErrorCorrect] = useState(false);
+  const [textareaEmail, setTextareaEmail] = useState("");
+  const [dataBillers, setDataBillers] = useState<SigninResponse | any>();
+  const form = useRef<HTMLFormElement | null>(null);
+  const [selectedValue, setSelectedValue] = useState<string | null>(null);
+  const [selectedPath, setSelectedPath] = useState("");
+  //Cargar facturas pendientes
   const loadReports = useCallback(async () => {
     try {
       const response = await functions.loadingreport();
@@ -41,6 +49,8 @@ function Facturas() {
     }
   }, []);
 
+  //Cargar facturas por corregir
+
   const loadReports2 = useCallback(async () => {
     try {
       const response = await functions.loadingreport();
@@ -62,6 +72,37 @@ function Facturas() {
       console.log(error);
     }
   }, []);
+
+  //Cargar facturadores
+
+  async function loadBillers() {
+    try {
+      const response = await functions.loadingbillers();
+      if (response) {
+        setDataBillers(response);
+      }
+      return response;
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  function handleSelectedChange(e: React.ChangeEvent<HTMLSelectElement>) {
+    const selectedOption = e.target.value;
+    setSelectedValue(selectedOption);
+    const selectedBiller = dataBillers?.data?.data?.find((biller: any) => biller.id_billers === selectedOption);
+    if(selectedBiller){
+      setSelectedPath(selectedBiller.billers.email);
+    }
+  }
+
+  useEffect(() => {
+    loadBillers();
+  }, []);
+
+  useEffect(() => {
+    console.log(dataBillers);
+  }, [dataBillers]);
 
   async function updateReports(
     e: React.FormEvent<HTMLFormElement>,
@@ -105,6 +146,29 @@ function Facturas() {
       console.log(error);
     }
   }
+
+  const sendEmail = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    if (form.current) {
+      emailjs
+        .sendForm(
+          "service_tlclszm",
+          "template_vud6j0p",
+          form.current,
+          "9Es0kUSqg2Dv28YFx"
+        )
+        .then(
+          (result) => {
+            console.log(result);
+          },
+          (error) => {
+            console.log(error);
+          }
+        );
+    } else {
+      console.log("La referencia al formulario es null.");
+    }
+  };
 
   useEffect(() => {
     loadReports();
@@ -174,6 +238,7 @@ function Facturas() {
                           data-bs-toggle="modal"
                           data-bs-target="#modalSendFactures"
                           title="Enviar factura"
+                          onClick={() => setSelectedItems(data)}
                         />
                         <FaExclamationTriangle
                           className="fs-4 option mx-1"
@@ -184,7 +249,9 @@ function Facturas() {
                         />
                       </div>
                     ) : (
-                      <><p>No Aplica</p></>
+                      <>
+                        <p>No Aplica</p>
+                      </>
                     )}
                   </td>
                 </tr>
@@ -332,15 +399,28 @@ function Facturas() {
                 ></button>
               </div>
               <div className="modal-body">
-                <form>
+                <form ref={form} onSubmit={sendEmail}>
                   <div className="mb-3">
                     <label htmlFor="recipient-name" className="col-form-label">
                       Seleccionar facturador
                     </label>
-                    <select className="form-select" defaultValue="0">
+                    <select
+                      className="form-select"
+                      defaultValue="0"
+                      onChange={(e) => setSelectedValue(e.target.textContent)}
+                    >
                       <option value="0">Selecciona un facturador</option>
-                      <option value="1">Leo Luna</option>
+                      {dataBillers?.data?.data?.map((billers: any) => (
+                        <option key={billers.id} value={billers.id_billers}>
+                          {billers.billers_name}
+                        </option>
+                      ))}
                     </select>
+                    <input
+                      type="hidden"
+                      name="file_path"
+                      value={selectedItems?.file_path}
+                    />
                   </div>
                   <div className="mb-3">
                     <label htmlFor="message-text" className="col-form-label">
@@ -349,21 +429,22 @@ function Facturas() {
                     <textarea
                       className="form-control"
                       id="message-text"
+                      onChange={(e) => setTextareaEmail(e.target.value)}
+                      name="comment_fac"
                     ></textarea>
                   </div>
+                  <div className="modal-footer">
+                    <button
+                      className="btn btn-secondary"
+                      data-bs-dismiss="modal"
+                    >
+                      Cerrar
+                    </button>
+                    <button type="button" className="btn btn-primary">
+                      Enviar factura
+                    </button>
+                  </div>
                 </form>
-              </div>
-              <div className="modal-footer">
-                <button
-                  type="button"
-                  className="btn btn-secondary"
-                  data-bs-dismiss="modal"
-                >
-                  Cerrar
-                </button>
-                <button type="button" className="btn btn-primary">
-                  Enviar factura
-                </button>
               </div>
             </div>
           </div>
