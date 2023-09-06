@@ -57,10 +57,13 @@ const functions = {
       console.log(error);
     }
   },
-  loadingreport: async function () {
+  loadingreport: async function (pag: any) {
+    const formData = new FormData();
+    formData.append("page", pag);
+    console.log(pag);
     try {
-      const response = await axios.get<DataTableResponse>(
-        "http://127.0.0.1/DysamFacturas/backend/api.php?action=loadingreport"
+      const response = await axios.post<DataTableResponse>(
+        "http://127.0.0.1/DysamFacturas/backend/api.php?action=loadingreport", formData
       );
       return response;
     } catch (error) {

@@ -15,6 +15,8 @@ export const DataContext = createContext<{
   validateSesion: () => boolean;
   reloadData: TypeCookies | any;
   setReloadData: React.Dispatch<React.SetStateAction<TypeCookies | any>>;
+  page: number;
+  setPage: React.Dispatch<React.SetStateAction<number>>;
 }>({
   login: "false",
   setLogin: () => {},
@@ -23,12 +25,16 @@ export const DataContext = createContext<{
   validateSesion: () => false,
   reloadData: null,
   setReloadData: () => {},
+  page: 1,
+  setPage: () => {}
+
 });
 
 export function DataContextProvider(props: DataContextProviderProps) {
   const [login, setLogin] = useState("false");
   const [data, setData] = useState<SigninResponse | any>(null);
   const [reloadData, setReloadData] = useState<TypeCookies | any>(null);
+  const [page, setPage] = useState(1);
   function validateSesion() {
     const SESION = Cookies.get("dysam-fac");
     if (SESION !== undefined) {
@@ -60,6 +66,8 @@ export function DataContextProvider(props: DataContextProviderProps) {
         validateSesion,
         reloadData,
         setReloadData,
+        page,
+        setPage
       }}
     >
       {props.children}

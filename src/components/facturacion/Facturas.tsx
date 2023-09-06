@@ -4,7 +4,7 @@ import {
   FaFileUpload,
   FaFileAlt,
 } from "react-icons/fa";
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState, useRef, useContext } from "react";
 import { DataTableResponse } from "../../types/table";
 import functions from "../../data/request";
 import { TypeCorrectReports } from "../../types/correctFile";
@@ -13,6 +13,8 @@ import { FaTriangleExclamation } from "react-icons/fa6";
 import emailjs from "@emailjs/browser";
 import { SigninResponse } from "../../types/login";
 import { TypeVerifyReport } from "../../types/verify";
+import PaginationTable from "../utilities/Pagination";
+import { DataContext } from "../../context/DataContext";
 
 function Facturas() {
   const [insertData, setInsertData] = useState<DataTableResponse | any>();
@@ -29,10 +31,15 @@ function Facturas() {
   const [selectedEmail, setSelectedEmail] = useState("");
   const serverUrl = "http://127.0.0.1:5173/";
   const [sendEmailSuccess, setSendEmailSuccess] = useState(false);
+  const [pagination, setPagination] = useState(false);
+  const { page } = useContext(DataContext);
+  const pag = page;
   //Cargar facturas pendientes
   const loadReports = useCallback(async () => {
     try {
-      const response: DataTableResponse | any = await functions.loadingreport();
+      const response: DataTableResponse | any = await functions.loadingreport(
+        pag
+      );
       if (
         response?.data.salida === "exito" &&
         response?.data.data ===
@@ -67,7 +74,9 @@ function Facturas() {
 
   const loadReports2 = useCallback(async () => {
     try {
-      const response: DataTableResponse | any = await functions.loadingreport();
+      const response: DataTableResponse | any = await functions.loadingreport(
+        pag
+      );
       if (
         response?.data.salida === "exito" &&
         response?.data.data ===
@@ -114,7 +123,8 @@ function Facturas() {
 
   useEffect(() => {
     loadReports();
-  }, []);
+    console.log(pag);
+  }, [pag]);
 
   function handleSelectedChange(e: React.ChangeEvent<HTMLSelectElement>) {
     const selectedOption = e.target.value;
@@ -218,6 +228,14 @@ function Facturas() {
     }
   };
 
+  useEffect(() => {
+    if (insertData?.length === 10) {
+      setPagination(true);
+    } else {
+      setPagination(false);
+    }
+  }, [insertData]);
+
   return (
     <div
       className="d-flex align-items-center justify-content-center"
@@ -303,6 +321,7 @@ function Facturas() {
               ))}
             </tbody>
           </table>
+          {pagination === true ? <PaginationTable /> : <></>}
           {messageErrorPending === true ? (
             <div
               className="alert alert-danger d-flex align-items-center gap-2 my-3"
@@ -425,11 +444,7 @@ function Facturas() {
           </div>
         </div>
         {/* //Modal enviar */}
-        <div
-          className="modal fade"
-          id="modalSendFactures"
-          aria-hidden="true"
-        >
+        <div className="modal fade" id="modalSendFactures" aria-hidden="true">
           <div className="modal-dialog">
             <div className="modal-content">
               <div className="modal-header">

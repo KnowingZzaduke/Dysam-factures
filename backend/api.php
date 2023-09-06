@@ -34,7 +34,6 @@ if (isset($_POST["action"]) || isset($_GET["action"])) {
             $nombre_original = $_FILES["file"]["name"];
 
             $ruta_destino = "../uploads/" . uniqid() . "_" . $nombre_original;
-
             if (move_uploaded_file($archivo_temporal, $ruta_destino)) {
                 $user_name = $_POST["user_name"];
                 try {
@@ -60,7 +59,14 @@ if (isset($_POST["action"]) || isset($_GET["action"])) {
             if ($mysqli->connect_error) {
                 echo json_encode(["salida" => "error", "data" => "Error de conexión a la base de datos: " . $mysqli->connect_error]);
             } else {
-                $sql = "SELECT * FROM files";
+                // Número de registros por página y página actual
+                $registrosPorPagina = 10;
+                $paginaActual = isset($_GET['page']) ? $_GET['page'] : 1;
+                // Calcular el desplazamiento (offset) para la consulta SQL
+                $offset = ($paginaActual - 1) * $registrosPorPagina;
+
+                // Consulta SQL con la paginación
+                $sql = "SELECT * FROM files LIMIT $registrosPorPagina OFFSET $offset";
                 $result = $mysqli->query($sql);
 
                 if ($result) {
