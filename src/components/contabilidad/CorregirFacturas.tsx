@@ -1,23 +1,38 @@
-import { FaUpload, FaFileUpload, FaFileAlt, FaTrashAlt } from "react-icons/fa";
+import { FaFileUpload, FaFileAlt, FaTrashAlt } from "react-icons/fa";
 import { useState, useCallback, useEffect } from "react";
 import { DataTableResponse } from "../../types/table";
+import { useNavigate } from "react-router-dom";
 import functions from "../../data/request";
+import { FaTriangleExclamation } from "react-icons/fa6";
 
 function CorregirFacturas() {
   const [insertData, setInsertData] = useState<DataTableResponse | any>();
-  const [selectedItems, setSelectedItems] = useState<DataTableResponse | any>();
-
+  const [notResults, setNotResults] = useState(false);
+  const navigate = useNavigate();
   const loadReports = useCallback(async () => {
     try {
-      const response = await functions.loadingreport();
-      if (response) {
+      const response: DataTableResponse | any = await functions.loadingreport();
+      if (
+        response?.data.salida === "exito" &&
+        response?.data.data === "No se encontraron registros en la tabla archivos"
+      ) {
+        setNotResults(true);
+        setTimeout(() => {
+          setNotResults(false);
+        }, 3000);
+      } else if (
+        response?.data.salida === "exito" &&
+        response?.data.data !== "No se encontraron registros en la tabla archivos"
+      ) {
         const originalData = response;
         const filterData = originalData?.data?.data?.filter(
           (data: any) => data.status_file === "Corregir"
         );
-        console.log(filterData.commentF);
         if (filterData.length === 0) {
-          console.log("No hay resultados en la tabla");
+          setNotResults(true);
+          setTimeout(() => {
+            setNotResults(false);
+          }, 3000);
         } else {
           setInsertData(filterData);
         }
@@ -26,10 +41,21 @@ function CorregirFacturas() {
       console.log(error);
     }
   }, []);
-
   useEffect(() => {
     loadReports();
   }, []);
+
+  async function deleteReports(id: string) {
+    try {
+      const response = await functions.deletereport(id);
+      if(response){
+        navigate("/contabilidad/enviar-facturas");
+      }
+    } catch (error) {
+      
+    }
+    
+  }
   return (
     <div
       className="d-flex align-items-center justify-content-center"
@@ -67,24 +93,27 @@ function CorregirFacturas() {
                     <p>{data.commentf}</p>
                   </td>
                   <td>
-                    <FaUpload
-                      className="fs-4 option mx-1"
-                      data-bs-toggle="modal"
-                      data-bs-target="#modalSendFactures"
-                      title="Reenviar factura"
-                    />
                     <FaTrashAlt
                       className="fs-4 option mx-1"
-                      data-bs-toggle="modal"
-                      data-bs-target="#modalCorrectFactures"
                       title="Borrar Factura"
-                      onClick={() => setSelectedItems(data)}
+                      onClick={() => deleteReports(data.id_files)}
                     />
                   </td>
                 </tr>
               ))}
             </tbody>
           </table>
+          {notResults === true ? (
+            <div
+              className="alert alert-danger d-flex align-items-center gap-2 my-3"
+              role="alert"
+            >
+              <FaTriangleExclamation />
+              <div className="text-center">No hay facturas por corregir</div>
+            </div>
+          ) : (
+            <></>
+          )}
         </div>
       </div>
     </div>

@@ -32,8 +32,21 @@ function Facturas() {
   //Cargar facturas pendientes
   const loadReports = useCallback(async () => {
     try {
-      const response = await functions.loadingreport();
-      if (response) {
+      const response: DataTableResponse | any = await functions.loadingreport();
+      if (
+        response?.data.salida === "exito" &&
+        response?.data.data ===
+          "No se encontraron registros en la tabla archivos"
+      ) {
+        setMessageErrorPending(true);
+        setTimeout(() => {
+          setMessageErrorPending(false);
+        }, 4000);
+      } else if (
+        response?.data.salida === "exito" &&
+        response?.data.data !==
+          "No se encontraron registros en la tabla archivos"
+      ) {
         const originalData = response;
         const filterData = originalData?.data?.data?.filter(
           (data: any) => data.status_file === "Pendiente"
@@ -52,11 +65,23 @@ function Facturas() {
     }
   }, []);
 
-
   const loadReports2 = useCallback(async () => {
     try {
-      const response = await functions.loadingreport();
-      if (response) {
+      const response: DataTableResponse | any = await functions.loadingreport();
+      if (
+        response?.data.salida === "exito" &&
+        response?.data.data ===
+          "No se encontraron registros en la tabla archivos"
+      ) {
+        setMessageErrorCorrect(true);
+        setTimeout(() => {
+          setMessageErrorCorrect(false);
+        }, 4000);
+      } else if (
+        response?.data.salida === "exito" &&
+        response?.data.data !==
+          "No se encontraron registros en la tabla archivos"
+      ) {
         const originalData = response;
         const filterData = originalData?.data?.data?.filter(
           (data: any) => data.status_file === "Corregir"
@@ -75,7 +100,6 @@ function Facturas() {
     }
   }, []);
 
-
   async function loadBillers() {
     try {
       const response = await functions.loadingbillers();
@@ -92,7 +116,7 @@ function Facturas() {
     loadReports();
   }, []);
 
-    function handleSelectedChange(e: React.ChangeEvent<HTMLSelectElement>) {
+  function handleSelectedChange(e: React.ChangeEvent<HTMLSelectElement>) {
     const selectedOption = e.target.value;
     setSelectedValue(selectedOption);
     const selectedBiller = dataBillers?.data?.data?.find(
@@ -137,8 +161,8 @@ function Facturas() {
         setFileSuccess(true);
         setTimeout(() => {
           setFileSuccess(false);
+          location.reload();
         }, 3000);
-        loadReports();
       } else {
         setMessageErrorFile(true);
         setTimeout(() => {
@@ -155,9 +179,8 @@ function Facturas() {
       status: "Verificado",
       username: selectedItems.user_name,
       id_file: selectedItems.id_files,
-      comment: ""
+      comment: "",
     };
-    console.log(verifyReportsParams);
     try {
       const response = await functions.verifyreport(verifyReportsParams);
     } catch (error) {
@@ -308,7 +331,6 @@ function Facturas() {
           className="modal"
           id="modalCorrectFactures"
           aria-labelledby="exampleModalLabel"
-          tabIndex="-1"
           aria-hidden="true"
         >
           <div className="modal-dialog">
@@ -406,7 +428,6 @@ function Facturas() {
         <div
           className="modal fade"
           id="modalSendFactures"
-          tabIndex="-1"
           aria-hidden="true"
         >
           <div className="modal-dialog">

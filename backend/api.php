@@ -174,6 +174,11 @@ if (isset($_POST["action"]) || isset($_GET["action"])) {
                 echo json_encode(["salida" => "exito", "data" => "Los datos del archivo se actualizaron correctamente", "id_file" => $idfile]);
             }
             break;
+        case "deletereport":
+            $db->where("id_files", $_POST["idfile"]);
+            $db->delete("files");
+            echo json_encode(["salida" => "exito", "data" => "El reporte fue eliminado correctamente"]);
+            break;
     }
     exit;
 }

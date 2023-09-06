@@ -111,6 +111,19 @@ const functions = {
       console.log(error);
     }
   },
+  deletereport: async function (id: string) {
+    const formData = new FormData();
+    formData.append("idfile", id);
+    try {
+      const response = await axios.post<SigninResponse>(
+        "http://127.0.0.1/DysamFacturas/backend/api.php?action=deletereport", formData
+      );
+      console.log(response)
+      return response;
+    } catch (error) {
+      console.log(error);
+    }
+  },
   decryptdata: function (data: string) {
     const bytes = CryptoJS.AES.decrypt(data, "FDhfd678GHSDFS23");
     const decrypted = JSON.parse(bytes.toString(CryptoJS.enc.Utf8));
