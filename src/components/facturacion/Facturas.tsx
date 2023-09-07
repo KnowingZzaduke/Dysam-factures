@@ -31,14 +31,18 @@ function Facturas() {
   const [selectedEmail, setSelectedEmail] = useState("");
   const serverUrl = "http://127.0.0.1:5173/";
   const [sendEmailSuccess, setSendEmailSuccess] = useState(false);
-  const [pagination, setPagination] = useState(false);
   const { page } = useContext(DataContext);
-  const pag = page;
   //Cargar facturas pendientes
+  useEffect(() => {
+    loadReports();
+    console.log(page);
+  }, [page]);
+
   const loadReports = useCallback(async () => {
     try {
+      console.log(page);
       const response: DataTableResponse | any = await functions.loadingreport(
-        pag
+        page
       );
       if (
         response?.data.salida === "exito" &&
@@ -75,7 +79,7 @@ function Facturas() {
   const loadReports2 = useCallback(async () => {
     try {
       const response: DataTableResponse | any = await functions.loadingreport(
-        pag
+        page
       );
       if (
         response?.data.salida === "exito" &&
@@ -120,11 +124,6 @@ function Facturas() {
       console.log(error);
     }
   }
-
-  useEffect(() => {
-    loadReports();
-    console.log(pag);
-  }, [pag]);
 
   function handleSelectedChange(e: React.ChangeEvent<HTMLSelectElement>) {
     const selectedOption = e.target.value;
@@ -171,7 +170,7 @@ function Facturas() {
         setFileSuccess(true);
         setTimeout(() => {
           setFileSuccess(false);
-          location.reload();
+          loadReports();
         }, 3000);
       } else {
         setMessageErrorFile(true);
@@ -227,14 +226,6 @@ function Facturas() {
       console.log("La referencia al formulario es null.");
     }
   };
-
-  useEffect(() => {
-    if (insertData?.length === 10) {
-      setPagination(true);
-    } else {
-      setPagination(false);
-    }
-  }, [insertData]);
 
   return (
     <div
@@ -321,7 +312,7 @@ function Facturas() {
               ))}
             </tbody>
           </table>
-          {pagination === true ? <PaginationTable /> : <></>}
+          <PaginationTable />
           {messageErrorPending === true ? (
             <div
               className="alert alert-danger d-flex align-items-center gap-2 my-3"

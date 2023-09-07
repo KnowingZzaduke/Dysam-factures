@@ -7,6 +7,7 @@ import { TypeLoadFile } from "../types/loadfile";
 import { DataTableResponse } from "../types/table";
 import { TypeCorrectReports } from "../types/correctFile";
 import { TypeVerifyReport } from "../types/verify";
+
 const functions = {
   signin: async function ({ username, password }: TypeSigning) {
     const formData = new FormData();
@@ -57,14 +58,13 @@ const functions = {
       console.log(error);
     }
   },
-  loadingreport: async function (pag: any) {
-    const formData = new FormData();
-    formData.append("page", pag);
+  loadingreport: async function (pag: number) {
     console.log(pag);
     try {
       const response = await axios.post<DataTableResponse>(
-        "http://127.0.0.1/DysamFacturas/backend/api.php?action=loadingreport", formData
+        `http://127.0.0.1/DysamFacturas/backend/api.php?action=loadingreport&page=${pag}`
       );
+      console.log(response);
       return response;
     } catch (error) {
       console.error(error);
@@ -119,9 +119,10 @@ const functions = {
     formData.append("idfile", id);
     try {
       const response = await axios.post<SigninResponse>(
-        "http://127.0.0.1/DysamFacturas/backend/api.php?action=deletereport", formData
+        "http://127.0.0.1/DysamFacturas/backend/api.php?action=deletereport",
+        formData
       );
-      console.log(response)
+      console.log(response);
       return response;
     } catch (error) {
       console.log(error);

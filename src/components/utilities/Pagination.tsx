@@ -1,7 +1,10 @@
 import { DataContext } from "../../context/DataContext";
-import { useContext } from "react";
+import { useContext, useEffect } from "react";
 function PaginationTable() {
   const { page, setPage } = useContext(DataContext);
+  useEffect(() => {
+    setPage(1)
+  }, []);
   return (
     <div>
       <nav aria-label="Page navigation">
@@ -11,7 +14,9 @@ function PaginationTable() {
               type="button"
               className="page-link"
               aria-label="Previous"
-              onClick={() => setPage((prevPage) => (prevPage <= 1 ? 1 : prevPage - 1))}
+              onClick={() =>
+                setPage((prevPage) => (prevPage <= 1 ? 1 : prevPage - 1))
+              }
             >
               <span aria-hidden="true">&laquo;</span>
             </button>
