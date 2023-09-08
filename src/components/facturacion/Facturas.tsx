@@ -15,7 +15,6 @@ import { SigninResponse } from "../../types/login";
 import { TypeVerifyReport } from "../../types/verify";
 import PaginationTable from "../utilities/Pagination";
 import { DataContext } from "../../context/DataContext";
-import { useNavigate } from "react-router-dom";
 
 function Facturas() {
   const [insertData, setInsertData] = useState<DataTableResponse | any>();
@@ -33,7 +32,6 @@ function Facturas() {
   const serverUrl = "http://127.0.0.1:5173/";
   const [sendEmailSuccess, setSendEmailSuccess] = useState(false);
   const [notItems, setNotItems] = useState(false);
-  const navigate = useNavigate();
   const { page } = useContext(DataContext);
   const rowsPrePage = 10;
   const items = useMemo(() => {
@@ -226,7 +224,7 @@ function Facturas() {
               setSendEmailSuccess(true);
               setTimeout(() => {
                 setSendEmailSuccess(false);
-                navigate("/facturacion/filtrar-facturas");
+                loadReports();
               }, 3000);
             }
           },
@@ -279,6 +277,7 @@ function Facturas() {
               <tr className="table-light text-center">
                 <th>Estado</th>
                 <th>Fecha</th>
+                <th>Hora</th>
                 <th>Facturas</th>
                 <th>Opciones</th>
               </tr>
@@ -288,6 +287,7 @@ function Facturas() {
                 <tr className="table-secondary text-center" key={data.id_files}>
                   <td>{data.status_file}</td>
                   <td>{data.date}</td>
+                  <td>{data.time}</td>
                   <td>
                     <a href={data.file_path} target="_blank">
                       <FaFileUpload

@@ -89,16 +89,18 @@ function CorregirFacturas() {
               <tr className="table-light text-center">
                 <th>Estado</th>
                 <th>Fecha</th>
+                <th>Hora</th>
                 <th>Facturas</th>
                 <th>Observaciones</th>
                 <th>Herramientas</th>
               </tr>
             </thead>
             <tbody>
-              {insertData?.map((data: any) => (
+              {items?.map((data: any) => (
                 <tr className="table-secondary text-center" key={data.id_files}>
                   <td>{data.status_file}</td>
                   <td>{data.date}</td>
+                  <td>{data.time}</td>
                   <td>
                     <a href={data.file_path} target="_blank">
                       <FaFileUpload

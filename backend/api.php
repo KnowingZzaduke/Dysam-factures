@@ -4,7 +4,6 @@ header("Access-Control-Allow-Methods: GET, POST, OPTIONS");
 header("Access-Control-Allow-Headers: Content-Type");
 require("db/MysqliDb.php");
 // Crear una instancia
-date_default_timezone_set('America/Bogota');
 if (isset($_POST["action"]) || isset($_GET["action"])) {
     switch ($_GET["action"]) {
         case "signin":
@@ -32,7 +31,9 @@ if (isset($_POST["action"]) || isset($_GET["action"])) {
         case "makereport":
             $archivo_temporal = $_FILES["file"]["tmp_name"];
             $nombre_original = $_FILES["file"]["name"];
-
+            date_default_timezone_set('America/Bogota');
+            $hora_actual_colombia = new DateTime();
+            $hora_actual = $hora_actual_colombia->format("H:i:s");
             $ruta_destino = "../uploads/" . uniqid() . "_" . $nombre_original;
             if (move_uploaded_file($archivo_temporal, $ruta_destino)) {
                 $user_name = $_POST["user_name"];
@@ -41,6 +42,7 @@ if (isset($_POST["action"]) || isset($_GET["action"])) {
                         "user_name" => $user_name,
                         "file_path" => $ruta_destino,
                         "date" => $_POST["date"],
+                        "time" => $hora_actual,    // Guarda la hora actual
                         "comment" => $_POST["comment"],
                         "status_file" => $_POST["statusfile"]
                     ]);

@@ -5,7 +5,6 @@ import { TypeLoadFile } from "../../types/loadfile";
 import { SigninResponse } from "../../types/login";
 import { FaTriangleExclamation } from "react-icons/fa6";
 import functions from "../../data/request";
-import { v4 as uuidv4 } from "uuid";
 function EnviarFacturas() {
   const { reloadData } = useContext(DataContext);
   const [formFile, setFormFile] = useState<TypeFormFile>({
@@ -20,12 +19,16 @@ function EnviarFacturas() {
   const [fileSuccess, setFileSuccess] = useState(false);
   const [data, setData] = useState<SigninResponse | any>();
   const [messageErrorFile, setMessageErrorFile] = useState(false);
+  const [selectOtherFile, setSelectOtherFile] = useState(false);
+  const [fillInputs, setFillInputs] = useState(false);
 
   function handleInputChange(e: React.ChangeEvent<HTMLInputElement>) {
     const { name, value, files } = e.target;
     if (name === "files") {
       const newFiles: File | null = files ? files[0] : null;
-      const newFilesNoSpace: File | null = newFiles ? new File([newFiles], newFiles.name.replace(/\s+/g, "")) : null;
+      const newFilesNoSpace: File | null = newFiles
+        ? new File([newFiles], newFiles.name.replace(/\s+/g, ""))
+        : null;
       setFormFile({
         ...formFile,
         files: {
@@ -41,7 +44,6 @@ function EnviarFacturas() {
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     setMessageErrorFile(false);
-    const filePathNoSpaces = formFile;
     const fileparams: TypeLoadFile = {
       file: formFile,
       comment: textareaValue,
@@ -57,7 +59,6 @@ function EnviarFacturas() {
   }
 
   useEffect(() => {
-    console.log(data);
     if (data?.data.salida === "exito") {
       setFileSuccess(true);
       setTimeout(() => {
@@ -71,6 +72,16 @@ function EnviarFacturas() {
       setTimeout(() => {
         setMessageErrorFile(false);
       }, 2000);
+    } else if (data === undefined) {
+      setFillInputs(true);
+      setTimeout(() => {
+        setFillInputs(false);
+      }, 3000);
+    } else {
+      setSelectOtherFile(true);
+      setTimeout(() => {
+        setSelectOtherFile(false);
+      }, 3000);
     }
   }, [data]);
   return (
@@ -159,6 +170,28 @@ function EnviarFacturas() {
           >
             <FaTriangleExclamation />
             <div className="text-center">Hubo un error al subir el archivo</div>
+          </div>
+        ) : (
+          <></>
+        )}
+        {selectOtherFile === true ? (
+          <div
+            className="alert alert-danger d-flex align-items-center gap-2 my-3"
+            role="alert"
+          >
+            <FaTriangleExclamation />
+            <div className="text-center">Por favor selecciona otro archivo</div>
+          </div>
+        ) : (
+          <></>
+        )}
+        {fillInputs === true ? (
+          <div
+            className="alert alert-danger d-flex align-items-center gap-2 my-3"
+            role="alert"
+          >
+            <FaTriangleExclamation />
+            <div className="text-center">Por favor llena los campos :)</div>
           </div>
         ) : (
           <></>

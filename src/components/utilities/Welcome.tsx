@@ -5,7 +5,7 @@ function Welcome() {
   useEffect(() => {
     const typed = new Typed(welcome.current, {
       strings: [
-        "<h3> Encantado de tenerte aquí. Explora nuestras opciones para ver las diferentes facturas y poder realizar el filtrado de estas</h3>",
+        "<h3> Encantado de tenerte aquí. Explora nuestras opciones para subir y ver las diferentes facturas y poder realizar el filtrado de estas</h3>",
       ],
       typeSpeed: 30,
     });
@@ -14,6 +14,7 @@ function Welcome() {
       typed.destroy();
     };
   }, []);
+
   return (
     <div
       style={{ minHeight: "100vh" }}
@@ -21,7 +22,7 @@ function Welcome() {
     >
       <div className="col-6 typed text-center">
         <h1>Bienvenido 👋</h1>
-        <div ref={welcome}/>
+        <div ref={welcome} />
       </div>
     </div>
   );

@@ -185,7 +185,7 @@ function App() {
             Crear cuenta
           </a>
         </div>
-      </form>
+      </form>´
     </div>
   );
 }

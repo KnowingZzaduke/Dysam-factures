@@ -9,6 +9,7 @@ import { DataTableResponse } from "../../types/table";
 import functions from "../../data/request";
 import { FaTriangleExclamation } from "react-icons/fa6";
 import { DataContext } from "../../context/DataContext";
+import PaginationTable from "../utilities/Pagination";
 
 function FilterFacturas() {
   const [insertData, setInsertData] = useState<DataTableResponse | any>();
@@ -85,12 +86,13 @@ function FilterFacturas() {
                 <tr className="table-light text-center">
                   <th>Estado</th>
                   <th>Nombre del contador/a</th>
-                  <th>Fecha & hora</th>
+                  <th>Fecha</th>
+                  <th>Hora</th>
                   <th>Facturas</th>
                 </tr>
               </thead>
               <tbody>
-                {insertData?.map((data: any) => (
+                {items?.map((data: any) => (
                   <tr
                     className="table-secondary text-center"
                     key={data.id_files}
@@ -98,6 +100,7 @@ function FilterFacturas() {
                     <td>{data.status_file}</td>
                     <td>{data.user_name}</td>
                     <td>{data.date}</td>
+                    <td>{data.time}</td>
                     <td>
                       <a href={data.file_path} target="_blank">
                         <FaFileUpload
@@ -110,6 +113,7 @@ function FilterFacturas() {
                 ))}
               </tbody>
             </table>
+            <PaginationTable />
             {notResults === true ? (
               <div
                 className="alert alert-danger d-flex align-items-center gap-2 my-3"
