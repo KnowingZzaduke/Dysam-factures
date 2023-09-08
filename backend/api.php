@@ -59,14 +59,8 @@ if (isset($_POST["action"]) || isset($_GET["action"])) {
             if ($mysqli->connect_error) {
                 echo json_encode(["salida" => "error", "data" => "Error de conexión a la base de datos: " . $mysqli->connect_error]);
             } else {
-                // Número de registros por página y página actual
-                $registrosPorPagina = 10;
-                $paginaActual = isset($_GET['page']) ? $_GET['page'] : 1;
-                // Calcular el desplazamiento (offset) para la consulta SQL
-                $offset = ($paginaActual - 1) * $registrosPorPagina;
-
-                // Consulta SQL con la paginación
-                $sql = "SELECT * FROM files LIMIT $registrosPorPagina OFFSET $offset";
+                // Consulta SQL sin paginación
+                $sql = "SELECT * FROM files";
                 $result = $mysqli->query($sql);
 
                 if ($result) {

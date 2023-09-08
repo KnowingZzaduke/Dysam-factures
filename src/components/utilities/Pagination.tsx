@@ -2,13 +2,10 @@ import { DataContext } from "../../context/DataContext";
 import { useContext, useEffect } from "react";
 function PaginationTable() {
   const { page, setPage } = useContext(DataContext);
-  useEffect(() => {
-    setPage(1)
-  }, []);
   return (
     <div>
       <nav aria-label="Page navigation">
-        <ul className="pagination">
+        <ul className="pagination justify-content-center">
           <li className="page-item">
             <button
               type="button"

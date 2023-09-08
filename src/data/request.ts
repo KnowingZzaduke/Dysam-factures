@@ -58,13 +58,11 @@ const functions = {
       console.log(error);
     }
   },
-  loadingreport: async function (pag: number) {
-    console.log(pag);
+  loadingreport: async function () {
     try {
-      const response = await axios.post<DataTableResponse>(
-        `http://127.0.0.1/DysamFacturas/backend/api.php?action=loadingreport&page=${pag}`
+      const response = await axios.get<DataTableResponse>(
+        "http://127.0.0.1/DysamFacturas/backend/api.php?action=loadingreport"
       );
-      console.log(response);
       return response;
     } catch (error) {
       console.error(error);

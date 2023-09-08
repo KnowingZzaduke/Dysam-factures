@@ -1,20 +1,40 @@
 import { FaFileUpload, FaFileAlt, FaTrashAlt } from "react-icons/fa";
-import { useState, useCallback, useEffect } from "react";
+import { useState, useCallback, useEffect, useContext, useMemo } from "react";
 import { DataTableResponse } from "../../types/table";
 import { useNavigate } from "react-router-dom";
 import functions from "../../data/request";
 import { FaTriangleExclamation } from "react-icons/fa6";
+import { DataContext } from "../../context/DataContext";
+import PaginationTable from "../utilities/Pagination";
 
 function CorregirFacturas() {
   const [insertData, setInsertData] = useState<DataTableResponse | any>();
   const [notResults, setNotResults] = useState(false);
   const navigate = useNavigate();
+  const [notItems, setNotItems] = useState(false);
+  const { page } = useContext(DataContext);
+  const rowsPrePage = 10;
+  const items = useMemo(() => {
+    const start = (page - 1) * rowsPrePage;
+    const end = start + rowsPrePage;
+    return insertData?.slice(start, end);
+  }, [page, insertData]);
+
+  useEffect(() => {
+    if (items?.length === 0) {
+      setNotItems(true);
+      setTimeout(() => {
+        setNotItems(false);
+      }, 4000);
+    }
+  }, [items]);
   const loadReports = useCallback(async () => {
     try {
       const response: DataTableResponse | any = await functions.loadingreport();
       if (
         response?.data.salida === "exito" &&
-        response?.data.data === "No se encontraron registros en la tabla archivos"
+        response?.data.data ===
+          "No se encontraron registros en la tabla archivos"
       ) {
         setNotResults(true);
         setTimeout(() => {
@@ -22,11 +42,12 @@ function CorregirFacturas() {
         }, 3000);
       } else if (
         response?.data.salida === "exito" &&
-        response?.data.data !== "No se encontraron registros en la tabla archivos"
+        response?.data.data !==
+          "No se encontraron registros en la tabla archivos"
       ) {
         const originalData = response;
         const filterData = originalData?.data?.data?.filter(
-          (data: any) => data.status_file === "Corregir"
+          (data: any) => data.status_file === "Corregir" && data.user_name
         );
         if (filterData.length === 0) {
           setNotResults(true);
@@ -48,13 +69,10 @@ function CorregirFacturas() {
   async function deleteReports(id: string) {
     try {
       const response = await functions.deletereport(id);
-      if(response){
+      if (response) {
         navigate("/contabilidad/enviar-facturas");
       }
-    } catch (error) {
-      
-    }
-    
+    } catch (error) {}
   }
   return (
     <div
@@ -103,6 +121,7 @@ function CorregirFacturas() {
               ))}
             </tbody>
           </table>
+          <PaginationTable />
           {notResults === true ? (
             <div
               className="alert alert-danger d-flex align-items-center gap-2 my-3"
@@ -110,6 +129,17 @@ function CorregirFacturas() {
             >
               <FaTriangleExclamation />
               <div className="text-center">No hay facturas por corregir</div>
+            </div>
+          ) : (
+            <></>
+          )}
+          {notItems === true ? (
+            <div
+              className="alert alert-danger d-flex align-items-center gap-2 my-3"
+              role="alert"
+            >
+              <FaTriangleExclamation />
+              <div className="text-center">No se encontraron facturas</div>
             </div>
           ) : (
             <></>

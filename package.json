@@ -24,6 +24,7 @@
     "react-router-dom": "^6.15.0",
     "socket.io": "^4.7.2",
     "socket.io-client": "^4.7.2",
+    "sweetalert2": "^11.7.27",
     "typed.js": "^2.0.16",
     "uuidv4": "^6.2.13"
   },

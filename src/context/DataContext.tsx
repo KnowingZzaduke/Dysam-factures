@@ -55,10 +55,9 @@ export function DataContextProvider(props: DataContextProviderProps) {
       });
     }
   }, []);
-
   return (
     <DataContext.Provider
-      value={{
+      value={ {
         login,
         setLogin,
         data,

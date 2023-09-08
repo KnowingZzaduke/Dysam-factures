@@ -4,21 +4,40 @@ import {
   FaFileUpload,
   FaFileAlt,
 } from "react-icons/fa";
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useContext, useMemo } from "react";
 import { DataTableResponse } from "../../types/table";
 import functions from "../../data/request";
 import { FaTriangleExclamation } from "react-icons/fa6";
+import { DataContext } from "../../context/DataContext";
 
 function FilterFacturas() {
   const [insertData, setInsertData] = useState<DataTableResponse | any>();
   const [notResults, setNotResults] = useState(false);
+  const [notItems, setNotItems] = useState(false);
+  const { page } = useContext(DataContext);
+  const rowsPrePage = 10;
+  const items = useMemo(() => {
+    const start = (page - 1) * rowsPrePage;
+    const end = start + rowsPrePage;
+    return insertData?.slice(start, end);
+  }, [page, insertData]);
+
+  useEffect(() => {
+    if (items?.length === 0) {
+      setNotItems(true);
+      setTimeout(() => {
+        setNotItems(false);
+      }, 4000);
+    }
+  }, [items]);
 
   const loadReports = useCallback(async () => {
     try {
       const response: DataTableResponse | any = await functions.loadingreport();
       if (
         response?.data.salida === "exito" &&
-        response?.data.data === "No se encontraron registros en la tabla archivos"
+        response?.data.data ===
+          "No se encontraron registros en la tabla archivos"
       ) {
         setNotResults(true);
         setTimeout(() => {
@@ -26,7 +45,8 @@ function FilterFacturas() {
         }, 3000);
       } else if (
         response?.data.salida === "exito" &&
-        response?.data.data !== "No se encontraron registros en la tabla archivos"
+        response?.data.data !==
+          "No se encontraron registros en la tabla archivos"
       ) {
         const originalData = response;
         const filterData = originalData?.data?.data?.filter(
@@ -71,7 +91,10 @@ function FilterFacturas() {
               </thead>
               <tbody>
                 {insertData?.map((data: any) => (
-                  <tr className="table-secondary text-center" key={data.id_files}>
+                  <tr
+                    className="table-secondary text-center"
+                    key={data.id_files}
+                  >
                     <td>{data.status_file}</td>
                     <td>{data.user_name}</td>
                     <td>{data.date}</td>
@@ -94,6 +117,17 @@ function FilterFacturas() {
               >
                 <FaTriangleExclamation />
                 <div className="text-center">No hay facturas verificadas</div>
+              </div>
+            ) : (
+              <></>
+            )}
+            {notItems === true ? (
+              <div
+                className="alert alert-danger d-flex align-items-center gap-2 my-3"
+                role="alert"
+              >
+                <FaTriangleExclamation />
+                <div className="text-center">No se encontraron facturas</div>
               </div>
             ) : (
               <></>

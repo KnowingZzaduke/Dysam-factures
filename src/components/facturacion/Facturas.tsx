@@ -4,7 +4,7 @@ import {
   FaFileUpload,
   FaFileAlt,
 } from "react-icons/fa";
-import React, { useEffect, useState, useRef, useContext } from "react";
+import React, { useEffect, useState, useRef, useContext, useMemo } from "react";
 import { DataTableResponse } from "../../types/table";
 import functions from "../../data/request";
 import { TypeCorrectReports } from "../../types/correctFile";
@@ -15,6 +15,7 @@ import { SigninResponse } from "../../types/login";
 import { TypeVerifyReport } from "../../types/verify";
 import PaginationTable from "../utilities/Pagination";
 import { DataContext } from "../../context/DataContext";
+import { useNavigate } from "react-router-dom";
 
 function Facturas() {
   const [insertData, setInsertData] = useState<DataTableResponse | any>();
@@ -31,19 +32,28 @@ function Facturas() {
   const [selectedEmail, setSelectedEmail] = useState("");
   const serverUrl = "http://127.0.0.1:5173/";
   const [sendEmailSuccess, setSendEmailSuccess] = useState(false);
+  const [notItems, setNotItems] = useState(false);
+  const navigate = useNavigate();
   const { page } = useContext(DataContext);
-  //Cargar facturas pendientes
-  useEffect(() => {
-    loadReports();
-    console.log(page);
-  }, [page]);
+  const rowsPrePage = 10;
+  const items = useMemo(() => {
+    const start = (page - 1) * rowsPrePage;
+    const end = start + rowsPrePage;
+    return insertData?.slice(start, end);
+  }, [page, insertData]);
 
+  useEffect(() => {
+    if (items?.length === 0) {
+      setNotItems(true);
+      setTimeout(() => {
+        setNotItems(false);
+      }, 4000);
+    }
+  }, [items]);
+  //Cargar facturas pendientes
   const loadReports = useCallback(async () => {
     try {
-      console.log(page);
-      const response: DataTableResponse | any = await functions.loadingreport(
-        page
-      );
+      const response: DataTableResponse | any = await functions.loadingreport();
       if (
         response?.data.salida === "exito" &&
         response?.data.data ===
@@ -78,9 +88,7 @@ function Facturas() {
 
   const loadReports2 = useCallback(async () => {
     try {
-      const response: DataTableResponse | any = await functions.loadingreport(
-        page
-      );
+      const response: DataTableResponse | any = await functions.loadingreport();
       if (
         response?.data.salida === "exito" &&
         response?.data.data ===
@@ -111,6 +119,10 @@ function Facturas() {
     } catch (error) {
       console.log(error);
     }
+  }, []);
+
+  useEffect(() => {
+    loadReports();
   }, []);
 
   async function loadBillers() {
@@ -214,7 +226,7 @@ function Facturas() {
               setSendEmailSuccess(true);
               setTimeout(() => {
                 setSendEmailSuccess(false);
-                location.reload();
+                navigate("/facturacion/filtrar-facturas");
               }, 3000);
             }
           },
@@ -272,7 +284,7 @@ function Facturas() {
               </tr>
             </thead>
             <tbody>
-              {insertData?.map((data: any) => (
+              {items?.map((data: any) => (
                 <tr className="table-secondary text-center" key={data.id_files}>
                   <td>{data.status_file}</td>
                   <td>{data.date}</td>
@@ -331,6 +343,17 @@ function Facturas() {
             >
               <FaTriangleExclamation />
               <div className="text-center">No hay facturas por corregir</div>
+            </div>
+          ) : (
+            <></>
+          )}
+          {notItems === true ? (
+            <div
+              className="alert alert-danger d-flex align-items-center gap-2 my-3"
+              role="alert"
+            >
+              <FaTriangleExclamation />
+              <div className="text-center">No se encontraron facturas</div>
             </div>
           ) : (
             <></>
