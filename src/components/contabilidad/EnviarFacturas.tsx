@@ -86,7 +86,7 @@ function EnviarFacturas() {
   }, [data]);
   return (
     <div
-      className="d-flex align-items-center justify-content-center"
+      className="d-flex align-items-center justify-content-center my-5 bg-info.bg-gradient"
       style={{ minHeight: "100vh" }}
     >
       <form
@@ -158,7 +158,7 @@ function EnviarFacturas() {
             className="alert alert-success d-flex align-items-center gap-2 my-3"
             role="alert"
           >
-            <div className="text-center">Usuario creado correctamente</div>
+            <div className="text-center">Archivo enviado correctamente</div>
           </div>
         ) : (
           <></>

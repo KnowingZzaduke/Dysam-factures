@@ -16,6 +16,8 @@ function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [linkFacture, setLinkFacture] = useState(false);
   const [linkFilterFacture, setLinkFilterFacture] = useState(false);
+  const [linkCorrectFact, setLinkCorrectFact] = useState(false);
+  const [linkSendFact, setLinkSendFact] = useState(false);
   const { setData, reloadData, setReloadData } = useContext(DataContext);
   const [changeMenu, setChangeMenu] = useState<boolean>();
   const location = useLocation();
@@ -30,15 +32,25 @@ function Navbar() {
   }
 
   useEffect(() => {
-    if (location.pathname === "/facturacion/facturas") {
+    if (location.pathname === "/facturacion/facturas" || location.pathname === "/contabilidad/enviar-facturas") {
       setLinkFacture(true);
     } else {
       setLinkFacture(false);
     }
-    if (location.pathname === "/facturacion/filtrar-facturas") {
+    if (location.pathname === "/facturacion/filtrar-facturas" || location.pathname === "/contabilidad/corregir-facturas") {
       setLinkFilterFacture(true);
     } else {
       setLinkFilterFacture(false);
+    }
+    if (location.pathname === "/facturacion/facturas") {
+      setLinkCorrectFact(true);
+    } else {
+      setLinkCorrectFact(false);
+    }
+    if (location.pathname === "/facturacion/facturas") {
+      setLinkSendFact(true);
+    } else {
+      setLinkSendFact(false);
     }
   }, [location]);
 

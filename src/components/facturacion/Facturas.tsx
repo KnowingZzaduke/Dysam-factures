@@ -76,7 +76,7 @@ function Facturas() {
             setMessageErrorPending(false);
           }, 4000);
         } else {
-          setInsertData(filterData);
+          setInsertData(filterData.reverse());
         }
       }
     } catch (error) {
@@ -111,7 +111,7 @@ function Facturas() {
             setMessageErrorCorrect(false);
           }, 4000);
         } else {
-          setInsertData(filterData);
+          setInsertData(filterData.reverse());
         }
       }
     } catch (error) {
@@ -239,10 +239,10 @@ function Facturas() {
 
   return (
     <div
-      className="d-flex align-items-center justify-content-center"
+      className="d-flex align-items-center justify-content-center my-5"
       style={{ minHeight: "100vh" }}
     >
-      <div className="container">
+      <div className="container" style={{ backgroundColor: "#EAEDED" }}>
         <h1 className="my-4">
           Tabla de facturas <FaFileAlt />
         </h1>
@@ -272,9 +272,9 @@ function Facturas() {
           </div>
         </div>
         <div className="table-responsive">
-          <table className="table table-light">
+          <table className="table table-light table-striped">
             <thead>
-              <tr className="table-light text-center">
+              <tr className="table-dark text-center">
                 <th>Estado</th>
                 <th>Fecha</th>
                 <th>Hora</th>

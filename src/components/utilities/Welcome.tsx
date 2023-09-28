@@ -5,7 +5,7 @@ function Welcome() {
   useEffect(() => {
     const typed = new Typed(welcome.current, {
       strings: [
-        "<h3> Encantado de tenerte aquí. Explora nuestras opciones para subir y ver las diferentes facturas y poder realizar el filtrado de estas</h3>",
+        "<h3> Encantado de tenerte aquí, explora las diferentes opciones. </h3>",
       ],
       typeSpeed: 30,
     });

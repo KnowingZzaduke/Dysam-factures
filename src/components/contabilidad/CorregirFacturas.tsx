@@ -12,7 +12,7 @@ function CorregirFacturas() {
   const [notResults, setNotResults] = useState(false);
   const navigate = useNavigate();
   const [notItems, setNotItems] = useState(false);
-  const { page } = useContext(DataContext);
+  const { page, reloadData } = useContext(DataContext);
   const rowsPrePage = 10;
   const items = useMemo(() => {
     const start = (page - 1) * rowsPrePage;
@@ -47,7 +47,9 @@ function CorregirFacturas() {
       ) {
         const originalData = response;
         const filterData = originalData?.data?.data?.filter(
-          (data: any) => data.status_file === "Corregir" && data.user_name
+          (data: any) =>
+            data.status_file === "Corregir" &&
+            data.user_name === reloadData.user
         );
         if (filterData.length === 0) {
           setNotResults(true);
@@ -76,17 +78,17 @@ function CorregirFacturas() {
   }
   return (
     <div
-      className="d-flex align-items-center justify-content-center"
+      className="d-flex align-items-center justify-content-center my-5"
       style={{ minHeight: "100vh" }}
     >
-      <div className="container">
+      <div className="container" style={{ backgroundColor: "#EAEDED" }}>
         <h1 className="my-4">
           Tabla de corregir facturas <FaFileAlt />
         </h1>
         <div className="table-responsive">
-          <table className="table table-light border">
+          <table className="table table-light border table-striped">
             <thead>
-              <tr className="table-light text-center">
+              <tr className="table-dark text-center">
                 <th>Estado</th>
                 <th>Fecha</th>
                 <th>Hora</th>
