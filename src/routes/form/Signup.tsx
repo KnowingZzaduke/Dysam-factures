@@ -6,7 +6,7 @@ import { FaTriangleExclamation } from "react-icons/fa6";
 import { TypeSignup } from "../../types/signup";
 import { SigninResponse } from "../../types/login";
 import functions from "../../data/request";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 function Signup() {
   const [videoLoaded, setVideoLoaded] = useState(false);
   const [userName, setUserName] = useState("");
@@ -124,7 +124,7 @@ function Signup() {
         </div>
         <div className="mb-3">
           <label htmlFor="exampleInputPassword1" className="form-label">
-            Password
+            Contraseña
           </label>
           <input
             type="password"
@@ -198,9 +198,9 @@ function Signup() {
           </div>
         )}
         <div className="d-flex justify-content-end">
-          <a className="registro my-2" href="/" target="_blank">
+          <Link className="registro my-2" to="/">
             Iniciar sesión
-          </a>
+          </Link>
         </div>
       </form>
     </div>

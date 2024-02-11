@@ -52,6 +52,7 @@ function Facturas() {
   const loadReports = useCallback(async () => {
     try {
       const response: DataTableResponse | any = await functions.loadingreport();
+      console.log(response);
       if (
         response?.data.salida === "exito" &&
         response?.data.data ===
@@ -63,13 +64,13 @@ function Facturas() {
         }, 4000);
       } else if (
         response?.data.salida === "exito" &&
-        response?.data.data !==
-          "No se encontraron registros en la tabla archivos"
+        response?.data.data.length > 0
       ) {
         const originalData = response;
         const filterData = originalData?.data?.data?.filter(
-          (data: any) => data.status_file === "Pendiente"
+          (data: any) => data.status_file === "0"
         );
+        console.log(filterData)
         if (filterData.length === 0) {
           setMessageErrorPending(true);
           setTimeout(() => {
@@ -103,7 +104,7 @@ function Facturas() {
       ) {
         const originalData = response;
         const filterData = originalData?.data?.data?.filter(
-          (data: any) => data.status_file === "Corregir"
+          (data: any) => data.status_file === "1"
         );
         if (filterData.length === 0) {
           setMessageErrorCorrect(true);

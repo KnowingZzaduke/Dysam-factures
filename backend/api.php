@@ -56,7 +56,7 @@ if (isset($_POST["action"]) || isset($_GET["action"])) {
             }
             break;
         case "loadingreport":
-            $mysqli = new mysqli("localhost", "root", "", "dysam_facturas");
+            $mysqli = new mysqli("localhost", "root", "", "dysam-facturas");
 
             if ($mysqli->connect_error) {
                 echo json_encode(["salida" => "error", "data" => "Error de conexión a la base de datos: " . $mysqli->connect_error]);

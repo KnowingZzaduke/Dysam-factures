@@ -14,20 +14,23 @@ function Autenticacion({ children }: AuthChildren) {
     const SESION = Cookies.get("dysam-fac");
     if (SESION === undefined) {
       console.log("No tienes cookies guardadas 😶");
+      navigate("/");
     } else {
       const SESIONDECRYPT = functions.decryptdata(SESION);
       if (validateSesion()) {
         switch (SESIONDECRYPT.level) {
-          case "1":
+          case 1:
             navigate("/facturacion/bienvenida");
             break;
-          case "2":
+          case 2:
             navigate("/contabilidad/bienvenida");
             break;
         }
       } else {
         if (SESIONDECRYPT.user === null) {
           Cookies.remove("dysam-fac");
+          navigate("/");
+        } else if (SESION === undefined) {
           navigate("/");
         }
       }

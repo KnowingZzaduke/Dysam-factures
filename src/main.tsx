@@ -12,6 +12,7 @@ import CorregirFacturas from "./components/contabilidad/CorregirFacturas";
 import { DataContextProvider } from "./context/DataContext";
 import "./index.css";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import { NextUIProvider } from "@nextui-org/react";
 import Autenticacion from "./components/validacion/HOC";
 const router = createBrowserRouter([
   {
@@ -79,7 +80,9 @@ const router = createBrowserRouter([
 ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
   <React.StrictMode>
     <DataContextProvider>
-      <RouterProvider router={router} />
+      <NextUIProvider>
+        <RouterProvider router={router} />
+      </NextUIProvider>
     </DataContextProvider>
   </React.StrictMode>
 );

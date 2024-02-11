@@ -14,7 +14,7 @@
  * @version   2.9.3
  */
 
-$db = new MysqliDb("localhost", "root", "", "dysam_facturas");
+$db = new MysqliDb("localhost", "root", "", "dysam-facturas");
 
 class MysqliDb
 {

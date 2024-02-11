@@ -3,7 +3,7 @@ import videoWater from "/onda.mp4";
 import imgWater from "/img-water.webp";
 import logoDysam from "/Dysam.jpg";
 import functions from "./data/request";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { TypeSigning } from "./types/login";
 import { FaTriangleExclamation } from "react-icons/fa6";
 import Cookies from "js-cookie";
@@ -74,26 +74,19 @@ function App() {
   }, [data]);
 
   useEffect(() => {
+    console.log(data);
     if (data !== undefined) {
       if (data?.data.salida === "exito") {
+        console.log(data);
         if (data?.data.level === 1) {
-          setIsReadyToRedirect(true); // Marcar como listo para redirigir
-        } else {
-          setIsReadyToRedirect(true); // Marcar como listo para redirigir
+          navigate("/facturacion/bienvenida");
+          console.log("Hola")
+        } else if (data?.data.level === 2) {
+          navigate("/contabilidad/bienvenida");
         }
       }
     }
   }, [data]);
-
-  useEffect(() => {
-    if (isReadyToRedirect) {
-      if (data?.data.level === "1") {
-        navigate("/facturacion/bienvenida");
-      } else if (data?.data.level === "2") {
-        navigate("/contabilidad/bienvenida");
-      }
-    }
-  }, [isReadyToRedirect]);
 
   return (
     <div
@@ -181,9 +174,9 @@ function App() {
           <></>
         )}
         <div className="d-flex justify-content-end">
-          <a className="registro my-2" href="/registrarse" target="_blank">
+          <Link className="registro my-2" to="/registrarse">
             Crear cuenta
-          </a>
+          </Link>
         </div>
       </form>´
     </div>

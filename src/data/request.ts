@@ -106,7 +106,6 @@ const functions = {
         "http://127.0.0.1/DysamFacturas/backend/api.php?action=verifyreport",
         formData
       );
-      console.log(response);
       return response;
     } catch (error) {
       console.log(error);
@@ -120,7 +119,6 @@ const functions = {
         "http://127.0.0.1/DysamFacturas/backend/api.php?action=deletereport",
         formData
       );
-      console.log(response);
       return response;
     } catch (error) {
       console.log(error);
