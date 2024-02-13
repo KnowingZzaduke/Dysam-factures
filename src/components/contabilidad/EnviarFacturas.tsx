@@ -4,7 +4,8 @@ import { TypeFormFile } from "../../types/file";
 import { TypeLoadFile } from "../../types/loadfile";
 import { SigninResponse } from "../../types/login";
 import {
-  cells,
+  HeaderCells,
+  FirtsCells,
   SecondCells,
   ThirdCells,
   FourthCells,
@@ -59,7 +60,9 @@ function EnviarFacturas() {
     const end = start + rowsPerPage;
     return p.slice(start, end);
   }, [page, p]);
-  const [valuesInputs, setValuesInputs] = useState<Map<string, string>>(new Map());
+  const [valuesInputs, setValuesInputs] = useState<Map<string, string>>(
+    new Map()
+  );
   const [codeSelectedValue, setCodeSelectValue] = useState<any>(new Set([]));
 
   function handleInputChange(e: React.ChangeEvent<HTMLInputElement>) {
@@ -125,22 +128,23 @@ function EnviarFacturas() {
     }
   }, [data]);
 
-
-  function changeInputsTable(e: React.ChangeEvent<HTMLInputElement>, inputIdentifier: string) {
+  function changeInputsTable(
+    e: React.ChangeEvent<HTMLInputElement>,
+    inputIdentifier: string
+  ) {
     const value = e.target.value;
-    console.log(inputIdentifier);
     if (value !== undefined) {
       setValuesInputs((prevValues: Map<string, string>) => {
         const newValues = new Map(prevValues);
-        newValues.set(inputIdentifier,value);
+        newValues.set(inputIdentifier, value);
         return newValues;
       });
     }
   }
 
   useEffect(() => {
-    console.log(valuesInputs);
-  }, [valuesInputs]);
+    console.log(Array(valuesInputs));
+  }, [valuesInputs])
 
   return (
     // <div
@@ -261,18 +265,16 @@ function EnviarFacturas() {
       <h1 className="text-center py-4">COTIZACIÓN SERVICIOS DYSAM SAS</h1>
       <form className="px-4 flex flex-col gap-4">
         <div className="border rounded-full px-4 flex flex-row justify-center items-center align-middle w-full gap-4 py-4 my-4">
-          <Input
-            type="date"
-            label="Fecha"
-            placeholder="Ingresa una fecha"
-            className="flex-1"
-          />
-          <Input
-            type="number"
-            label="NIT"
-            placeholder="Ingresa el NIT"
-            className="flex-1"
-          />
+          {HeaderCells?.map((item) => (
+            <Input
+              type={item.type}
+              label={item.label}
+              placeholder={item.placeholder}
+              className="flex-1"
+              key={item.id}
+              onChange={(e) => changeInputsTable(e, item.label)}
+            />
+          ))}
           <div className="flex-1">
             <div className="w-full flex justify-center">
               <Select
@@ -324,31 +326,16 @@ function EnviarFacturas() {
             </TableHeader>
             <TableBody emptyContent={"No hay datos"} items={d}>
               <TableRow>
-                {cells &&
-                  cells.map((item) => (
+                {FirtsCells &&
+                  FirtsCells.map((item) => (
                     <TableCell key={item.id}>
-                      {item.label === "Código" ? (
-                        <Select
-                          label="Cliente"
-                          placeholder="Selecciona un cliente"
-                          selectedKeys={codeSelectedValue}
-                          className="max-w-full"
-                          onSelectionChange={setCodeSelectValue}
-                        >
-                          <SelectItem key="2" value="2">
-                            Hola
-                          </SelectItem>
-                        </Select>
-                      ) : (
-                        <Input
-                          type={item.type}
-                          label={item.label}
-                          placeholder={item.placeholder}
-                          className="w-full"
-                          onChange={(e) => changeInputsTable(e, item.label)}
-                          key={item.id}
-                        />
-                      )}
+                      <Input
+                        type={item.type}
+                        label={item.label}
+                        placeholder={item.placeholder}
+                        className="w-full"
+                        onChange={(e) => changeInputsTable(e, item.label)}
+                      />
                     </TableCell>
                   ))}
               </TableRow>
@@ -386,6 +373,7 @@ function EnviarFacturas() {
                         label={item.label}
                         placeholder={item.placeholder}
                         className="w-full"
+                        onChange={(e) => changeInputsTable(e, item.label)}
                       />
                     </TableCell>
                   ))}
@@ -420,6 +408,7 @@ function EnviarFacturas() {
                         label={item.label}
                         placeholder={item.placeholder}
                         className="w-full"
+                        onChange={(e) => changeInputsTable(e, item.label)}
                       />
                     </TableCell>
                   ))}
@@ -465,6 +454,7 @@ function EnviarFacturas() {
                         label={item.label}
                         placeholder={item.placeholder}
                         className="w-full"
+                        onChange={(e) => changeInputsTable(e, item.label)}
                       />
                     </TableCell>
                   ))}
@@ -499,6 +489,7 @@ function EnviarFacturas() {
                         label={item.label}
                         placeholder={item.placeholder}
                         className="w-full"
+                        onChange={(e) => changeInputsTable(e, item.label)}
                       />
                     </TableCell>
                   ))}
@@ -511,6 +502,7 @@ function EnviarFacturas() {
               label="Otros gastos"
               placeholder="Ingresa otros gastos"
               className="w-full"
+              onChange={(e) => changeInputsTable(e, "Otros gastos")}
             />
           </div>
         </div>
@@ -534,12 +526,12 @@ function EnviarFacturas() {
             }}
           >
             <TableHeader>
-              <TableColumn key="descripciónImpuestos">TOTAL COSTOS</TableColumn>
-              <TableColumn key="valorImpuestos">ADMINISTRACIÓN</TableColumn>
-              <TableColumn key="cantidadImpuestos">
+              <TableColumn key="totalCostos">TOTAL COSTOS</TableColumn>
+              <TableColumn key="adminitracion">ADMINISTRACIÓN</TableColumn>
+              <TableColumn key="utilidadBrutaEstimada">
                 UTILIDAD BRUTA ESTIMADA
               </TableColumn>
-              <TableColumn key="totalImpuestos">
+              <TableColumn key="totalSinIVA">
                 TOTAL A COBRAR SIN IVA
               </TableColumn>
               <TableColumn key="totalIVA">TOTAL CON IVA</TableColumn>
@@ -554,6 +546,7 @@ function EnviarFacturas() {
                         label={item.label}
                         placeholder={item.placeholder}
                         className="w-full"
+                        onChange={(e) => changeInputsTable(e, item.label)}
                       />
                     </TableCell>
                   ))}

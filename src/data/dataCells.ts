@@ -1,4 +1,19 @@
-export const cells = [
+export const HeaderCells = [
+  {
+    id: 100,
+    type: "date",
+    label: "Fecha",
+    placeholder: "Ingresa la fecha",
+  },
+  {
+    id: 101,
+    type: "number",
+    label: "NIT",
+    placeholder: "Ingresa el NIT",
+  },
+];
+
+export const FirtsCells = [
   {
     id: 1,
     type: "text",
