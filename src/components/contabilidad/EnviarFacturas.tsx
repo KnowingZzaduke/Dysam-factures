@@ -3,7 +3,14 @@ import { DataContext } from "../../context/DataContext";
 import { TypeFormFile } from "../../types/file";
 import { TypeLoadFile } from "../../types/loadfile";
 import { SigninResponse } from "../../types/login";
-import { cells, SecondCells, ThirdCells } from "../../data/dataCells";
+import {
+  cells,
+  SecondCells,
+  ThirdCells,
+  FourthCells,
+  FifthCells,
+  SixthCells,
+} from "../../data/dataCells";
 import {
   Textarea,
   Select,
@@ -52,12 +59,7 @@ function EnviarFacturas() {
     const end = start + rowsPerPage;
     return p.slice(start, end);
   }, [page, p]);
-  const [valuesInputs, setValuesInputs] = useState<any>({
-    codigo: "",
-    cantidad: 0,
-    ValorU: 0,
-    Valor: "",
-  });
+  const [valuesInputs, setValuesInputs] = useState<Map<string, string>>(new Map());
   const [codeSelectedValue, setCodeSelectValue] = useState<any>(new Set([]));
 
   function handleInputChange(e: React.ChangeEvent<HTMLInputElement>) {
@@ -123,11 +125,23 @@ function EnviarFacturas() {
     }
   }, [data]);
 
+
+  function changeInputsTable(e: React.ChangeEvent<HTMLInputElement>, inputIdentifier: string) {
+    const value = e.target.value;
+    console.log(inputIdentifier);
+    if (value !== undefined) {
+      setValuesInputs((prevValues: Map<string, string>) => {
+        const newValues = new Map(prevValues);
+        newValues.set(inputIdentifier,value);
+        return newValues;
+      });
+    }
+  }
+
   useEffect(() => {
     console.log(valuesInputs);
   }, [valuesInputs]);
 
-  function changeInputsTable(e: any, id: number) {}
   return (
     // <div
     //   className="d-flex align-items-center justify-content-center my-5 bg-info.bg-gradient"
@@ -309,10 +323,10 @@ function EnviarFacturas() {
               <TableColumn key="valor">VALOR</TableColumn>
             </TableHeader>
             <TableBody emptyContent={"No hay datos"} items={d}>
-              <TableRow key="1">
+              <TableRow>
                 {cells &&
                   cells.map((item) => (
-                    <TableCell>
+                    <TableCell key={item.id}>
                       {item.label === "Código" ? (
                         <Select
                           label="Cliente"
@@ -331,8 +345,8 @@ function EnviarFacturas() {
                           label={item.label}
                           placeholder={item.placeholder}
                           className="w-full"
-                          value={valuesInputs}
-                          onChange={(e) => changeInputsTable(e, item.id)}
+                          onChange={(e) => changeInputsTable(e, item.label)}
+                          key={item.id}
                         />
                       )}
                     </TableCell>
@@ -424,23 +438,116 @@ function EnviarFacturas() {
             }}
           >
             <TableHeader>
-              <TableColumn key="horaAuxilio">
+              <TableColumn key="transporteEquiposContratdos">
                 TRANSPORTE DE EQUIPOS CONTRATADOS
               </TableColumn>
-              <TableColumn key="valorHA">TRANSPORTE PROPIO</TableColumn>
-              <TableColumn key="numeroHoras">UN T.E.C</TableColumn>
-              <TableColumn key="transportes">UN T.P</TableColumn>
-              <TableColumn key="valorPagar">PRECIO UN T.E.C</TableColumn>
-              <TableColumn key="valorPagar">PRECIO UN T.P</TableColumn>
-              <TableColumn key="valorPagar">VALOR UN T.E.C</TableColumn>
-              <TableColumn key="valorPagar">VALOR UN T.P</TableColumn>
-              <TableColumn key="valorPagar">VALOR TOTAL UN T.E.C</TableColumn>
-              <TableColumn key="valorPagar">VALOR TOTAL UN T.P</TableColumn>
+              <TableColumn key="transportePropio">
+                TRANSPORTE PROPIO
+              </TableColumn>
+              <TableColumn key="unTEC">UN T.E.C</TableColumn>
+              <TableColumn key="unTP">UN T.P</TableColumn>
+              <TableColumn key="precioTEC">PRECIO UN T.E.C</TableColumn>
+              <TableColumn key="precioTP">PRECIO UN T.P</TableColumn>
+              <TableColumn key="valorTEC">VALOR UN T.E.C</TableColumn>
+              <TableColumn key="valorTP">VALOR UN T.P</TableColumn>
+              <TableColumn key="valorTotalTEC">
+                VALOR TOTAL UN T.E.C
+              </TableColumn>
+              <TableColumn key="valorTotalTP">VALOR TOTAL UN T.P</TableColumn>
             </TableHeader>
             <TableBody emptyContent={"No hay datos"} items={d}>
               <TableRow key="1">
-                {ThirdCells &&
-                  ThirdCells.map((item) => (
+                {FourthCells &&
+                  FourthCells.map((item) => (
+                    <TableCell>
+                      <Input
+                        type={item.type}
+                        label={item.label}
+                        placeholder={item.placeholder}
+                        className="w-full"
+                      />
+                    </TableCell>
+                  ))}
+              </TableRow>
+            </TableBody>
+          </Table>
+        </div>
+
+        {/* Quinta tabla */}
+
+        <div className="">
+          <h2 className="text-center">IMPUESTOS Y OTROS GASTOS</h2>
+          <Table
+            aria-label="Example table with client side pagination"
+            classNames={{
+              wrapper: "min-h-[222px]",
+            }}
+          >
+            <TableHeader>
+              <TableColumn key="descripciónImpuestos">DESCRIPCIÓN</TableColumn>
+              <TableColumn key="valorImpuestos">VALOR</TableColumn>
+              <TableColumn key="cantidadImpuestos">CANTIDAD</TableColumn>
+              <TableColumn key="totalImpuestos">TOTAL</TableColumn>
+            </TableHeader>
+            <TableBody emptyContent={"No hay datos"} items={d}>
+              <TableRow key="1">
+                {FifthCells &&
+                  FifthCells.map((item) => (
+                    <TableCell>
+                      <Input
+                        type={item.type}
+                        label={item.label}
+                        placeholder={item.placeholder}
+                        className="w-full"
+                      />
+                    </TableCell>
+                  ))}
+              </TableRow>
+            </TableBody>
+          </Table>
+          <div className="py-4">
+            <Input
+              type="number"
+              label="Otros gastos"
+              placeholder="Ingresa otros gastos"
+              className="w-full"
+            />
+          </div>
+        </div>
+
+        {/* Sexta tabla */}
+
+        <div className="">
+          <h2 className="text-center">VALORES FINALES</h2>
+          <div className="py-4">
+            <Input
+              type="number"
+              label="Porcentaje de utilidad bruta estimada"
+              className="w-full"
+              defaultValue="50%"
+            />
+          </div>
+          <Table
+            aria-label="Example table with client side pagination"
+            classNames={{
+              wrapper: "min-h-[222px]",
+            }}
+          >
+            <TableHeader>
+              <TableColumn key="descripciónImpuestos">TOTAL COSTOS</TableColumn>
+              <TableColumn key="valorImpuestos">ADMINISTRACIÓN</TableColumn>
+              <TableColumn key="cantidadImpuestos">
+                UTILIDAD BRUTA ESTIMADA
+              </TableColumn>
+              <TableColumn key="totalImpuestos">
+                TOTAL A COBRAR SIN IVA
+              </TableColumn>
+              <TableColumn key="totalIVA">TOTAL CON IVA</TableColumn>
+            </TableHeader>
+            <TableBody emptyContent={"No hay datos"} items={d}>
+              <TableRow key="1">
+                {SixthCells &&
+                  SixthCells.map((item) => (
                     <TableCell>
                       <Input
                         type={item.type}

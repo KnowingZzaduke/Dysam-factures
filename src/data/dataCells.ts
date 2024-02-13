@@ -102,3 +102,126 @@ export const ThirdCells = [
     placeholder: "Ingresa el valor a pagar",
   },
 ];
+
+export const FourthCells = [
+  {
+    id: 13,
+    type: "text",
+    label: "Transporte de equipos contratados",
+    placeholder: "Ingresa el T.E.C",
+  },
+  {
+    id: 14,
+    type: "number",
+    label: "Transporte propio",
+    placeholder: "Ingresa el T.P",
+  },
+  {
+    id: 15,
+    type: "number",
+    label: "Un T.E.C",
+    placeholder: "Ingresa el Un T.E.C",
+  },
+  {
+    id: 16,
+    type: "number",
+    label: "Un T.P",
+    placeholder: "Ingresa el Un T.P",
+  },
+  {
+    id: 17,
+    type: "number",
+    label: "¨Precio Un T.E.C",
+    placeholder: "Ingresa el precio Un T.E.C",
+  },
+  {
+    id: 18,
+    type: "number",
+    label: "Precio Un T.P",
+    placeholder: "Ingresa el precio Un T.P",
+  },
+  {
+    id: 19,
+    type: "number",
+    label: "Valor Un T.E.C",
+    placeholder: "Ingresa el valor Un T.E.C",
+  },
+  {
+    id: 20,
+    type: "number",
+    label: "Valor Un T.P",
+    placeholder: "Ingresa el valor Un T.P",
+  },
+  {
+    id: 21,
+    type: "number",
+    label: "Valor total Un T.E.C",
+    placeholder: "Ingresa el valor total Un T.E.C",
+  },
+  {
+    id: 22,
+    type: "number",
+    label: "Valor total Un T.P",
+    placeholder: "Ingresa el valor total Un T.P",
+  },
+];
+
+export const FifthCells = [
+  {
+    id: 23,
+    type: "text",
+    label: "Descripción",
+    placeholder: "Ingresa la descripción",
+  },
+  {
+    id: 24,
+    type: "number",
+    label: "Valor ",
+    placeholder: "Ingresa el valor",
+  },
+  {
+    id: 25,
+    type: "number",
+    label: "Cantidad",
+    placeholder: "Ingresa la cantidad",
+  },
+  {
+    id: 26,
+    type: "number",
+    label: "Total",
+    placeholder: "Ingresa el total",
+  },
+];
+
+export const SixthCells = [
+  {
+    id: 27,
+    type: "text",
+    label: "Total costos",
+    placeholder: "Ingresa el total de los costos",
+  },
+  {
+    id: 28,
+    type: "number",
+    label: "Administración",
+    placeholder: "Ingresa el valor de administración",
+  },
+  {
+    id: 29,
+    type: "number",
+    label: "Utilidad bruta estimada",
+    placeholder: "Ingresa la U.B.E",
+  },
+  {
+    id: 30,
+    type: "number",
+    label: "Total a cobrar sin IVA",
+    placeholder: "Ingresa el total a cobrar sin IVA",
+  },
+  {
+    id: 31,
+    type: "number",
+    label: "Total con IVA",
+    placeholder: "Ingresa el total con IVA",
+  },
+];
