@@ -64,7 +64,6 @@ function EnviarFacturas() {
   const [valuesInputs, setValuesInputs] = useState<TableInput[]>([]);
   const [initialFormState, setInitialFormState] =
     useState<Record<string, any>>();
-  const [newValuesInputs, setNewValuesInputs] = useState<{}>({});
   const [codeSelectedValue, setCodeSelectValue] = useState<any>(new Set([]));
 
   function changeInputsTable(e: React.ChangeEvent<HTMLInputElement>) {
@@ -89,9 +88,17 @@ function EnviarFacturas() {
     // }
   }
 
+  function changeSelectCode(e) {
+    console.log(e.target.value);
+  }
+
   useEffect(() => {
     console.log(initialFormState);
   }, [initialFormState]);
+
+  useEffect(() => {
+    console.log(codeSelectedValue);
+  }, [codeSelectedValue]);
 
   return (
     // <div
@@ -226,18 +233,23 @@ function EnviarFacturas() {
           <div className="flex-1">
             <div className="w-full flex justify-center">
               <Select
-                label="Cliente"
-                placeholder="Selecciona un cliente"
+                label="Código"
+                placeholder="Ingresa el códig"
                 className="w-full lg:w-auto"
+                onChange={changeInputsTable}
               >
-                <SelectItem key="2" value="2">
-                  Hola
+                <SelectItem key="this" value="2" name="s">
+                  Cliente 1
+                </SelectItem>
+                <SelectItem key="3" value="3" name="sa">
+                  Cliente 2
                 </SelectItem>
               </Select>
             </div>
           </div>
           <Textarea
             label="Descripción"
+            name="descipcioncliente"
             placeholder="Ingresa una descripción"
             className="flex-1 h-14 w-"
             onChange={(e) => changeInputsTable(e)}
@@ -275,18 +287,35 @@ function EnviarFacturas() {
             </TableHeader>
             <TableBody emptyContent={"No hay datos"} items={d}>
               <TableRow>
-                {FirtsCells?.map((item) => (
-                  <TableCell key={`${item.id}-${item.label}`}>
-                    <Input
-                      type={item.type}
-                      name={item.name}
-                      label={item.label}
-                      placeholder={item.placeholder}
-                      className="w-full"
-                      onChange={(e) => changeInputsTable(e)}
-                    />
-                  </TableCell>
-                ))}
+                {FirtsCells?.map((item) =>
+                  item.name === "codigo" ? (
+                    <TableCell>
+                      <Select
+                        label="Cliente"
+                        placeholder="Selecciona un cliente"
+                        className="w-full lg:w-auto"
+                      >
+                        <SelectItem key="2" value="2">
+                          Cliente 1
+                        </SelectItem>
+                        <SelectItem key="3" value="3">
+                          Cliente 2
+                        </SelectItem>
+                      </Select>
+                    </TableCell>
+                  ) : (
+                    <TableCell key={`${item.id}-${item.label}`}>
+                      <Input
+                        type={item.type}
+                        name={item.name}
+                        label={item.label}
+                        placeholder={item.placeholder}
+                        className="w-full"
+                        onChange={(e) => changeInputsTable(e)}
+                      />
+                    </TableCell>
+                  )
+                )}
               </TableRow>
             </TableBody>
           </Table>
