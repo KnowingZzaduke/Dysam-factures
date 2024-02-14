@@ -33,8 +33,9 @@ import {
   ModalFooter,
   Input,
 } from "@nextui-org/react";
-
+import { TableInput } from "../../data/inputs";
 import functions from "../../data/request";
+
 function EnviarFacturas() {
   const { reloadData } = useContext(DataContext);
   const [formFile, setFormFile] = useState<TypeFormFile>({
@@ -60,91 +61,37 @@ function EnviarFacturas() {
     const end = start + rowsPerPage;
     return p.slice(start, end);
   }, [page, p]);
-  const [valuesInputs, setValuesInputs] = useState<Map<string, string>>(
-    new Map()
-  );
+  const [valuesInputs, setValuesInputs] = useState<TableInput[]>([]);
+  const [initialFormState, setInitialFormState] =
+    useState<Record<string, any>>();
+  const [newValuesInputs, setNewValuesInputs] = useState<{}>({});
   const [codeSelectedValue, setCodeSelectValue] = useState<any>(new Set([]));
 
-  function handleInputChange(e: React.ChangeEvent<HTMLInputElement>) {
-    const { name, value, files } = e.target;
-    if (name === "files") {
-      const newFiles: File | null = files ? files[0] : null;
-      const newFilesNoSpace: File | null = newFiles
-        ? new File([newFiles], newFiles.name.replace(/\s+/g, ""))
-        : null;
-      setFormFile({
-        ...formFile,
-        files: {
-          ...formFile.files,
-          name: newFilesNoSpace,
-        },
-      });
-    } else {
-      setFormFile({ ...formFile, [name]: value });
-    }
-  }
-
-  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
-    e.preventDefault();
-    setMessageErrorFile(false);
-    const fileparams: TypeLoadFile = {
-      file: formFile,
-      comment: textareaValue,
-    };
-    try {
-      const response = await functions.makereport(fileparams);
-      if (response) {
-        setData(response);
-      }
-    } catch (error) {
-      console.log(error);
-    }
-  }
-
-  useEffect(() => {
-    if (data?.data.salida === "exito") {
-      setFileSuccess(true);
-      setTimeout(() => {
-        setFileSuccess(false);
-        setFormFile({ ...formFile, date: "", files: { name: null } });
-        setTextareaValue("");
-      }, 2000);
-    } else if (data?.data.salida === "error") {
-      setFileSuccess(false);
-      setMessageErrorFile(true);
-      setTimeout(() => {
-        setMessageErrorFile(false);
-      }, 2000);
-    } else if (data === undefined) {
-      setFillInputs(true);
-      setTimeout(() => {
-        setFillInputs(false);
-      }, 3000);
-    } else {
-      setSelectOtherFile(true);
-      setTimeout(() => {
-        setSelectOtherFile(false);
-      }, 3000);
-    }
-  }, [data]);
-
-  function changeInputsTable(
-    e: React.ChangeEvent<HTMLInputElement>,
-    inputIdentifier: string
-  ) {
+  function changeInputsTable(e: React.ChangeEvent<HTMLInputElement>) {
     const value = e.target.value;
-    if (value !== undefined) {
-      setValuesInputs((prevValues: Map<string, string>) => {
-        const newValues = new Map(prevValues);
-        newValues.set(inputIdentifier, value);
-        return newValues;
-      });
-    }
+    const name = e.target.name;
+    //[name] acá se está usando para indicar que tome el valor de name como tal, se conoce como indexación
+    setInitialFormState((prevInitial) => ({ ...prevInitial, [name]: value }));
+    // const existingInput = valuesInputs.find(
+    //   (item) => item.key === inputIdentifier
+    // );
+    // if (existingInput) {
+    //   setValuesInputs((prevValues) =>
+    //     prevValues.map((item) =>
+    //       item.key === inputIdentifier ? { ...item, value } : item
+    //     )
+    //   );
+    // } else {
+    //   setValuesInputs((prevValues) => [
+    //     ...prevValues,
+    //     { key: inputIdentifier, value },
+    //   ]);
+    // }
   }
 
   useEffect(() => {
-    console.log(Array(valuesInputs));
-  }, [valuesInputs])
+    console.log(initialFormState);
+  }, [initialFormState]);
 
   return (
     // <div
@@ -269,10 +216,11 @@ function EnviarFacturas() {
             <Input
               type={item.type}
               label={item.label}
+              name={item.name}
               placeholder={item.placeholder}
               className="flex-1"
-              key={item.id}
-              onChange={(e) => changeInputsTable(e, item.label)}
+              onChange={(e) => changeInputsTable(e)}
+              key={`${item.id}-${item.label}`}
             />
           ))}
           <div className="flex-1">
@@ -292,6 +240,7 @@ function EnviarFacturas() {
             label="Descripción"
             placeholder="Ingresa una descripción"
             className="flex-1 h-14 w-"
+            onChange={(e) => changeInputsTable(e)}
           />
         </div>
         {/* Primera tabla */}
@@ -326,18 +275,18 @@ function EnviarFacturas() {
             </TableHeader>
             <TableBody emptyContent={"No hay datos"} items={d}>
               <TableRow>
-                {FirtsCells &&
-                  FirtsCells.map((item) => (
-                    <TableCell key={item.id}>
-                      <Input
-                        type={item.type}
-                        label={item.label}
-                        placeholder={item.placeholder}
-                        className="w-full"
-                        onChange={(e) => changeInputsTable(e, item.label)}
-                      />
-                    </TableCell>
-                  ))}
+                {FirtsCells?.map((item) => (
+                  <TableCell key={`${item.id}-${item.label}`}>
+                    <Input
+                      type={item.type}
+                      name={item.name}
+                      label={item.label}
+                      placeholder={item.placeholder}
+                      className="w-full"
+                      onChange={(e) => changeInputsTable(e)}
+                    />
+                  </TableCell>
+                ))}
               </TableRow>
             </TableBody>
           </Table>
@@ -371,9 +320,10 @@ function EnviarFacturas() {
                       <Input
                         type={item.type}
                         label={item.label}
+                        name={item.name}
                         placeholder={item.placeholder}
                         className="w-full"
-                        onChange={(e) => changeInputsTable(e, item.label)}
+                        onChange={(e) => changeInputsTable(e)}
                       />
                     </TableCell>
                   ))}
@@ -402,13 +352,14 @@ function EnviarFacturas() {
               <TableRow key="1">
                 {ThirdCells &&
                   ThirdCells.map((item) => (
-                    <TableCell>
+                    <TableCell key={`${item.id}-${item.label}`}>
                       <Input
                         type={item.type}
                         label={item.label}
+                        name={item.name}
                         placeholder={item.placeholder}
                         className="w-full"
-                        onChange={(e) => changeInputsTable(e, item.label)}
+                        onChange={(e) => changeInputsTable(e)}
                       />
                     </TableCell>
                   ))}
@@ -452,9 +403,10 @@ function EnviarFacturas() {
                       <Input
                         type={item.type}
                         label={item.label}
+                        name={item.name}
                         placeholder={item.placeholder}
                         className="w-full"
-                        onChange={(e) => changeInputsTable(e, item.label)}
+                        onChange={(e) => changeInputsTable(e)}
                       />
                     </TableCell>
                   ))}
@@ -487,9 +439,10 @@ function EnviarFacturas() {
                       <Input
                         type={item.type}
                         label={item.label}
+                        name={item.name}
                         placeholder={item.placeholder}
                         className="w-full"
-                        onChange={(e) => changeInputsTable(e, item.label)}
+                        onChange={(e) => changeInputsTable(e)}
                       />
                     </TableCell>
                   ))}
@@ -502,7 +455,7 @@ function EnviarFacturas() {
               label="Otros gastos"
               placeholder="Ingresa otros gastos"
               className="w-full"
-              onChange={(e) => changeInputsTable(e, "Otros gastos")}
+              onChange={(e) => changeInputsTable(e)}
             />
           </div>
         </div>
@@ -544,9 +497,10 @@ function EnviarFacturas() {
                       <Input
                         type={item.type}
                         label={item.label}
+                        name={item.name}
                         placeholder={item.placeholder}
                         className="w-full"
-                        onChange={(e) => changeInputsTable(e, item.label)}
+                        onChange={(e) => changeInputsTable(e)}
                       />
                     </TableCell>
                   ))}
