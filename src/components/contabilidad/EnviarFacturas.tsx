@@ -64,157 +64,41 @@ function EnviarFacturas() {
   const [valuesInputs, setValuesInputs] = useState<TableInput[]>([]);
   const [initialFormState, setInitialFormState] =
     useState<Record<string, any>>();
-  const [codeSelectedValue, setCodeSelectValue] = useState<any>(new Set([]));
 
-  function changeInputsTable(e: React.ChangeEvent<HTMLInputElement>) {
+  function changeInputsTable(
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+  ) {
     const value = e.target.value;
     const name = e.target.name;
     //[name] acá se está usando para indicar que tome el valor de name como tal, se conoce como indexación
-    setInitialFormState((prevInitial) => ({ ...prevInitial, [name]: value }));
-    // const existingInput = valuesInputs.find(
-    //   (item) => item.key === inputIdentifier
-    // );
-    // if (existingInput) {
-    //   setValuesInputs((prevValues) =>
-    //     prevValues.map((item) =>
-    //       item.key === inputIdentifier ? { ...item, value } : item
-    //     )
-    //   );
-    // } else {
-    //   setValuesInputs((prevValues) => [
-    //     ...prevValues,
-    //     { key: inputIdentifier, value },
-    //   ]);
-    // }
+    //Recomendable crear un estado inicial para los formularios
+    setInitialFormState((prevInitial) => ({
+      ...prevInitial,
+      [name]: value,
+    }));
   }
-
-  function changeSelectCode(e) {
-    console.log(e.target.value);
-  }
-
   useEffect(() => {
     console.log(initialFormState);
+    for (const clave in initialFormState) {
+      switch (clave) {
+        case "valor":
+          const valorTotal =
+            parseFloat(initialFormState?.cantidad) *
+            parseFloat(initialFormState?.valorunitario);
+          break;
+        case "totaltiempohoras":
+          const totaltiempohoras =
+            parseFloat(initialFormState?.basicoahora) *
+            parseFloat(initialFormState?.horest);
+          console.log(totaltiempohoras);
+          break;
+        default:
+          break;
+      }
+    }
   }, [initialFormState]);
 
-  useEffect(() => {
-    console.log(codeSelectedValue);
-  }, [codeSelectedValue]);
-
   return (
-    // <div
-    //   className="d-flex align-items-center justify-content-center my-5 bg-info.bg-gradient"
-    //   style={{ minHeight: "100vh" }}
-    // >
-    //   {/* <form
-    //     className="was-validated border border-dark p-5 rounded bg-light"
-    //     onSubmit={handleSubmit}
-    //     encType="multipart/form-data"
-    //   >
-    //     <h1>Enviar facturas</h1>
-    //     <div className="my-4">
-    //       <label htmlFor="username" className="form-label">
-    //         Nombre de usuario
-    //       </label>
-    //       <input
-    //         type="text"
-    //         id="username"
-    //         className="form-control"
-    //         value={reloadData?.user}
-    //         disabled
-    //         onChange={handleInputChange}
-    //       />
-    //     </div>
-    //     <div className="mb-4">
-    //       <label htmlFor="dateInput">Fecha</label>
-    //       <input
-    //         type="date"
-    //         className="form-control"
-    //         id="dateInput"
-    //         name="date"
-    //         required
-    //         value={formFile.date}
-    //         onChange={handleInputChange}
-    //       />
-    //     </div>
-    //     <div className="mb-4">
-    //       <label htmlFor="factures">Archivo</label>
-    //       <input
-    //         name="files"
-    //         id="factures"
-    //         type="file"
-    //         className="form-control"
-    //         aria-label="file example"
-    //         required
-    //         onChange={handleInputChange}
-    //       />
-    //       <div className="invalid-feedback">
-    //         Por favor selecciona un archivo válido
-    //       </div>
-    //     </div>
-    //     <div className="form-floating my-3">
-    //       <textarea
-    //         className="form-control"
-    //         placeholder="Leave a comment here"
-    //         id="floatingTextarea"
-    //         name="comment"
-    //         required
-    //         value={textareaValue}
-    //         onChange={(e) => setTextareaValue(e.target.value)}
-    //       ></textarea>
-    //       <label htmlFor="floatingTextarea">Comentarios</label>
-    //     </div>
-
-    //     <div className="mb-3">
-    //       <button className="btn btn-primary" type="submit">
-    //         Enviar factura
-    //       </button>
-    //     </div>
-    //     {fileSuccess === true ? (
-    //       <div
-    //         className="alert alert-success d-flex align-items-center gap-2 my-3"
-    //         role="alert"
-    //       >
-    //         <div className="text-center">Archivo enviado correctamente</div>
-    //       </div>
-    //     ) : (
-    //       <></>
-    //     )}
-    //     {messageErrorFile === true ? (
-    //       <div
-    //         className="alert alert-danger d-flex align-items-center gap-2 my-3"
-    //         role="alert"
-    //       >
-    //         <FaTriangleExclamation />
-    //         <div className="text-center">Hubo un error al subir el archivo</div>
-    //       </div>
-    //     ) : (
-    //       <></>
-    //     )}
-    //     {selectOtherFile === true ? (
-    //       <div
-    //         className="alert alert-danger d-flex align-items-center gap-2 my-3"
-    //         role="alert"
-    //       >
-    //         <FaTriangleExclamation />
-    //         <div className="text-center">Por favor selecciona otro archivo</div>
-    //       </div>
-    //     ) : (
-    //       <></>
-    //     )}
-    //     {fillInputs === true ? (
-    //       <div
-    //         className="alert alert-danger d-flex align-items-center gap-2 my-3"
-    //         role="alert"
-    //       >
-    //         <FaTriangleExclamation />
-    //         <div className="text-center">Por favor llena los campos :)</div>
-    //       </div>
-    //     ) : (
-    //       <></>
-    //     )}
-    //   </form> */}
-
-    // </div>
     <div>
       <h1 className="text-center py-4">COTIZACIÓN SERVICIOS DYSAM SAS</h1>
       <form className="px-4 flex flex-col gap-4">
@@ -234,14 +118,14 @@ function EnviarFacturas() {
             <div className="w-full flex justify-center">
               <Select
                 label="Código"
-                placeholder="Ingresa el códig"
+                placeholder="Ingresa el código"
                 className="w-full lg:w-auto"
                 onChange={changeInputsTable}
               >
-                <SelectItem key="this" value="2" name="s">
+                <SelectItem key="this" value="2">
                   Cliente 1
                 </SelectItem>
-                <SelectItem key="3" value="3" name="sa">
+                <SelectItem key="3" value="3">
                   Cliente 2
                 </SelectItem>
               </Select>
