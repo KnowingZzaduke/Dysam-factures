@@ -61,9 +61,9 @@ function EnviarFacturas() {
     const end = start + rowsPerPage;
     return p.slice(start, end);
   }, [page, p]);
-  const [valuesInputs, setValuesInputs] = useState<TableInput[]>([]);
   const [initialFormState, setInitialFormState] =
     useState<Record<string, any>>();
+  const [updateFields, setUpdateFields] = useState<Record<string, any>>();
 
   function changeInputsTable(
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
@@ -78,25 +78,61 @@ function EnviarFacturas() {
     }));
   }
   useEffect(() => {
-    console.log(initialFormState);
     for (const clave in initialFormState) {
-      switch (clave) {
-        case "valor":
-          const valorTotal =
-            parseFloat(initialFormState?.cantidad) *
-            parseFloat(initialFormState?.valorunitario);
-          break;
-        case "totaltiempohoras":
-          const totaltiempohoras =
-            parseFloat(initialFormState?.basicoahora) *
-            parseFloat(initialFormState?.horest);
-          console.log(totaltiempohoras);
-          break;
-        default:
-          break;
+      //Primero guarda el valor
+      const valorInitial = initialFormState[clave];
+      //Verifica si es un string vacío, si es así, asigna el valor 0, de lo contrario, deja el valor que tenga
+      const valorAsigned = valorInitial === "" ? 0 : valorInitial;
+      //Asigna el valor obtenido
+      if (initialFormState.hasOwnProperty(clave)) {
+        switch (clave) {
+          case "valorunitario":
+            const valorTotal =
+              parseFloat(initialFormState?.cantidad) *
+              parseFloat(initialFormState?.valorunitario);
+            if (!isNaN(valorTotal)) {
+              setUpdateFields((prevUpdate) => ({
+                ...prevUpdate,
+                valortotal: valorTotal.toFixed(),
+              }));
+            }
+            break;
+          case "basicoahora":
+            const totalTiempoHoras =
+              parseFloat(initialFormState?.basicoahora) *
+              parseFloat(initialFormState?.horest);
+            const vrDia = parseFloat(initialFormState?.basicoahora) * 10;
+
+            if (!isNaN(totalTiempoHoras) && !isNaN(vrDia)) {
+              setUpdateFields((prevUpdate) => ({
+                ...prevUpdate,
+                totaltiempohoras: totalTiempoHoras.toFixed(),
+                vrdia: vrDia.toFixed(),
+              }));
+            }
+            break;
+
+          case "totaltiempohoras":
+            const totaltiempohoras =
+              parseFloat(initialFormState?.basicoahora) *
+              parseFloat(initialFormState?.horest);
+            if (!isNaN(totaltiempohoras)) {
+              setUpdateFields((prevUpdate) => ({
+                ...prevUpdate,
+                totaltiempohoras: totaltiempohoras.toFixed(),
+              }));
+            }
+            break;
+          default:
+            break;
+        }
       }
     }
   }, [initialFormState]);
+
+  useEffect(() => {
+    console.log(updateFields);
+  }, [updateFields]);
 
   return (
     <div>
@@ -192,6 +228,17 @@ function EnviarFacturas() {
                       <Input
                         type={item.type}
                         name={item.name}
+                        value={
+                          item.name === "codigo"
+                            ? initialFormState?.codigo
+                            : item.name === "cantidad"
+                            ? initialFormState?.cantidad
+                            : item.name === "valorunitario"
+                            ? initialFormState?.valorunitario
+                            : item.name === "valor"
+                            ? updateFields?.valortotal
+                            : initialFormState?.[item.name]
+                        }
                         label={item.label}
                         placeholder={item.placeholder}
                         className="w-full"
@@ -224,6 +271,9 @@ function EnviarFacturas() {
               <TableColumn key="vrDia">VR DÍA</TableColumn>
               <TableColumn key="diasEstimados">DÍAS ESTIMADOS</TableColumn>
               <TableColumn key="totalDias">TOTAL DÍAS</TableColumn>
+              <TableColumn key="manoObraDirecta">
+                MANO DE OBRA DIRECTA
+              </TableColumn>
             </TableHeader>
             <TableBody emptyContent={"No hay datos"} items={d}>
               <TableRow key="1">
@@ -234,6 +284,23 @@ function EnviarFacturas() {
                         type={item.type}
                         label={item.label}
                         name={item.name}
+                        value={
+                          item.name === "basicoahora"
+                            ? initialFormState?.basicoahora
+                            : item.name === "horest"
+                            ? initialFormState?.horest
+                            : item.name === "totaltiempohoras"
+                            ? updateFields?.totaltiempohoras
+                            : item.name === "vrdia"
+                            ? updateFields?.vrdia
+                            : item.name === "diasestimados"
+                            ? initialFormState?.diasestimados
+                            : item.name === "totaldias"
+                            ? updateFields?.totaldias
+                            : item.name === "manoobradirecta"
+                            ? updateFields?.manoobradirecta
+                            : initialFormState?.[item.name]
+                        }
                         placeholder={item.placeholder}
                         className="w-full"
                         onChange={(e) => changeInputsTable(e)}

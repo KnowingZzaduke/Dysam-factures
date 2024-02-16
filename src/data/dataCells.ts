@@ -96,6 +96,13 @@ export const SecondCells = [
     label: "Total días",
     placeholder: "Ingresa el total de días",
   },
+  {
+    id: 116,
+    type: "number",
+    name: "manoobradirecta",
+    label: "Mano obra directa",
+    placeholder: "Ingresa la mano de obra directa",
+  },
 ];
 
 export const ThirdCells = [
