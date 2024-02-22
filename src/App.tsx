@@ -80,7 +80,6 @@ function App() {
         console.log(data);
         if (data?.data.level === 1) {
           navigate("/facturacion/bienvenida");
-          console.log("Hola")
         } else if (data?.data.level === 2) {
           navigate("/contabilidad/bienvenida");
         }

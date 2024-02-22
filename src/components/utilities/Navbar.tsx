@@ -56,12 +56,18 @@ function Navegacion() {
   }
 
   useEffect(() => {
-    if (location.pathname === "/facturacion/facturas" || location.pathname === "/contabilidad/enviar-facturas") {
+    if (
+      location.pathname === "/facturacion/facturas" ||
+      location.pathname === "/contabilidad/enviar-facturas"
+    ) {
       setLinkFacture(true);
     } else {
       setLinkFacture(false);
     }
-    if (location.pathname === "/facturacion/filtrar-facturas" || location.pathname === "/contabilidad/corregir-facturas") {
+    if (
+      location.pathname === "/facturacion/filtrar-facturas" ||
+      location.pathname === "/contabilidad/corregir-facturas"
+    ) {
       setLinkFilterFacture(true);
     } else {
       setLinkFilterFacture(false);
@@ -103,10 +109,9 @@ function Navegacion() {
       <NavbarContent>
         <NavbarMenuToggle
           aria-label={isMenuOpen ? "Close menu" : "Open menu"}
-          className="sm:hidden"
         />
         <NavbarBrand>
-          <p className="font-bold text-inherit">MENÚ</p>
+          <p className="font-bold text-inherit">Menú</p>
         </NavbarBrand>
       </NavbarContent>
 
@@ -114,7 +119,6 @@ function Navegacion() {
         <NavbarItem>
           <Button
             color="primary"
-            href="#"
             variant="flat"
             onClick={() => closedSession()}
           >
@@ -142,6 +146,3 @@ function Navegacion() {
 }
 
 export default Navegacion;
-
-
-

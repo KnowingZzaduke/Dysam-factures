@@ -63,71 +63,114 @@ function EnviarFacturas() {
   }, [page, p]);
   const [initialFormState, setInitialFormState] =
     useState<Record<string, any>>();
-  const [updateFields, setUpdateFields] = useState<Record<string, any>>();
+  const [updateFields, setUpdateFields] =
+    useState<Record<string, string | number>>();
 
   function changeInputsTable(
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
   ) {
     const value = e.target.value;
     const name = e.target.name;
-    //[name] acá se está usando para indicar que tome el valor de name como tal, se conoce como indexación
     //Recomendable crear un estado inicial para los formularios
+    //[name] acá se está usando para indicar que tome el valor de name como tal, se conoce como indexación
     setInitialFormState((prevInitial) => ({
       ...prevInitial,
-      [name]: value,
+      [name]: e.type === "number" ? parseFloat(value) || 0 : value,
     }));
   }
   useEffect(() => {
-    for (const clave in initialFormState) {
-      //Primero guarda el valor
-      const valorInitial = initialFormState[clave];
-      //Verifica si es un string vacío, si es así, asigna el valor 0, de lo contrario, deja el valor que tenga
-      const valorAsigned = valorInitial === "" ? 0 : valorInitial;
-      //Asigna el valor obtenido
-      if (initialFormState.hasOwnProperty(clave)) {
-        switch (clave) {
-          case "valorunitario":
-            const valorTotal =
-              parseFloat(initialFormState?.cantidad) *
-              parseFloat(initialFormState?.valorunitario);
-            if (!isNaN(valorTotal)) {
-              setUpdateFields((prevUpdate) => ({
-                ...prevUpdate,
-                valortotal: valorTotal.toFixed(),
-              }));
-            }
-            break;
-          case "basicoahora":
-            const totalTiempoHoras =
-              parseFloat(initialFormState?.basicoahora) *
-              parseFloat(initialFormState?.horest);
-            const vrDia = parseFloat(initialFormState?.basicoahora) * 10;
+    console.log(initialFormState);
+    //Primera fila
+    const cantidad = parseFloat(initialFormState?.cantidad) || 0;
+    const valorunitario = parseFloat(initialFormState?.valorunitario) || 0;
+    const valorTotal = cantidad * valorunitario;
 
-            if (!isNaN(totalTiempoHoras) && !isNaN(vrDia)) {
-              setUpdateFields((prevUpdate) => ({
-                ...prevUpdate,
-                totaltiempohoras: totalTiempoHoras.toFixed(),
-                vrdia: vrDia.toFixed(),
-              }));
-            }
-            break;
+    //Segunda fila
+    const basicoahora = parseFloat(initialFormState?.basicoahora) || 0;
+    const horest = parseFloat(initialFormState?.horest) || 0;
 
-          case "totaltiempohoras":
-            const totaltiempohoras =
-              parseFloat(initialFormState?.basicoahora) *
-              parseFloat(initialFormState?.horest);
-            if (!isNaN(totaltiempohoras)) {
-              setUpdateFields((prevUpdate) => ({
-                ...prevUpdate,
-                totaltiempohoras: totaltiempohoras.toFixed(),
-              }));
-            }
-            break;
-          default:
-            break;
-        }
-      }
-    }
+    //Tercera fila
+    const valorHa = parseFloat(initialFormState?.valorha || 0);
+    const numeroHoras = parseFloat(initialFormState?.numerohoras || 0);
+    const transportes = parseFloat(initialFormState?.transportes || 0);
+
+    //Cuarta fila
+    const transporteEquiposContratdos = parseInt(
+      initialFormState?.transporteequiposcontratados || 0
+    );
+    const transportePropio = parseInt(initialFormState?.transportepropio || 0);
+    const precioUnTec = parseInt(initialFormState?.preciountec || 0);
+    const precioUnTp = parseInt(initialFormState?.preciountp || 0);
+    const valorUnTec = parseInt(initialFormState?.valoruntec || 0);
+    const valorUnTp = parseInt(initialFormState?.valoruntp || 0);
+
+    //Quinta fila
+    const valorFc = parseInt(initialFormState?.valorfc || 0);
+    const cantidadFc = parseInt(initialFormState?.cantidadfc || 0);
+
+    //Sexta fila
+    const porcentajeUbe = parseInt(
+      initialFormState?.porcentajeutilidadbrutaestimada || "50%"
+    );
+
+    //Operaciones segunda fila
+    const totalTiempoHoras = basicoahora * horest;
+    const vrDia = basicoahora * 10;
+    const totalDias = totalTiempoHoras;
+    const manoObraDirecta = totalDias;
+
+    //Operaciones tercera fila
+    const valorPagarHa = valorHa * numeroHoras + transportes;
+
+    //Operaciones cuarta fila
+    const valorTotalUnTec = precioUnTec * valorUnTec;
+    const valorTotalUnTp = precioUnTp * valorUnTp;
+    const valorTotalUn = valorTotalUnTec * valorTotalUnTp;
+
+    //Operaciones quinta fila
+    const totalFc = valorFc * cantidadFc;
+    const totalOtrosGastosFc = totalFc;
+
+    //Operaciones sexta fila
+    const porcentajeDeUtilidadBrutaEstimada = 0.5;
+    const totalCostos =
+      totalOtrosGastosFc + valorTotalUn + valorPagarHa + valorTotal;
+    const administracion = totalCostos * 0.05;
+    const utilidadBrutaEstimada = administracion * 0.5;
+    const totalSinIVA = utilidadBrutaEstimada + administracion + totalCostos;
+    const totalConIVA = totalSinIVA * 0.19 + totalSinIVA;
+    setUpdateFields((prevUpdate) => ({
+      ...prevUpdate,
+      valortotal: !isNaN(valorTotal) ? valorTotal.toFixed() : "0",
+      porcentajeutilidadbrutaestimada: isNaN(porcentajeDeUtilidadBrutaEstimada)
+        ? porcentajeDeUtilidadBrutaEstimada
+        : "0.50",
+      totalcostos: !isNaN(totalCostos) ? totalCostos.toFixed() : "0",
+      administracion: !isNaN(administracion) ? administracion.toFixed() : "0",
+      utilidadbrutaestimada: !isNaN(utilidadBrutaEstimada)
+        ? utilidadBrutaEstimada.toFixed()
+        : "0",
+      totalcobrarsiniva: !isNaN(totalSinIVA) ? totalSinIVA.toFixed() : "0",
+      totalconiva: !isNaN(totalConIVA) ? totalConIVA.toFixed() : "0",
+      totaltiempohoras: !isNaN(totalTiempoHoras)
+        ? totalTiempoHoras.toFixed()
+        : "0",
+      vrdia: !isNaN(vrDia) ? vrDia.toFixed() : "0",
+      totaldias: !isNaN(totalDias) ? totalDias.toFixed() : "0",
+      manoobradirecta: !isNaN(manoObraDirecta)
+        ? manoObraDirecta.toFixed()
+        : "0",
+      valorpagar: !isNaN(valorPagarHa) ? valorPagarHa.toFixed() : "0",
+      valortotaluntec: !isNaN(valorTotalUnTec)
+        ? valorTotalUnTec.toFixed()
+        : "0",
+      valortotaluntp: !isNaN(valorTotalUnTp) ? valorTotalUnTp.toFixed() : "0",
+      valorfinalun: !isNaN(valorTotalUn) ? valorTotalUn.toFixed() : "0",
+      totalfc: !isNaN(totalFc) ? totalFc.toFixed() : "0",
+      totalotrosgastos: !isNaN(totalOtrosGastosFc)
+        ? totalOtrosGastosFc.toFixed()
+        : "0",
+    }));
   }, [initialFormState]);
 
   useEffect(() => {
@@ -135,16 +178,15 @@ function EnviarFacturas() {
   }, [updateFields]);
 
   return (
-    <div>
-      <h1 className="text-center py-4">COTIZACIÓN SERVICIOS DYSAM SAS</h1>
+    <div className="bg-teal-100 min-h-screen">
+      <h1 className="text-center pt-6 font-bold">COTIZACIÓN SERVICIOS DYSAM SAS</h1>
       <form className="px-4 flex flex-col gap-4">
-        <div className="border rounded-full px-4 flex flex-row justify-center items-center align-middle w-full gap-4 py-4 my-4">
+        <div className="border rounded-full bg-white px-4 flex flex-row justify-center items-center align-middle w-full gap-4 py-4 my-4">
           {HeaderCells?.map((item) => (
             <Input
               type={item.type}
-              label={item.label}
+              label={item.label === "Fecha" ? item.label = "" : item.label}
               name={item.name}
-              placeholder={item.placeholder}
               className="flex-1"
               onChange={(e) => changeInputsTable(e)}
               key={`${item.id}-${item.label}`}
@@ -155,7 +197,7 @@ function EnviarFacturas() {
               <Select
                 label="Código"
                 placeholder="Ingresa el código"
-                className="w-full lg:w-auto"
+                className="w-full"
                 onChange={changeInputsTable}
               >
                 <SelectItem key="this" value="2">
@@ -213,7 +255,7 @@ function EnviarFacturas() {
                       <Select
                         label="Cliente"
                         placeholder="Selecciona un cliente"
-                        className="w-full lg:w-auto"
+                        className="w-full"
                       >
                         <SelectItem key="2" value="2">
                           Cliente 1
@@ -240,8 +282,7 @@ function EnviarFacturas() {
                             : initialFormState?.[item.name]
                         }
                         label={item.label}
-                        placeholder={item.placeholder}
-                        className="w-full"
+                                  className="w-full"
                         onChange={(e) => changeInputsTable(e)}
                       />
                     </TableCell>
@@ -301,8 +342,7 @@ function EnviarFacturas() {
                             ? updateFields?.manoobradirecta
                             : initialFormState?.[item.name]
                         }
-                        placeholder={item.placeholder}
-                        className="w-full"
+                                  className="w-full"
                         onChange={(e) => changeInputsTable(e)}
                       />
                     </TableCell>
@@ -336,9 +376,21 @@ function EnviarFacturas() {
                       <Input
                         type={item.type}
                         label={item.label}
+                        value={
+                          item.name === "horaauxilio"
+                            ? initialFormState?.horaauxilio
+                            : item.name === "valora"
+                            ? initialFormState?.valora
+                            : item.name === "numerohoras"
+                            ? updateFields?.numerohoras
+                            : item.name === "transportes"
+                            ? updateFields?.transportes
+                            : item.name === "valorpagar"
+                            ? updateFields?.valorpagar
+                            : initialFormState?.[item.name]
+                        }
                         name={item.name}
-                        placeholder={item.placeholder}
-                        className="w-full"
+                                  className="w-full"
                         onChange={(e) => changeInputsTable(e)}
                       />
                     </TableCell>
@@ -374,6 +426,7 @@ function EnviarFacturas() {
                 VALOR TOTAL UN T.E.C
               </TableColumn>
               <TableColumn key="valorTotalTP">VALOR TOTAL UN T.P</TableColumn>
+              <TableColumn key="valorfinalUn">VALOR FINAL U.N</TableColumn>
             </TableHeader>
             <TableBody emptyContent={"No hay datos"} items={d}>
               <TableRow key="1">
@@ -383,9 +436,33 @@ function EnviarFacturas() {
                       <Input
                         type={item.type}
                         label={item.label}
+                        value={
+                          item.name === "transporteequiposcontratados"
+                            ? initialFormState?.transporteequiposcontratados
+                            : item.name === "transportepropio"
+                            ? initialFormState?.transportepropio
+                            : item.name === "untec"
+                            ? updateFields?.untec
+                            : item.name === "untp"
+                            ? updateFields?.untp
+                            : item.name === "preciountec"
+                            ? initialFormState?.preciountec
+                            : item.name === "preciountp"
+                            ? initialFormState?.preciountp
+                            : item.name === "valoruntec"
+                            ? initialFormState?.valoruntec
+                            : item.name === "valoruntp"
+                            ? initialFormState?.valoruntp
+                            : item.name === "valortotaluntec"
+                            ? updateFields?.valortotaluntec
+                            : item.name === "valortotaluntp"
+                            ? updateFields?.valortotaluntp
+                            : item.name === "valorfinalun"
+                            ? updateFields?.valorfinalun
+                            : initialFormState?.[item.name]
+                        }
                         name={item.name}
-                        placeholder={item.placeholder}
-                        className="w-full"
+                                  className="w-full"
                         onChange={(e) => changeInputsTable(e)}
                       />
                     </TableCell>
@@ -398,7 +475,7 @@ function EnviarFacturas() {
         {/* Quinta tabla */}
 
         <div className="">
-          <h2 className="text-center">IMPUESTOS Y OTROS GASTOS</h2>
+          <h2 className="text-center py-6 font-bold">IMPUESTOS Y OTROS GASTOS</h2>
           <Table
             aria-label="Example table with client side pagination"
             classNames={{
@@ -419,9 +496,19 @@ function EnviarFacturas() {
                       <Input
                         type={item.type}
                         label={item.label}
+                        value={
+                          item.name === "descripcionfc"
+                            ? initialFormState?.descripcionfc
+                            : item.name === "valorfc"
+                            ? initialFormState?.valorfc
+                            : item.name === "cantidadfc"
+                            ? updateFields?.cantidadfc
+                            : item.name === "totalfc"
+                            ? updateFields?.totalfc
+                            : initialFormState?.[item.name]
+                        }
                         name={item.name}
-                        placeholder={item.placeholder}
-                        className="w-full"
+                                  className="w-full"
                         onChange={(e) => changeInputsTable(e)}
                       />
                     </TableCell>
@@ -433,6 +520,8 @@ function EnviarFacturas() {
             <Input
               type="number"
               label="Otros gastos"
+              name="totalgastos"
+              value={updateFields?.totalotrosgastos}
               placeholder="Ingresa otros gastos"
               className="w-full"
               onChange={(e) => changeInputsTable(e)}
@@ -443,13 +532,15 @@ function EnviarFacturas() {
         {/* Sexta tabla */}
 
         <div className="">
-          <h2 className="text-center">VALORES FINALES</h2>
+          <h2 className="text-center pt-6 font-bold">VALORES FINALES</h2>
           <div className="py-4">
             <Input
               type="number"
               label="Porcentaje de utilidad bruta estimada"
+              name="parcentajeutilidadbrutaestimada"
+              value={updateFields?.porcentajeutilidadbrutaestimada}
               className="w-full"
-              defaultValue="50%"
+              onChange={(e) => changeInputsTable(e)}
             />
           </div>
           <Table
@@ -477,9 +568,21 @@ function EnviarFacturas() {
                       <Input
                         type={item.type}
                         label={item.label}
+                        value={
+                          item.name === "totalcostos"
+                            ? updateFields?.totalcostos
+                            : item.name === "administracion"
+                            ? updateFields?.administracion
+                            : item.name === "utilidadbrutaestimada"
+                            ? updateFields?.utilidadbrutaestimada
+                            : item.name === "totalcobrarsiniva"
+                            ? updateFields?.totalcobrarsiniva
+                            : item.name === "totalconiva"
+                            ? updateFields?.totalconiva
+                            : initialFormState?.[item.name]
+                        }
                         name={item.name}
-                        placeholder={item.placeholder}
-                        className="w-full"
+                                  className="w-full"
                         onChange={(e) => changeInputsTable(e)}
                       />
                     </TableCell>

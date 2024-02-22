@@ -214,6 +214,13 @@ export const FourthCells = [
     label: "Valor total Un T.P",
     placeholder: "Ingresa el valor total Un T.P",
   },
+  {
+    id: 222,
+    type: "number",
+    name: "valorfinalun",
+    label: "Valor final UN",
+    placeholder: "Ingresa el valor final U.N",
+  },
 ];
 
 export const FifthCells = [
