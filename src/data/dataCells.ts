@@ -1,3 +1,5 @@
+import { m } from "framer-motion";
+
 export const HeaderCells = [
   {
     id: 100,
@@ -291,3 +293,32 @@ export const SixthCells = [
     placeholder: "Ingresa el total con IVA",
   },
 ];
+
+export const infoSecondCells = {
+  detalleMod: [
+    {
+      id: "mod1",
+      name: "HORA TÉCNICO",
+    },
+    {
+      id: "mod2",
+      name: "REPARACION BOMBA",
+    },
+    {
+      id: "mod3",
+      name: "HORA TABLERO",
+    },
+    {
+      id: "mod4",
+      name: "HORA HED - 5:30 A 10 PM – SABADOS DIA",
+    },
+    {
+      id: "mod5",
+      name: "HORA HEN - 10:00 PM A 6:00 AM PM",
+    },
+    {
+      id: "mod6",
+      name: "HORA HEF - DOMINGOS Y FESTIVOS",
+    },
+  ],
+};

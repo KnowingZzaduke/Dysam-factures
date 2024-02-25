@@ -1,8 +1,7 @@
 import React, { useContext, useState, useEffect, useMemo } from "react";
 import { DataContext } from "../../context/DataContext";
 import { TypeFormFile } from "../../types/file";
-import { TypeLoadFile } from "../../types/loadfile";
-import { SigninResponse } from "../../types/login";
+import { cellSecondCells } from "../../data/numberCells";
 import {
   HeaderCells,
   FirtsCells,
@@ -23,35 +22,10 @@ import {
   TableRow,
   TableCell,
   Pagination,
-  getKeyValue,
-  useDisclosure,
-  Button,
-  Modal,
-  ModalContent,
-  ModalHeader,
-  ModalBody,
-  ModalFooter,
   Input,
 } from "@nextui-org/react";
-import { TableInput } from "../../data/inputs";
-import functions from "../../data/request";
 
 function EnviarFacturas() {
-  const { reloadData } = useContext(DataContext);
-  const [formFile, setFormFile] = useState<TypeFormFile>({
-    username: reloadData?.user,
-    date: "",
-    files: {
-      name: null,
-    },
-    statusfile: "Pendiente",
-  });
-  const [textareaValue, setTextareaValue] = useState("");
-  const [fileSuccess, setFileSuccess] = useState(false);
-  const [data, setData] = useState<SigninResponse | any>();
-  const [messageErrorFile, setMessageErrorFile] = useState(false);
-  const [selectOtherFile, setSelectOtherFile] = useState(false);
-  const [fillInputs, setFillInputs] = useState(false);
   const [p, setP] = useState([]);
   const [page, setPage] = useState(1);
   const rowsPerPage = 10;
@@ -67,10 +41,12 @@ function EnviarFacturas() {
     useState<Record<string, string | number>>();
 
   function changeInputsTable(
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
+    key: number
   ) {
     const value = e.target.value;
     const name = e.target.name;
+    console.log(key);
     //Recomendable crear un estado inicial para los formularios
     //[name] acá se está usando para indicar que tome el valor de name como tal, se conoce como indexación
     setInitialFormState((prevInitial) => ({
@@ -78,6 +54,7 @@ function EnviarFacturas() {
       [name]: e.type === "number" ? parseFloat(value) || 0 : value,
     }));
   }
+
   useEffect(() => {
     console.log(initialFormState);
     //Primera fila
@@ -139,6 +116,7 @@ function EnviarFacturas() {
     const utilidadBrutaEstimada = administracion * 0.5;
     const totalSinIVA = utilidadBrutaEstimada + administracion + totalCostos;
     const totalConIVA = totalSinIVA * 0.19 + totalSinIVA;
+
     setUpdateFields((prevUpdate) => ({
       ...prevUpdate,
       valortotal: !isNaN(valorTotal) ? valorTotal.toFixed() : "0",
@@ -171,6 +149,7 @@ function EnviarFacturas() {
         ? totalOtrosGastosFc.toFixed()
         : "0",
     }));
+    cellSecondCells.map((item) => console.log(item.key));
   }, [initialFormState]);
 
   useEffect(() => {
@@ -179,13 +158,15 @@ function EnviarFacturas() {
 
   return (
     <div className="bg-teal-100 min-h-screen">
-      <h1 className="text-center pt-6 font-bold">COTIZACIÓN SERVICIOS DYSAM SAS</h1>
+      <h1 className="text-center pt-6 font-bold">
+        COTIZACIÓN SERVICIOS DYSAM SAS
+      </h1>
       <form className="px-4 flex flex-col gap-4">
         <div className="border rounded-full bg-white px-4 flex flex-row justify-center items-center align-middle w-full gap-4 py-4 my-4">
           {HeaderCells?.map((item) => (
             <Input
               type={item.type}
-              label={item.label === "Fecha" ? item.label = "" : item.label}
+              label={item.label === "Fecha" ? (item.label = "") : item.label}
               name={item.name}
               className="flex-1"
               onChange={(e) => changeInputsTable(e)}
@@ -248,7 +229,7 @@ function EnviarFacturas() {
               <TableColumn key="valor">VALOR</TableColumn>
             </TableHeader>
             <TableBody emptyContent={"No hay datos"} items={d}>
-              <TableRow>
+              <TableRow key="1">
                 {FirtsCells?.map((item) =>
                   item.name === "codigo" ? (
                     <TableCell>
@@ -282,7 +263,7 @@ function EnviarFacturas() {
                             : initialFormState?.[item.name]
                         }
                         label={item.label}
-                                  className="w-full"
+                        className="w-full"
                         onChange={(e) => changeInputsTable(e)}
                       />
                     </TableCell>
@@ -317,37 +298,44 @@ function EnviarFacturas() {
               </TableColumn>
             </TableHeader>
             <TableBody emptyContent={"No hay datos"} items={d}>
-              <TableRow key="1">
-                {SecondCells &&
-                  SecondCells.map((item) => (
-                    <TableCell>
-                      <Input
-                        type={item.type}
-                        label={item.label}
-                        name={item.name}
-                        value={
-                          item.name === "basicoahora"
-                            ? initialFormState?.basicoahora
-                            : item.name === "horest"
-                            ? initialFormState?.horest
-                            : item.name === "totaltiempohoras"
-                            ? updateFields?.totaltiempohoras
-                            : item.name === "vrdia"
-                            ? updateFields?.vrdia
-                            : item.name === "diasestimados"
-                            ? initialFormState?.diasestimados
-                            : item.name === "totaldias"
-                            ? updateFields?.totaldias
-                            : item.name === "manoobradirecta"
-                            ? updateFields?.manoobradirecta
-                            : initialFormState?.[item.name]
-                        }
-                                  className="w-full"
-                        onChange={(e) => changeInputsTable(e)}
-                      />
-                    </TableCell>
-                  ))}
-              </TableRow>
+              {cellSecondCells?.map((itemCell) => (
+                <TableRow key={itemCell.key}>
+                  {SecondCells &&
+                    SecondCells?.map((item) => (
+                      <TableCell key={item.id}>
+                        <Input
+                          type={item.type}
+                          label={item.label}
+                          name={item.name}
+                          key={item.id}
+                          value={
+                            item.name === "basicoahora"
+                              ? initialFormState?.basicoahora
+                              : item.name === "horest"
+                              ? initialFormState?.horest
+                              : item.name === "totaltiempohoras"
+                              ? updateFields?.totaltiempohoras
+                              : item.name === "vrdia"
+                              ? updateFields?.vrdia
+                              : item.name === "diasestimados"
+                              ? initialFormState?.diasestimados
+                              : item.name === "totaldias"
+                              ? updateFields?.totaldias
+                              : item.name === "manoobradirecta"
+                              ? updateFields?.manoobradirecta
+                              : initialFormState?.[item.name]
+                          }
+                          className="w-full"
+                          onChange={(
+                            e: React.ChangeEvent<
+                              HTMLInputElement | HTMLSelectElement
+                            >
+                          ) => changeInputsTable(e, itemCell.key)}
+                        />
+                      </TableCell>
+                    ))}
+                </TableRow>
+              ))}
             </TableBody>
           </Table>
         </div>
@@ -390,7 +378,7 @@ function EnviarFacturas() {
                             : initialFormState?.[item.name]
                         }
                         name={item.name}
-                                  className="w-full"
+                        className="w-full"
                         onChange={(e) => changeInputsTable(e)}
                       />
                     </TableCell>
@@ -462,7 +450,7 @@ function EnviarFacturas() {
                             : initialFormState?.[item.name]
                         }
                         name={item.name}
-                                  className="w-full"
+                        className="w-full"
                         onChange={(e) => changeInputsTable(e)}
                       />
                     </TableCell>
@@ -475,7 +463,9 @@ function EnviarFacturas() {
         {/* Quinta tabla */}
 
         <div className="">
-          <h2 className="text-center py-6 font-bold">IMPUESTOS Y OTROS GASTOS</h2>
+          <h2 className="text-center py-6 font-bold">
+            IMPUESTOS Y OTROS GASTOS
+          </h2>
           <Table
             aria-label="Example table with client side pagination"
             classNames={{
@@ -508,7 +498,7 @@ function EnviarFacturas() {
                             : initialFormState?.[item.name]
                         }
                         name={item.name}
-                                  className="w-full"
+                        className="w-full"
                         onChange={(e) => changeInputsTable(e)}
                       />
                     </TableCell>
@@ -582,7 +572,7 @@ function EnviarFacturas() {
                             : initialFormState?.[item.name]
                         }
                         name={item.name}
-                                  className="w-full"
+                        className="w-full"
                         onChange={(e) => changeInputsTable(e)}
                       />
                     </TableCell>
