@@ -3,19 +3,24 @@ import { registerAllModules } from "handsontable/registry";
 import { registerLanguageDictionary, esMX } from "handsontable/i18n";
 import HyperFormula from "hyperformula";
 import "handsontable/dist/handsontable.full.css";
-import { SecondCells, infoSecondCells } from "../../data/dataCells";
+import { infoSecondCells } from "../../../data/dataCells";
+import { Button } from "@nextui-org/react";
 registerAllModules();
 registerLanguageDictionary(esMX);
 import { useEffect } from "react";
-function TablaEnviarFacturas() {
-
-  useEffect(() => {
+function SegundaTablaContabilidad() {
+  function handleSubmitParams() {
     console.log(infoSecondCells);
-    formulasPlugin.engine.changeNamedExpression('ADDITIONAL_COST', );
-  }, [infoSecondCells]);
+  }
+
+  const hyperformulaInstance = HyperFormula.buildEmpty({
+    // to use an external HyperFormula instance,
+    // initialize it with the `'internal-use-in-handsontable'` license key
+    licenseKey: "internal-use-in-handsontable",
+  });
 
   return (
-    <div className="h-screen flex justify-center">
+    <div className="flex justify-start w-full">
       <HotTable
         language={esMX.languageCode}
         licenseKey="non-commercial-and-evaluation"
@@ -28,30 +33,31 @@ function TablaEnviarFacturas() {
           "VR DIA ",
           "DIA ESTIMADOS",
           "TOTAL DIAS",
+          "MANO DE OBRA DIRECTA",
         ]}
         rowHeaders={true}
         columnSorting={true}
-        mergeCells={true}
         contextMenu={["row_above", "row_below"]}
-        readOnly={false}
         autoWrapCol={true}
         autoWrapRow={true}
-        manualRowMove={true}
         formulas={{
-          engine: HyperFormula,
+          engine: hyperformulaInstance,
+          sheetName: "Sheet1",
         }}
         className="-z-0"
       >
-        <HotColumn data={1} />
-        <HotColumn data={2} />
-        <HotColumn data={3} />
-        <HotColumn data={4} />
-        <HotColumn data={5} />
-        <HotColumn data={6} />
-        <HotColumn data={7} />
+        <HotColumn />
+        <HotColumn type="numeric" />
+        <HotColumn type="numeric" />
+        <HotColumn type="numeric" />
+        <HotColumn type="numeric" />
+        <HotColumn type="numeric" />
+        <HotColumn type="numeric" />
+        <HotColumn readOnly className="bg-gray-300" />
       </HotTable>
+      <Button onClick={handleSubmitParams}>Enviar</Button>
     </div>
   );
 }
 
-export default TablaEnviarFacturas;
+export default SegundaTablaContabilidad;

@@ -14,7 +14,7 @@ import "./index.css";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import { NextUIProvider } from "@nextui-org/react";
 import Autenticacion from "./components/validacion/HOC";
-import TablaEnviarFacturas from "./components/contabilidad/TablaEnviarFacturas";
+import TablasContabilidad from "./components/contabilidad/TablasContabilidad";
 const router = createBrowserRouter([
   {
     path: "/",
@@ -68,7 +68,7 @@ const router = createBrowserRouter([
       },
       {
         path: "/contabilidad/enviar-facturas",
-        element: <TablaEnviarFacturas />,
+        element: <TablasContabilidad />,
       },
       {
         path: "/contabilidad/corregir-facturas",
