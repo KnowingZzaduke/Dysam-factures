@@ -10,3 +10,15 @@ input[type="number"]::-webkit-outer-spin-button {
 input[type="number"] {
   -moz-appearance: textfield;
 }
+
+#root{
+  background-color: beige;
+}
+td.custom-cell {
+  color: #fff;
+  background-color: #37bc6c;
+}
+.custom-table thead th {
+  background-color: #000080;
+  color: white
+}

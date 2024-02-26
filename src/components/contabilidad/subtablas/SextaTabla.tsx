@@ -3,14 +3,14 @@ import { registerAllModules } from "handsontable/registry";
 import { registerLanguageDictionary, esMX } from "handsontable/i18n";
 import HyperFormula from "hyperformula";
 import "handsontable/dist/handsontable.full.css";
-import { infoSecondCells } from "../../../data/dataCells";
+import { infoSixthCells } from "../../../data/dataCells";
 import { Button } from "@nextui-org/react";
 registerAllModules();
 registerLanguageDictionary(esMX);
 import { useEffect } from "react";
-function SegundaTablaContabilidad() {
+function SextaTablaContabilidad() {
   function handleSubmitParams() {
-    console.log(infoSecondCells);
+    console.log(infoSixthCells);
   }
 
   const hyperformulaInstance = HyperFormula.buildEmpty({
@@ -24,40 +24,36 @@ function SegundaTablaContabilidad() {
       <HotTable
         language={esMX.languageCode}
         licenseKey="non-commercial-and-evaluation"
-        width="100%"
-        data={infoSecondCells}
+        data={infoSixthCells}
         colHeaders={[
-          "DETALLE DE M.O.D.",
-          "BASICO HORA",
-          "HOR-EST",
-          "TOTAL TIEMPO/ HORAS",
-          "VR DIA ",
-          "DIA ESTIMADOS",
-          "TOTAL DIAS",
-          "MANO DE OBRA DIRECTA",
+          "TOTAL COSTOS",
+          "ADMINISTACIÓN",
+          "UTILIDAD BRUTA ESTIMADA",
+          "TOTAL A COBRAR SIN IVA",
+          "TOTAL CON IVA",
         ]}
         rowHeaders={true}
         columnSorting={true}
         contextMenu={["row_above", "row_below"]}
         autoWrapCol={true}
         autoWrapRow={true}
+        mergeCells={false}
+        dragToScroll={true}
+        width="100%"
         formulas={{
           engine: hyperformulaInstance,
           sheetName: "Sheet1",
         }}
         className="-z-0 custom-table"
       >
-        <HotColumn />
         <HotColumn type="numeric" />
         <HotColumn type="numeric" />
         <HotColumn type="numeric" />
         <HotColumn type="numeric" />
-        <HotColumn type="numeric" />
-        <HotColumn type="numeric" />
-        <HotColumn readOnly className="bg-gray-300" />
+        <HotColumn readOnly className="bg-gray-300" type="numeric" />
       </HotTable>
     </div>
   );
 }
 
-export default SegundaTablaContabilidad;
+export default SextaTablaContabilidad;

@@ -37,11 +37,12 @@ function TerceraTablaContabilidad() {
         contextMenu={["row_above", "row_below"]}
         autoWrapCol={true}
         autoWrapRow={true}
+        width="100%"
         formulas={{
           engine: hyperformulaInstance,
           sheetName: "Sheet1",
         }}
-        className="-z-0"
+        className="-z-0 custom-table"
       >
         <HotColumn />
         <HotColumn type="numeric" />
@@ -49,7 +50,6 @@ function TerceraTablaContabilidad() {
         <HotColumn type="numeric" />
         <HotColumn readOnly className="bg-gray-300" type="numeric" />
       </HotTable>
-      <Button onClick={handleSubmitParams}>Enviar</Button>
     </div>
   );
 }

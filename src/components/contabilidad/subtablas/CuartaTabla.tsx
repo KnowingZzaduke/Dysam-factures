@@ -25,7 +25,7 @@ function CuartaTablaContabilidad() {
         language={esMX.languageCode}
         licenseKey="non-commercial-and-evaluation"
         data={infoFourthCells}
-        colHeaders={["I", "I", "I", "I", "I", "TOTAL TRANSPORTE"]}
+        colHeaders={["I", "I", "I", "I", "I", "I", "TOTAL TRANSPORTE"]}
         rowHeaders={true}
         columnSorting={true}
         contextMenu={["row_above", "row_below"]}
@@ -35,8 +35,11 @@ function CuartaTablaContabilidad() {
           engine: hyperformulaInstance,
           sheetName: "Sheet1",
         }}
-        className="-z-0"
+        colWidths={[300, 400, 50, 50, 50, 50, 200]}
+        width="100%"
+        className="-z-0 custom-table"
       >
+        <HotColumn />
         <HotColumn />
         <HotColumn />
         <HotColumn />
@@ -44,7 +47,6 @@ function CuartaTablaContabilidad() {
         <HotColumn />
         <HotColumn readOnly className="bg-gray-300" />
       </HotTable>
-      <Button onClick={handleSubmitParams}>Enviar</Button>
     </div>
   );
 }

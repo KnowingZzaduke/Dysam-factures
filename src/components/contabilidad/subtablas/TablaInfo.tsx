@@ -3,14 +3,14 @@ import { registerAllModules } from "handsontable/registry";
 import { registerLanguageDictionary, esMX } from "handsontable/i18n";
 import HyperFormula from "hyperformula";
 import "handsontable/dist/handsontable.full.css";
-import { infoSecondCells } from "../../../data/dataCells";
+import { infoCells } from "../../../data/dataCells";
 import { Button } from "@nextui-org/react";
 registerAllModules();
 registerLanguageDictionary(esMX);
 import { useEffect } from "react";
-function SegundaTablaContabilidad() {
+function InfoTablaContabilidad() {
   function handleSubmitParams() {
-    console.log(infoSecondCells);
+    console.log(infoCells);
   }
 
   const hyperformulaInstance = HyperFormula.buildEmpty({
@@ -20,44 +20,32 @@ function SegundaTablaContabilidad() {
   });
 
   return (
-    <div className="flex justify-start w-full">
+    <div className="flex justify-start w-full flex-col">
+      <h1 className="text-2xl text-center my-4  font-bold">COTIZACIÓN SERVICIOS DYSAM SAS</h1>
       <HotTable
         language={esMX.languageCode}
         licenseKey="non-commercial-and-evaluation"
-        width="100%"
-        data={infoSecondCells}
-        colHeaders={[
-          "DETALLE DE M.O.D.",
-          "BASICO HORA",
-          "HOR-EST",
-          "TOTAL TIEMPO/ HORAS",
-          "VR DIA ",
-          "DIA ESTIMADOS",
-          "TOTAL DIAS",
-          "MANO DE OBRA DIRECTA",
-        ]}
+        data={infoCells}
+        colHeaders={["FECHA", "CLIENTE Y NIT", "DESCRIPCIÓN"]}
         rowHeaders={true}
         columnSorting={true}
         contextMenu={["row_above", "row_below"]}
         autoWrapCol={true}
         autoWrapRow={true}
+        width="100%"
+        colWidths={[300, 300, 500]}
         formulas={{
           engine: hyperformulaInstance,
           sheetName: "Sheet1",
         }}
         className="-z-0 custom-table"
       >
-        <HotColumn />
+        <HotColumn type="date" />
+        <HotColumn type="select" selectOptions={{ cliente1: "Cliente 1" }} />
         <HotColumn type="numeric" />
-        <HotColumn type="numeric" />
-        <HotColumn type="numeric" />
-        <HotColumn type="numeric" />
-        <HotColumn type="numeric" />
-        <HotColumn type="numeric" />
-        <HotColumn readOnly className="bg-gray-300" />
       </HotTable>
     </div>
   );
 }
 
-export default SegundaTablaContabilidad;
+export default InfoTablaContabilidad;
