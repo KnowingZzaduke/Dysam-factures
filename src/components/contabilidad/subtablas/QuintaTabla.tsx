@@ -4,21 +4,21 @@ import { registerLanguageDictionary, esMX } from "handsontable/i18n";
 import HyperFormula from "hyperformula";
 import "handsontable/dist/handsontable.full.css";
 import { infoFifthCells } from "../../../data/dataCells";
-import { Button } from "@nextui-org/react";
+import { Button, Checkbox } from "@nextui-org/react";
 registerAllModules();
 registerLanguageDictionary(esMX);
-import { useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 type Props = {
   valores: Operaciones;
   actualizarValores: (nuevosValores: Operaciones) => void;
 };
 import { Operaciones } from "../../../types/operaciones";
 function QuintaTablaContabilidad({ valores, actualizarValores }: Props) {
+  const [isSelected, setIsSelected] = useState(false);
   const hotComponenteQuintaTabla = useRef(null);
   function ejecutarFormulas() {
     const guardarDatos =
       hotComponenteQuintaTabla?.current?.hotInstance?.getData();
-    console.log(guardarDatos);
     for (let i = 0; i < guardarDatos.length; i++) {
       if (i === 0) {
         const arrayEquipos = guardarDatos[i];
@@ -34,6 +34,12 @@ function QuintaTablaContabilidad({ valores, actualizarValores }: Props) {
       }
     }
   }
+
+  useEffect(() => {
+    if (isSelected === true) {
+      ejecutarFormulas();
+    }
+  }, [isSelected]);
 
   const hyperformulaInstance = HyperFormula.buildEmpty({
     // to use an external HyperFormula instance,
@@ -86,13 +92,15 @@ function QuintaTablaContabilidad({ valores, actualizarValores }: Props) {
         <HotColumn type="numeric" />
         <HotColumn readOnly className="bg-gray-300" type="numeric" />
       </HotTable>
-      <Button
-        className="w-1/2 mb-6 mt-2"
-        color="success"
-        onClick={ejecutarFormulas}
-      >
-        Guardar valores
-      </Button>
+      <div className="my-2 p-2 border rounded-lg w-2/5 bg-green-500">
+        <Checkbox
+          isSelected={isSelected}
+          onValueChange={setIsSelected}
+          size="lg"
+        >
+          <p className="text-xs">Capturar valores</p>
+        </Checkbox>
+      </div>
     </div>
   );
 }

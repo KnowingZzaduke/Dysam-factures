@@ -4,10 +4,10 @@ import { registerLanguageDictionary, esMX } from "handsontable/i18n";
 import HyperFormula from "hyperformula";
 import "handsontable/dist/handsontable.full.css";
 import { infoFourthCells } from "../../../data/dataCells";
-import { Button } from "@nextui-org/react";
+import { Button, Checkbox } from "@nextui-org/react";
 registerAllModules();
 registerLanguageDictionary(esMX);
-import { useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 type Props = {
   valores: Operaciones;
   actualizarValores: (nuevosValores: Operaciones) => void;
@@ -15,6 +15,7 @@ type Props = {
 import { Operaciones } from "../../../types/operaciones";
 function CuartaTablaContabilidad({ valores, actualizarValores }: Props) {
   const hotComponenteCuartaTabla = useRef(null);
+  const [isSelected, setIsSelected] = useState(false);
   function ejecutarFormulas() {
     const guardarDatos =
       hotComponenteCuartaTabla?.current?.hotInstance?.getData();
@@ -22,7 +23,7 @@ function CuartaTablaContabilidad({ valores, actualizarValores }: Props) {
       if (i === 0) {
         const arrayEquipos = guardarDatos[i];
         for (let e = 0; e < arrayEquipos.length; e++) {
-          if (e === 4) {
+          if (e === 6) {
             const actualizarValoresEquipo = {
               ...valores,
               totalTransporte: arrayEquipos[e],
@@ -33,6 +34,12 @@ function CuartaTablaContabilidad({ valores, actualizarValores }: Props) {
       }
     }
   }
+
+  useEffect(() => {
+    if (isSelected === true) {
+      ejecutarFormulas();
+    }
+  }, [isSelected]);
 
   const hyperformulaInstance = HyperFormula.buildEmpty({
     // to use an external HyperFormula instance,
@@ -69,13 +76,15 @@ function CuartaTablaContabilidad({ valores, actualizarValores }: Props) {
         <HotColumn />
         <HotColumn readOnly className="bg-gray-300" />
       </HotTable>
-      <Button
-        className="w-1/2 mb-6 mt-2"
-        color="success"
-        onClick={ejecutarFormulas}
-      >
-        Guardar valores
-      </Button>
+      <div className="my-2 p-2 border rounded-lg w-2/5 bg-green-500">
+        <Checkbox
+          isSelected={isSelected}
+          onValueChange={setIsSelected}
+          size="lg"
+        >
+          <p className="text-xs">Capturar valores</p>
+        </Checkbox>
+      </div>
     </div>
   );
 }

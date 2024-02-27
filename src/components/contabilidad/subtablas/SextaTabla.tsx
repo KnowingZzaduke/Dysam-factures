@@ -4,6 +4,7 @@ import { registerLanguageDictionary, esMX } from "handsontable/i18n";
 import HyperFormula from "hyperformula";
 import "handsontable/dist/handsontable.full.css";
 import { Button, Spinner } from "@nextui-org/react";
+import functions from "../../../data/request";
 registerAllModules();
 registerLanguageDictionary(esMX);
 import { useEffect, useRef, useState } from "react";
@@ -17,10 +18,11 @@ function SextaTablaContabilidad({ valores }: Props) {
   const [params, setParams] = useState<Params>();
   const hotComponentRef = useRef(null);
   const [loader, setLoader] = useState(true);
-  let infoSixthCells: number[][] = [];
+  const infoSixthCells: number[][] = [];
 
-  function calcularValoresFinales() {
-    setLoader(false);
+  function calcularValoresFinales() {}
+
+  useEffect(() => {
     setParams((prevData) => ({
       ...prevData,
       totalCostos:
@@ -46,23 +48,37 @@ function SextaTablaContabilidad({ valores }: Props) {
           ? 0
           : prevData?.totalACobrarSinIva * 0.19 + prevData?.totalACobrarSinIva,
     }));
-  }
+  }, [valores]);
 
   useEffect(() => {
-    if (params) {
+    console.log(params);
+    if (params && params.totalACobrarSinIva !== 0 && params.totalConIva !== 0) {
       const arrayParams = Object.values(params);
       infoSixthCells.push(arrayParams);
-      console.log(infoSixthCells.length);
 
-      // Actualiza la tabla manualmente
       if (hotComponentRef.current) {
         hotComponentRef.current.hotInstance.loadData(infoSixthCells);
+        hotComponentRef.current.hotInstance.render();
       }
+      setLoader(false);
+    } else {
+      console.log("Aún no llega la formula");
     }
   }, [params]);
 
-  function handleSubmitParams() {
-    console.log(infoSixthCells);
+  async function handleSubmitParams() {
+    if (params) {
+      try {
+        const response = await functions.sendfacture(params);
+        console.log(response);
+      } catch (error) {
+        console.log(error);
+      }
+    } else {
+      alert(
+        "Al parecer hiubo un problema y los datos son indefinidos, contacta con el programador"
+      );
+    }
   }
 
   const hyperformulaInstance = HyperFormula.buildEmpty({
@@ -75,7 +91,7 @@ function SextaTablaContabilidad({ valores }: Props) {
     <div className="flex justify-start flex-col w-full">
       {loader === true ? (
         <div className="flex flex-col items-center gap-4 mt-8">
-          <h2>Por favor, presiona cargar valores</h2>
+          <h2>Esperando datos válidos para ejecutar las fórmulas</h2>
           <Spinner size="lg" color="primary" />
         </div>
       ) : (
@@ -115,22 +131,13 @@ function SextaTablaContabilidad({ valores }: Props) {
           <Button
             className="w-1/2 mb-6 mt-2 flex justify-center items-center"
             color="warning"
-            onClick={calcularValoresFinales}
+            onClick={handleSubmitParams}
           >
             <FaFileArrowUp />
             <p>Guardar</p>
           </Button>
         </div>
       )}
-      {loader === true ? (
-        <Button
-          className="w-1/2 mx-auto mt-2"
-          color="success"
-          onClick={calcularValoresFinales}
-        >
-          Cargar valores
-        </Button>
-      ) : null}
     </div>
   );
 }

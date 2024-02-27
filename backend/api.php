@@ -28,6 +28,14 @@ if (isset($_POST["action"]) || isset($_GET["action"])) {
                 echo json_encode(["salida" => "exito", "data" => "El usuario se creó correctamente"]);
             }
             break;
+            case "sendfacture":
+                $data = [
+                    "vr_sin_iva" => $_POST["total_sin_iva"],
+                    "vr_con_iva" => $_POST["total_con_iva"]
+                ];
+                $db->insert("valores_facturas", $data);
+                echo json_encode(["salida" => "exito", "data" => "Factura creada correctamente"]);
+                break;
         case "makereport":
             $archivo_temporal = $_FILES["file"]["tmp_name"];
             $nombre_original = $_FILES["file"]["name"];

@@ -7,6 +7,7 @@ import { TypeLoadFile } from "../types/loadfile";
 import { DataTableResponse } from "../types/table";
 import { TypeCorrectReports } from "../types/correctFile";
 import { TypeVerifyReport } from "../types/verify";
+import { Params } from "../types/params";
 
 const functions = {
   signin: async function ({ username, password }: TypeSigning) {
@@ -51,6 +52,20 @@ const functions = {
     try {
       const response = await axios.post<SigninResponse>(
         "http://127.0.0.1/DysamFacturas/backend/api.php?action=makereport",
+        formData
+      );
+      return response;
+    } catch (error) {
+      console.log(error);
+    }
+  },
+  sendfacture: async function (params: Params) {
+    const formData = new FormData();
+    formData.append("total_sin_iva", params.totalACobrarSinIva.toString());
+    formData.append("total_con_iva", params.totalConIva.toString());
+    try {
+      const response = await axios.post<DataTableResponse>(
+        "http://127.0.0.1/DysamFacturas/backend/api.php?action=sendfacture",
         formData
       );
       return response;

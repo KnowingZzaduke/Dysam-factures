@@ -11,10 +11,11 @@ type Props = {
   actualizarValores: (nuevosValores: Operaciones) => void;
 };
 import { Operaciones } from "../../../types/operaciones";
-import { useRef } from "react";
-import { Button } from "@nextui-org/react";
+import { useEffect, useRef, useState } from "react";
+import { Button, Checkbox } from "@nextui-org/react";
 function PrimeraTablaContabilidad({ valores, actualizarValores }: Props) {
   const hotComponentePrimeraTabla = useRef(null);
+  const [isSelected, setIsSelected] = useState(false);
   function ejecutarFormulas() {
     const guardarDatos =
       hotComponentePrimeraTabla?.current?.hotInstance?.getData();
@@ -33,6 +34,12 @@ function PrimeraTablaContabilidad({ valores, actualizarValores }: Props) {
       }
     }
   }
+
+  useEffect(() => {
+    if (isSelected === true) {
+      ejecutarFormulas();
+    }
+  }, [isSelected]);
 
   const hyperformulaInstance = HyperFormula.buildEmpty({
     // to use an external HyperFormula instance,
@@ -66,13 +73,15 @@ function PrimeraTablaContabilidad({ valores, actualizarValores }: Props) {
         <HotColumn type="numeric" />
         <HotColumn type="numeric" />
       </HotTable>
-      <Button
-        className="w-1/2 mb-6 mt-2"
-        color="success"
-        onClick={ejecutarFormulas}
-      >
-        Guardar valores
-      </Button>
+      <div className="my-2 p-2 border rounded-lg w-2/5 bg-green-500">
+        <Checkbox
+          isSelected={isSelected}
+          onValueChange={setIsSelected}
+          size="lg"
+        >
+          <p className="text-xs">Capturar valores</p>
+        </Checkbox>
+      </div>
     </div>
   );
 }

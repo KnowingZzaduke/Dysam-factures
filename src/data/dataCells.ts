@@ -74,8 +74,8 @@ export const infoFourthCells = [
 export const infoFifthCells = [
   ["PÓLIZAS", "", "0", "=B1*C1", "=SUM(D1:D6)"],
   ["INSTALACION", "", "0", "=B2*C2"],
-  ["IMPREVISTOS", "", "0", "=B2*C2"],
-  ["NEGOCIACION", "", "0", "=B3*C3"],
-  ["COMISION A TERCEROS", "", "0", "=B4*C4"],
-  ["IMPREVISTOS   EMERGENCIAS", "", "0", "=B5*C5"],
+  ["IMPREVISTOS", "", "0", "=B3*C3"],
+  ["NEGOCIACION", "", "0", "=B4*C4"],
+  ["COMISION A TERCEROS", "", "0", "=B5*C5"],
+  ["IMPREVISTOS   EMERGENCIAS", "", "0", "=B6*C6"],
 ];
