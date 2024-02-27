@@ -7,10 +7,31 @@ import { infoThirdCells } from "../../../data/dataCells";
 import { Button } from "@nextui-org/react";
 registerAllModules();
 registerLanguageDictionary(esMX);
-import { useEffect } from "react";
-function TerceraTablaContabilidad() {
-  function handleSubmitParams() {
-    console.log(infoThirdCells);
+import { useRef } from "react";
+type Props = {
+  valores: Operaciones;
+  actualizarValores: (nuevosValores: Operaciones) => void;
+};
+import { Operaciones } from "../../../types/operaciones";
+function TerceraTablaContabilidad({ valores, actualizarValores }: Props) {
+  const hotComponenteTerceraTabla = useRef(null);
+  function ejecutarFormulas() {
+    const guardarDatos =
+      hotComponenteTerceraTabla?.current?.hotInstance?.getData();
+    for (let i = 0; i < guardarDatos.length; i++) {
+      if (i === 0) {
+        const arrayEquipos = guardarDatos[i];
+        for (let e = 0; e < arrayEquipos.length; e++) {
+          if (e === 5) {
+            const actualizarValoresEquipo = {
+              ...valores,
+              valorTotal: arrayEquipos[e],
+            };
+            actualizarValores(actualizarValoresEquipo);
+          }
+        }
+      }
+    }
   }
 
   const hyperformulaInstance = HyperFormula.buildEmpty({
@@ -20,10 +41,11 @@ function TerceraTablaContabilidad() {
   });
 
   return (
-    <div className="flex justify-start w-full">
+    <div className="flex justify-start flex-col w-full">
       <HotTable
         language={esMX.languageCode}
         licenseKey="non-commercial-and-evaluation"
+        ref={hotComponenteTerceraTabla}
         data={infoThirdCells}
         colHeaders={[
           "HORA AUXILIO",
@@ -52,6 +74,9 @@ function TerceraTablaContabilidad() {
         <HotColumn type="numeric" />
         <HotColumn readOnly className="bg-gray-300" type="numeric" />
       </HotTable>
+      <Button className="w-1/2 mb-6 mt-2" color="success" onClick={ejecutarFormulas}>
+        Guardar valores
+      </Button>
     </div>
   );
 }

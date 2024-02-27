@@ -7,10 +7,31 @@ import { infoFourthCells } from "../../../data/dataCells";
 import { Button } from "@nextui-org/react";
 registerAllModules();
 registerLanguageDictionary(esMX);
-import { useEffect } from "react";
-function CuartaTablaContabilidad() {
-  function handleSubmitParams() {
-    console.log(infoFourthCells);
+import { useRef } from "react";
+type Props = {
+  valores: Operaciones;
+  actualizarValores: (nuevosValores: Operaciones) => void;
+};
+import { Operaciones } from "../../../types/operaciones";
+function CuartaTablaContabilidad({ valores, actualizarValores }: Props) {
+  const hotComponenteCuartaTabla = useRef(null);
+  function ejecutarFormulas() {
+    const guardarDatos =
+      hotComponenteCuartaTabla?.current?.hotInstance?.getData();
+    for (let i = 0; i < guardarDatos.length; i++) {
+      if (i === 0) {
+        const arrayEquipos = guardarDatos[i];
+        for (let e = 0; e < arrayEquipos.length; e++) {
+          if (e === 4) {
+            const actualizarValoresEquipo = {
+              ...valores,
+              totalTransporte: arrayEquipos[e],
+            };
+            actualizarValores(actualizarValoresEquipo);
+          }
+        }
+      }
+    }
   }
 
   const hyperformulaInstance = HyperFormula.buildEmpty({
@@ -20,9 +41,10 @@ function CuartaTablaContabilidad() {
   });
 
   return (
-    <div className="flex justify-start w-full">
+    <div className="flex justify-start flex-col w-full">
       <HotTable
         language={esMX.languageCode}
+        ref={hotComponenteCuartaTabla}
         licenseKey="non-commercial-and-evaluation"
         data={infoFourthCells}
         colHeaders={["I", "I", "I", "I", "I", "I", "TOTAL TRANSPORTE"]}
@@ -47,6 +69,13 @@ function CuartaTablaContabilidad() {
         <HotColumn />
         <HotColumn readOnly className="bg-gray-300" />
       </HotTable>
+      <Button
+        className="w-1/2 mb-6 mt-2"
+        color="success"
+        onClick={ejecutarFormulas}
+      >
+        Guardar valores
+      </Button>
     </div>
   );
 }

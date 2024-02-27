@@ -23,7 +23,7 @@ function TablasContabilidad() {
 
   useEffect(() => {
     console.log(operacionesTablas);
-  }, [operacionesTablas])
+  }, [operacionesTablas]);
   return (
     <div className="min-h-screen flex flex-col items-center gap-6 max-w-screen-xl	mx-auto">
       <InfoTablaContabilidad />
@@ -31,11 +31,23 @@ function TablasContabilidad() {
         valores={operacionesTablas}
         actualizarValores={actualizarValores}
       />
-      <SegundaTablaContabilidad />
-      <TerceraTablaContabilidad />
-      <CuartaTablaContabilidad />
-      <QuintaTablaContabilidad />
-      <SextaTablaContabilidad />
+      <SegundaTablaContabilidad
+        valores={operacionesTablas}
+        actualizarValores={actualizarValores}
+      />
+      <TerceraTablaContabilidad
+        valores={operacionesTablas}
+        actualizarValores={actualizarValores}
+      />
+      <CuartaTablaContabilidad
+        valores={operacionesTablas}
+        actualizarValores={actualizarValores}
+      />
+      <QuintaTablaContabilidad
+        valores={operacionesTablas}
+        actualizarValores={actualizarValores}
+      />
+      <SextaTablaContabilidad valores={operacionesTablas} />
     </div>
   );
 }

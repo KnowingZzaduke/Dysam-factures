@@ -11,29 +11,28 @@ type Props = {
   actualizarValores: (nuevosValores: Operaciones) => void;
 };
 import { Operaciones } from "../../../types/operaciones";
-import { useEffect, useRef } from "react";
+import { useRef } from "react";
 import { Button } from "@nextui-org/react";
 function PrimeraTablaContabilidad({ valores, actualizarValores }: Props) {
   const hotComponentePrimeraTabla = useRef(null);
-  function e() {
+  function ejecutarFormulas() {
     const guardarDatos =
       hotComponentePrimeraTabla?.current?.hotInstance?.getData();
     for (let i = 0; i < guardarDatos.length; i++) {
       if (i === 34) {
         const arrayEquipos = guardarDatos[i];
         for (let e = 0; e < arrayEquipos.length; e++) {
-          const actualizarValoresEquipo = {
-            ...valores,
-            equipos: arrayEquipos[e],
-          };
-          actualizarValores(actualizarValoresEquipo);
+          if (e === 3) {
+            const actualizarValoresEquipo = {
+              ...valores,
+              equipos: arrayEquipos[e],
+            };
+            actualizarValores(actualizarValoresEquipo);
+          }
         }
       }
     }
   }
-  useEffect(() => {
-    console.log(infoFirthCells);
-  }, [infoFirthCells]);
 
   const hyperformulaInstance = HyperFormula.buildEmpty({
     // to use an external HyperFormula instance,
@@ -42,7 +41,7 @@ function PrimeraTablaContabilidad({ valores, actualizarValores }: Props) {
   });
 
   return (
-    <div className="flex justify-start w-full">
+    <div className="flex justify-start flex-col w-full">
       <HotTable
         ref={hotComponentePrimeraTabla}
         language={esMX.languageCode}
@@ -67,7 +66,13 @@ function PrimeraTablaContabilidad({ valores, actualizarValores }: Props) {
         <HotColumn type="numeric" />
         <HotColumn type="numeric" />
       </HotTable>
-      <Button onClick={e}>Enviar</Button>
+      <Button
+        className="w-1/2 mb-6 mt-2"
+        color="success"
+        onClick={ejecutarFormulas}
+      >
+        Guardar valores
+      </Button>
     </div>
   );
 }
