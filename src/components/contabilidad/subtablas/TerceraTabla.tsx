@@ -31,6 +31,7 @@ function TerceraTablaContabilidad() {
           "NÚMERO/HORAS",
           "TRANSPORTE",
           "VALOR/PAGAR",
+          "VALOR TOTAL",
         ]}
         rowHeaders={true}
         columnSorting={true}
@@ -45,6 +46,7 @@ function TerceraTablaContabilidad() {
         className="-z-0 custom-table"
       >
         <HotColumn />
+        <HotColumn type="numeric" />
         <HotColumn type="numeric" />
         <HotColumn type="numeric" />
         <HotColumn type="numeric" />

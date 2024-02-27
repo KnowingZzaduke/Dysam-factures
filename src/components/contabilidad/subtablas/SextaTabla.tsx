@@ -3,7 +3,6 @@ import { registerAllModules } from "handsontable/registry";
 import { registerLanguageDictionary, esMX } from "handsontable/i18n";
 import HyperFormula from "hyperformula";
 import "handsontable/dist/handsontable.full.css";
-import { infoSixthCells } from "../../../data/dataCells";
 import { Button } from "@nextui-org/react";
 registerAllModules();
 registerLanguageDictionary(esMX);
@@ -12,6 +11,8 @@ function SextaTablaContabilidad() {
   function handleSubmitParams() {
     console.log(infoSixthCells);
   }
+
+  const infoSixthCells = [["", "", "", "", ""]];
 
   const hyperformulaInstance = HyperFormula.buildEmpty({
     // to use an external HyperFormula instance,
