@@ -4,6 +4,7 @@ import { registerLanguageDictionary, esMX } from "handsontable/i18n";
 import HyperFormula from "hyperformula";
 import "handsontable/dist/handsontable.full.css";
 import { infoFifthCells } from "../../../data/dataCells";
+import React from "react";
 import { Button, Checkbox } from "@nextui-org/react";
 registerAllModules();
 registerLanguageDictionary(esMX);
@@ -13,7 +14,10 @@ type Props = {
   actualizarValores: (nuevosValores: Operaciones) => void;
 };
 import { Operaciones } from "../../../types/operaciones";
-function QuintaTablaContabilidad({ valores, actualizarValores }: Props) {
+function QuintaTablaContabilidad({
+  valores,
+  actualizarValores,
+}: Props) {
   const [isSelected, setIsSelected] = useState(false);
   const hotComponenteQuintaTabla = useRef(null);
   function ejecutarFormulas() {
@@ -37,7 +41,12 @@ function QuintaTablaContabilidad({ valores, actualizarValores }: Props) {
 
   useEffect(() => {
     if (isSelected === true) {
-      ejecutarFormulas();
+      const inter = setInterval(() => {
+        ejecutarFormulas();
+      }, 1000);
+      setTimeout(() => {
+        clearTimeout(inter);
+      }, 7000);
     }
   }, [isSelected]);
 

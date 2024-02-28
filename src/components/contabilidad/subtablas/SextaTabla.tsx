@@ -20,8 +20,6 @@ function SextaTablaContabilidad({ valores }: Props) {
   const [loader, setLoader] = useState(true);
   const infoSixthCells: number[][] = [];
 
-  function calcularValoresFinales() {}
-
   useEffect(() => {
     setParams((prevData) => ({
       ...prevData,
@@ -52,15 +50,16 @@ function SextaTablaContabilidad({ valores }: Props) {
 
   useEffect(() => {
     console.log(params);
-    if (params && params.totalACobrarSinIva !== 0 && params.totalConIva !== 0) {
+    if (params) {
+      if (params.totalCostos !== 0) {
+        setLoader(false);
+      }
       const arrayParams = Object.values(params);
       infoSixthCells.push(arrayParams);
-
       if (hotComponentRef.current) {
         hotComponentRef.current.hotInstance.loadData(infoSixthCells);
         hotComponentRef.current.hotInstance.render();
       }
-      setLoader(false);
     } else {
       console.log("Aún no llega la formula");
     }
@@ -76,7 +75,7 @@ function SextaTablaContabilidad({ valores }: Props) {
       }
     } else {
       alert(
-        "Al parecer hiubo un problema y los datos son indefinidos, contacta con el programador"
+        "Al parecer hubo un problema y los datos son indefinidos, contacta con el programador"
       );
     }
   }
