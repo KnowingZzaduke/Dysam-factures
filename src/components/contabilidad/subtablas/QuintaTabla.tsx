@@ -45,7 +45,7 @@ function QuintaTablaContabilidad({
         ejecutarFormulas();
       }, 1000);
       setTimeout(() => {
-        clearTimeout(inter);
+        clearInterval(inter);
       }, 7000);
     }
   }, [isSelected]);

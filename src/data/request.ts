@@ -73,6 +73,44 @@ const functions = {
       console.log(error);
     }
   },
+  updatedata: async function (dataToUpdate) {
+    const formData = new FormData();
+    dataToUpdate?.forEach((item) => {
+      console.log(item);
+      formData.append("idvalores_facturas", item.idvalores_facturas);
+      formData.append("estado", item.estado);
+    });
+    try {
+      const response = await axios.post(
+        "http://127.0.0.1/DysamFacturas/backend/api.php?action=updatedata",
+        formData
+      );
+      console.log(response);
+      return response;
+    } catch (error) {
+      console.log(error);
+    }
+  },
+  loadinginventory: async function () {
+    try {
+      const response = await axios.get<DataTableResponse>(
+        "http://127.0.0.1/DysamFacturas/backend/api.php?action=loadinginventory"
+      );
+      return response;
+    } catch (error) {
+      console.error(error);
+    }
+  },
+  loadingvalues: async function () {
+    try {
+      const response = await axios.get<DataTableResponse>(
+        "http://127.0.0.1/DysamFacturas/backend/api.php?action=loadingvalues"
+      );
+      return response;
+    } catch (error) {
+      console.error(error);
+    }
+  },
   loadingreport: async function () {
     try {
       const response = await axios.get<DataTableResponse>(

@@ -16,7 +16,6 @@ for (let i = 1; i <= 34; i++) {
 // Agregar la fila de suma al array de datos
 infoFirthCells.push(["", "", "EQUIPOS", "=SUM(D1:D34)"]);
 
-console.log(infoFirthCells);
 export const infoSecondCells = [
   ["HORA TÉCNICO", "", "0", "=B1*C1", "=B1*10", "0", "=D1", "=SUM(G1:G6)"],
   ["REPARACION BOMBA", "", "0", "=B2*C2", "=B2*10", "0", "=D2", ""],

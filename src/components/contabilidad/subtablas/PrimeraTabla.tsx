@@ -10,12 +10,15 @@ type Props = {
   valores: Operaciones;
   actualizarValores: (nuevosValores: Operaciones) => void;
 };
+import { Inventario } from "../../../types/inventario";
 import { Operaciones } from "../../../types/operaciones";
 import { useEffect, useRef, useState } from "react";
 import { Button, Checkbox } from "@nextui-org/react";
+import functions from "../../../data/request";
 function PrimeraTablaContabilidad({ valores, actualizarValores }: Props) {
   const hotComponentePrimeraTabla = useRef(null);
   const [isSelected, setIsSelected] = useState(false);
+  const [datosInventario, setDataInventarios] = useState<Inventario[][]>([]);
   function ejecutarFormulas() {
     const guardarDatos =
       hotComponentePrimeraTabla?.current?.hotInstance?.getData();
@@ -36,8 +39,36 @@ function PrimeraTablaContabilidad({ valores, actualizarValores }: Props) {
   }
 
   useEffect(() => {
+    async function cargarDatosInventario() {
+      try {
+        const response = await functions.loadinginventory();
+        if (response?.data.data.salida === "exito") {
+          setDataInventarios((prevData) => ({
+            ...prevData,
+            codigo: response.data.data.data.map((item) => item),
+            descripcion: response.data.data.data.map((item) => item),
+            vunitario: response.data.data.data.map((item) => item),
+          }));
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    }
+    cargarDatosInventario();
+  }, []);
+
+  useEffect(() => {
+    console.log(datosInventario);
+  }, [datosInventario]);
+
+  useEffect(() => {
     if (isSelected === true) {
-      ejecutarFormulas();
+      const inter = setInterval(() => {
+        ejecutarFormulas();
+      }, 1000);
+      setTimeout(() => {
+        clearInterval(inter);
+      }, 7000);
     }
   }, [isSelected]);
 

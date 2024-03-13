@@ -7,14 +7,15 @@ import { Button, Spinner } from "@nextui-org/react";
 import functions from "../../../data/request";
 registerAllModules();
 registerLanguageDictionary(esMX);
-import { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { FaFileArrowUp } from "react-icons/fa6";
 type Props = {
   valores: Operaciones;
+  setShowModalSendValues: React.Dispatch<React.SetStateAction<boolean>>;
 };
 import { Params } from "../../../types/params";
 import { Operaciones } from "../../../types/operaciones";
-function SextaTablaContabilidad({ valores }: Props) {
+function SextaTablaContabilidad({ valores, setShowModalSendValues }: Props) {
   const [params, setParams] = useState<Params>();
   const hotComponentRef = useRef(null);
   const [loader, setLoader] = useState(true);
@@ -69,7 +70,11 @@ function SextaTablaContabilidad({ valores }: Props) {
     if (params) {
       try {
         const response = await functions.sendfacture(params);
-        console.log(response);
+        console.log(response?.data);
+        if (response?.data?.salida === "exito") {
+          setShowModalSendValues(true);
+          setLoader(true);
+        }
       } catch (error) {
         console.log(error);
       }

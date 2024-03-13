@@ -28,14 +28,71 @@ if (isset($_POST["action"]) || isset($_GET["action"])) {
                 echo json_encode(["salida" => "exito", "data" => "El usuario se creó correctamente"]);
             }
             break;
-            case "sendfacture":
-                $data = [
-                    "vr_sin_iva" => $_POST["total_sin_iva"],
-                    "vr_con_iva" => $_POST["total_con_iva"]
+        case "sendfacture":
+            $data = [
+                "vr_sin_iva" => $_POST["total_sin_iva"],
+                "vr_con_iva" => $_POST["total_con_iva"]
+            ];
+            $db->insert("valores_facturas", $data);
+            echo json_encode(["salida" => "exito", "data" => "Factura creada correctamente"]);
+            break;
+        case "loadinginventory":
+            $inventarioData = $db->get("inventario");
+
+            if (!$inventarioData || empty($inventarioData)) {
+                echo json_encode(["salida" => "error", "data" => "No se encontraron datos en el inventario"]);
+            } else {
+                $response = [
+                    "data" => array_map(function ($item) {
+                        return [
+                            "codigo" => $item["codigo"],
+                            "descripcion" => $item["descripcion"],
+                            "vunitario" => $item["vunitario"]
+                        ];
+                    }, $inventarioData)
                 ];
-                $db->insert("valores_facturas", $data);
-                echo json_encode(["salida" => "exito", "data" => "Factura creada correctamente"]);
-                break;
+                echo json_encode(["salida" => "exito", "data" => $response]);
+            }
+            break;
+        case "loadingvalues":
+            $valuesData = $db->get("valores");
+            if (!$valuesData || empty($valuesData)) {
+                echo json_encode(["salida" => "error", "data" => "No se encontraron datos en la tabla de valores de facturas"]);
+            } else {
+                $response = [
+                    "data" => array_map(function ($item) {
+                        return [
+                            "idvalores_facturas" => $item["idvalores_facturas"],
+                            "fecha" => $item["fecha"],
+                            "nit" => $item["nit"],
+                            "cliente" => $item["fecha"],
+                            "descripcion" => $item["descripcion"],
+                            "vr_sin_iva" => $item["vr_sin_iva"],
+                            "vr_con_iva" => $item["vr_con_iva"],
+                        ];
+                    }, $valuesData)
+                ];
+                echo json_encode(["salida" => "exito", "data" => $response]);
+            }
+            break;
+        case "updatedata":
+            $idvalores_facturas = $_POST["idvalores_facturas"];
+            $nuevoEstado = $_POST["estado"];
+
+            if (isset($idvalores_facturas, $nuevoEstado)) {
+                // Aquí se realiza la consulta de actualización utilizando el ID recibido
+                $actualizacionExitosa = $db->where('idvalores_facturas', $idvalores_facturas)
+                    ->update("valores", ["estado" => $nuevoEstado]);
+
+                if ($actualizacionExitosa) {
+                    echo json_encode(["salida" => "exito", "mensaje" => "Estado actualizado correctamente"]);
+                } else {
+                    echo json_encode(["salida" => "error", "mensaje" => "Error al actualizar el estado"]);
+                }
+            } else {
+                echo json_encode(["salida" => "error", "mensaje" => "Parámetros incompletos"]);
+            }
+            break;
         case "makereport":
             $archivo_temporal = $_FILES["file"]["tmp_name"];
             $nombre_original = $_FILES["file"]["name"];

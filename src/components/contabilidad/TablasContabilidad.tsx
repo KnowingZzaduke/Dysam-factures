@@ -7,6 +7,7 @@ import QuintaTablaContabilidad from "./subtablas/QuintaTabla";
 import SextaTablaContabilidad from "./subtablas/SextaTabla";
 import { Operaciones } from "../../types/operaciones";
 import { useEffect, useState } from "react";
+import ModalBloqueo from "../utilities/modal/ModalBloqueo";
 function TablasContabilidad() {
   const [operacionesTablas, setOperacionesTablas] = useState<Operaciones>({
     equipos: 0,
@@ -20,6 +21,8 @@ function TablasContabilidad() {
   const actualizarValores = (nuevosValores: Operaciones) => {
     setOperacionesTablas(nuevosValores);
   };
+
+  const [showModalSendValues, setShowModalSendValues] = useState(false);
 
   useEffect(() => {
     console.log(operacionesTablas);
@@ -47,7 +50,14 @@ function TablasContabilidad() {
         valores={operacionesTablas}
         actualizarValores={actualizarValores}
       />
-      <SextaTablaContabilidad valores={operacionesTablas} />
+      <SextaTablaContabilidad
+        valores={operacionesTablas}
+        setShowModalSendValues={setShowModalSendValues}
+      />
+      <ModalBloqueo
+        showModalSendValues={showModalSendValues}
+        setShowModalSendValues={setShowModalSendValues}
+      />
     </div>
   );
 }

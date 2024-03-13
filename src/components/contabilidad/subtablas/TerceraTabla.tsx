@@ -37,7 +37,12 @@ function TerceraTablaContabilidad({ valores, actualizarValores }: Props) {
 
   useEffect(() => {
     if (isSelected === true) {
-      ejecutarFormulas();
+      const inter = setInterval(() => {
+        ejecutarFormulas();
+      }, 1000);
+      setTimeout(() => {
+        clearInterval(inter);
+      }, 7000);
     }
   }, [isSelected]);
 
