@@ -20,7 +20,7 @@ function Welcome() {
       style={{ minHeight: "100vh" }}
       className="d-flex align-items-center justify-content-center"
     >
-      <div className="col-6 typed text-center">
+      <div className="col-6 typed text-center welcome_component">
         <h1>Bienvenido 👋</h1>
         <div ref={welcome} />
       </div>

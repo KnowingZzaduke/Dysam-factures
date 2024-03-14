@@ -76,6 +76,7 @@ if (isset($_POST["action"]) || isset($_GET["action"])) {
                 echo json_encode(["salida" => "exito", "data" => $response]);
             }
             break;
+
         case "updatedata":
             $idvalores_facturas = $_POST["idvalores_facturas"];
             $nuevoEstado = $_POST["estado"];
@@ -89,6 +90,23 @@ if (isset($_POST["action"]) || isset($_GET["action"])) {
                     echo json_encode(["salida" => "exito", "mensaje" => "Estado actualizado correctamente"]);
                 } else {
                     echo json_encode(["salida" => "error", "mensaje" => "Error al actualizar el estado"]);
+                }
+            } else {
+                echo json_encode(["salida" => "error", "mensaje" => "Parámetros incompletos"]);
+            }
+            break;
+        case "deletereport":
+            $idvalores_facturas = $_POST["idvalores_facturas"];
+            $nuevoEstado = $_POST["estado"];
+
+            if (isset($idvalores_facturas, $nuevoEstado)) {
+                $actualizacionExitosa = $db->where('idvalores_facturas', $idvalores_facturas)
+                    ->update("valores", ["estado" => $nuevoEstado]);
+
+                if ($actualizacionExitosa) {
+                    echo json_encode(["salida" => "exito", "mensaje" => "Factura neutralizada correctamente"]);
+                } else {
+                    echo json_encode(["salida" => "error", "mensaje" => "Error al neutralizar la factura"]);
                 }
             } else {
                 echo json_encode(["salida" => "error", "mensaje" => "Parámetros incompletos"]);

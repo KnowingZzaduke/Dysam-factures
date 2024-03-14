@@ -1,4 +1,4 @@
-function Footer(){
+function FooterDysam(){
     const fechaActual = new Date();
     const año = fechaActual.getFullYear();
     return (
@@ -8,4 +8,4 @@ function Footer(){
     )
 }
 
-export default Footer;
+export default FooterDysam;

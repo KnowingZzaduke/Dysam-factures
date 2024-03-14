@@ -150,7 +150,7 @@ function Signup() {
             onSelectionChange={setValue}
           >
             <SelectItem key="1" value="0">
-              Persona encargada de llenar las facturass
+              Persona encargada de llenar las facturas
             </SelectItem>
             <SelectItem key="2" value="1">
               Persona encargada del visto buen

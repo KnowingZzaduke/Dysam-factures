@@ -23,22 +23,15 @@ import { useMemo, useState, useCallback, useEffect } from "react";
 import { Link } from "react-router-dom";
 import functions from "../../data/request";
 import { CheckIcon } from "../utilities/svgComponents/CheckIcon";
-import { FaFloppyDisk } from "react-icons/fa6";
+import { FaFloppyDisk, FaRegTrashCan } from "react-icons/fa6";
 function TableData() {
   const [data, setData] = useState(null);
   const [showModalNotResults, setShowModalNotResults] = useState(false);
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [reverseData, setReverseData] = useState(false);
-  const [forceUpdate, setForceUpdate] = useState(false);
-  const {
-    children,
-    isSelected,
-    isFocusVisible,
-    getBaseProps,
-    getLabelProps,
-    getInputProps,
-  } = useCheckbox({ defaultSelected: false });
-  const [selectedRows, setSelectedRows] = useState({});
+  const { isSelected, isFocusVisible } = useCheckbox({
+    defaultSelected: false,
+  });
   const [page, setPage] = useState(1);
   const rowsPerPage = 10;
   const pages = Math.ceil(data?.length / rowsPerPage);
@@ -53,9 +46,10 @@ function TableData() {
       const response = await functions.loadingvalues();
       if (response?.data.salida === "exito") {
         const filterData = response?.data?.data?.data.filter(
-          (item) => item?.estado === "true" || "false"
+          (item) => item?.estado === "true" || item?.estado === "false"
         );
         if (filterData) {
+          console.log(filterData);
           const newData = filterData.map((item) => ({
             ...item,
             estado:
@@ -90,7 +84,6 @@ function TableData() {
     );
   };
   const updateData = async (idvalores_facturas, estado) => {
-    console.log({ idvalores_facturas, estado });
     try {
       const response = await functions.updatedata(idvalores_facturas, estado);
       if (response?.data?.salida === "exito") {
@@ -98,6 +91,36 @@ function TableData() {
       }
     } catch (error) {
       console.error("Error al actualizar los datos en la base de datos", error);
+    }
+  };
+
+  function eliminarFacturas(id: number) {
+    console.log(id);
+    console.log("hola");
+    setData((prevData) =>
+      prevData?.map((item) => {
+        if (item.idvalores_facturas === id) {
+          const updatedItem = {
+            ...item,
+            estado: undefined,
+          };
+          const { idvalores_facturas, estado } = updatedItem;
+          deleteData(idvalores_facturas, estado);
+          return updatedItem;
+        }
+        return item;
+      })
+    );
+  }
+
+  const deleteData = async (idvalores_facturas, estado) => {
+    try {
+      const response = await functions.deletereport(idvalores_facturas, estado);
+      if (response?.data?.salida === "exito") {
+        loadData();
+      }
+    } catch (error) {
+      console.log(error);
     }
   };
 
@@ -182,7 +205,10 @@ function TableData() {
                 <TableColumn key="vr_con_iva">VALOR CON IVA</TableColumn>
                 <TableColumn key="opciones">ESTADO</TableColumn>
               </TableHeader>
-              <TableBody items={items}>
+              <TableBody
+                items={items}
+                emptyContent={"Por favor agrega facturas"}
+              >
                 {(item) => (
                   <TableRow
                     key={item?.idvalores_facturas}
@@ -217,7 +243,9 @@ function TableData() {
                                 {item?.estado === "true" ||
                                 item?.estado === true ? (
                                   <div className="flex items-center gap-2">
-                                    <p className="font-semibold">Aprobado</p>
+                                    <p className="font-semibold">
+                                      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Aprobado
+                                    </p>
                                     <CheckIcon className="ml-1" />
                                   </div>
                                 ) : (
@@ -228,6 +256,14 @@ function TableData() {
                                 )}
                               </Chip>
                             </label>
+                            <Button
+                              color="danger"
+                              onClick={() =>
+                                eliminarFacturas(item?.idvalores_facturas)
+                              }
+                            >
+                              <FaRegTrashCan className="text-black" />
+                            </Button>
                           </div>
                         ) : (
                           getKeyValue(item, columnKey)

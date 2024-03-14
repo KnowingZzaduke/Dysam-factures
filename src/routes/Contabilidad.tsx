@@ -1,6 +1,6 @@
 import Navbar from "../components/utilities/Navbar";
 import { Outlet } from "react-router-dom";
-import Footer from "../components/utilities/Footer";
+import Footer from "../components/utilities/FooterDysam";
 function Contabilidad() {
   return (
     <>

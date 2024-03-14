@@ -11,7 +11,7 @@ input[type="number"] {
   -moz-appearance: textfield;
 }
 
-#root{
+#root {
   background-color: beige;
 }
 td.custom-cell {
@@ -20,5 +20,9 @@ td.custom-cell {
 }
 .custom-table thead th {
   background-color: #000080;
-  color: white
+  color: white;
+}
+
+.welcome_component span {
+  display: none;
 }

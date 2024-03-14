@@ -28,7 +28,7 @@ const functions = {
   signup: async function ({ username, password, position }: TypeSignup) {
     const formData = new FormData();
     formData.append("user_name", username);
-    formData.append("user_password", password); 
+    formData.append("user_password", password);
     formData.append("user_level", position.values().next().value.toString());
     console.log(formData);
     try {
@@ -162,14 +162,16 @@ const functions = {
       console.log(error);
     }
   },
-  deletereport: async function (id: string) {
+  deletereport: async function (idvalores_facturas, estado) {
     const formData = new FormData();
-    formData.append("idfile", id);
+    formData.append("idvalores_facturas", idvalores_facturas);
+    formData.append("estado", estado);
     try {
       const response = await axios.post<SigninResponse>(
         "http://127.0.0.1/DysamFacturas/backend/api.php?action=deletereport",
         formData
       );
+      console.log(response)
       return response;
     } catch (error) {
       console.log(error);
