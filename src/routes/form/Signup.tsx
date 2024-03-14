@@ -32,20 +32,16 @@ function Signup() {
     };
   }, []);
 
-  function handleValueSelect(e: React.ChangeEvent<HTMLSelectElement>) {
-    setUserPosition(e.target.value);
-  }
-
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    if (userName === "" || userPassword === "" || userPosition === "0") {
+    if (userName === "" || userPassword === "") {
       setAlert(true);
     } else {
       setAlert(false);
       const signupParams: TypeSignup = {
         username: userName,
         password: userPassword,
-        position: userPosition,
+        position: value,
       };
       const response = await functions.signup(signupParams);
       if (response) {

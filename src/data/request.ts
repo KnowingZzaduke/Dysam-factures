@@ -28,8 +28,9 @@ const functions = {
   signup: async function ({ username, password, position }: TypeSignup) {
     const formData = new FormData();
     formData.append("user_name", username);
-    formData.append("user_password", password); // Cambio aquí: "password" por "user_password"
-    formData.append("user_level", position); // Cambio aquí: "position" por "user_level"
+    formData.append("user_password", password); 
+    formData.append("user_level", position.values().next().value.toString());
+    console.log(formData);
     try {
       const response = await axios.post<SigninResponse>(
         "http://127.0.0.1/DysamFacturas/backend/api.php?action=signup",
