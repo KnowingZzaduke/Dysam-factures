@@ -7,6 +7,7 @@ import { TypeSignup } from "../../types/signup";
 import { SigninResponse } from "../../types/login";
 import functions from "../../data/request";
 import { useNavigate, Link } from "react-router-dom";
+import { Input, Select, SelectItem, Button } from "@nextui-org/react";
 function Signup() {
   const [videoLoaded, setVideoLoaded] = useState(false);
   const [userName, setUserName] = useState("");
@@ -18,6 +19,11 @@ function Signup() {
   const [campusMessage, setCampusMessage] = useState(false);
   const [spiner, setSpiner] = useState(false);
   const navigate = useNavigate();
+  const [value, setValue] = useState(new Set([]));
+  useEffect(() => {
+    console.log(value);
+  }, [value]);
+
   useEffect(() => {
     const video = document.createElement("video");
     video.src = videoWater;
@@ -64,6 +70,14 @@ function Signup() {
   }, [data]);
 
   useEffect(() => {
+    if (alert === true) {
+      setTimeout(() => {
+        setAlert(false);
+      }, 2000);
+    }
+  }, [alert]);
+
+  useEffect(() => {
     if (userName.length < 6 || userPassword.length < 6) {
       setCampusMessage(true);
     } else {
@@ -72,10 +86,7 @@ function Signup() {
   }, [userName, userPassword]);
 
   return (
-    <div
-      className="position-relative d-flex justify-content-center align-items-center"
-      style={{ minHeight: "100vh", overflow: "hidden" }}
-    >
+    <div className="relative flex justify-center items-center min-h-screen overflow-hidden">
       {videoLoaded === true ? (
         <video
           src={videoWater}
@@ -83,26 +94,24 @@ function Signup() {
           muted
           loop
           playsInline
-          className="position-absolute top-0 left-0 w-100 h-100"
-          style={{ objectFit: "cover", zIndex: "-1" }}
+          className="absolute top-0 left-0 w-full min-h-screen object-cover"
         />
       ) : (
         <img
           src={imgWater}
           alt="fondo de agua"
-          className="position-absolute top-0 left-0 w-100 h-100"
-          style={{ objectFit: "cover", zIndex: "-1" }}
+          className="absolute top-0 left-0 w-full h-full object-cover"
         />
       )}
 
       <form
-        className="h-50 border border-dark rounded p-4 mx-2 shadow bg-white"
+        className="h-50 border border-black rounded-2xl w-96 p-4 mx-2 shadow bg-white z-10"
         onSubmit={handleSubmit}
       >
-        <div className="text-center">
+        <div className="text-center flex justify-center">
           <img
             src={logoDysam}
-            alt="Lodo Dysam"
+            alt="Logo Dysam"
             className="my-3"
             style={{ width: "150px" }}
           />
@@ -111,25 +120,26 @@ function Signup() {
           <label htmlFor="exampleInputEmail1" className="form-label">
             Usuario
           </label>
-          <input
+          <Input
             type="text"
             className="form-control"
             id="exampleInputEmail1"
             aria-describedby="emailHelp"
+            isInvalid={true}
+            errorMessage="Ingresa el nombre del usuario"
             onChange={(e) => setUserName(e.target.value)}
           />
-          <div id="emailHelp" className="form-text">
-            Ingresa tu nombre de usuario.
-          </div>
         </div>
         <div className="mb-3">
           <label htmlFor="exampleInputPassword1" className="form-label">
             Contraseña
           </label>
-          <input
+          <Input
             type="password"
             className="form-control"
             id="exampleInputPassword1"
+            isInvalid={true}
+            errorMessage="Ingresa una contraseña"
             onChange={(e) => setUserPassword(e.target.value)}
           />
         </div>
@@ -137,26 +147,30 @@ function Signup() {
           <label htmlFor="cargos" className="form-label">
             Cargo
           </label>
-          <select
+          <Select
             className="mb-3 form-select"
-            aria-label="Default select example"
-            defaultValue="0"
-            onChange={handleValueSelect}
+            placeholder="¿A qué tipo de cargo perteneces?"
+            selectedKeys={value}
+            onSelectionChange={setValue}
           >
-            <option value="0" disabled>
-              ¿A qué tipo de cargo perteneces?
-            </option>
-            <option value="1">Persona encargada del visto bueno</option>
-            <option value="2">Contador/a</option>
-          </select>
+            <SelectItem key="1" value="0">
+              Persona encargada de llenar las facturass
+            </SelectItem>
+            <SelectItem key="2" value="1">
+              Persona encargada del visto buen
+            </SelectItem>
+            <SelectItem key="3" value="2">
+              Contador/a
+            </SelectItem>
+          </Select>
         </div>
 
-        <button type="submit" className="btn btn-primary w-100 mt-3">
+        <Button type="submit" color="success" className="w-full mt-3">
           Crear cuenta
-        </button>
+        </Button>
         {alert === true ? (
           <div
-            className="alert alert-danger d-flex align-items-center gap-2 my-3"
+            className="alert alert-danger flex align-center gap-2 my-3"
             role="alert"
           >
             <FaTriangleExclamation />
@@ -168,7 +182,7 @@ function Signup() {
           <></>
         )}
         {spiner === true ? (
-          <div className="w-100 d-flex justify-content-center my-2">
+          <div className="w-full flex justify-center my-2">
             <div className="spinner-border text-info" role="status">
               <span className="visually-hidden">Cargando...</span>
             </div>
@@ -178,7 +192,7 @@ function Signup() {
         )}
         {campusMessage === true ? (
           <div
-            className="alert alert-danger d-flex align-items-center gap-2 my-3"
+            className="alert alert-danger flex align-center gap-2 my-3"
             role="alert"
           >
             <FaTriangleExclamation />
@@ -191,14 +205,17 @@ function Signup() {
         )}
         {messageSuccess === true && (
           <div
-            className="alert alert-success d-flex align-items-center gap-2 my-3"
+            className="alert alert-success flex align-center gap-2 my-3"
             role="alert"
           >
             <div className="text-center">Usuario creado correctamente</div>
           </div>
         )}
-        <div className="d-flex justify-content-end">
-          <Link className="registro my-2" to="/">
+        <div className="flex justify-center">
+          <Link
+            className="registro my-2 underline hover:cursor-pointer underline-offset-2"
+            to="/"
+          >
             Iniciar sesión
           </Link>
         </div>

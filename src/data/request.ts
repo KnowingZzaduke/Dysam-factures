@@ -73,13 +73,10 @@ const functions = {
       console.log(error);
     }
   },
-  updatedata: async function (dataToUpdate) {
+  updatedata: async function (idvalores_facturas, estado) {
     const formData = new FormData();
-    dataToUpdate?.forEach((item) => {
-      console.log(item);
-      formData.append("idvalores_facturas", item.idvalores_facturas);
-      formData.append("estado", item.estado);
-    });
+    formData.append("idvalores_facturas", idvalores_facturas);
+    formData.append("estado", estado);
     try {
       const response = await axios.post(
         "http://127.0.0.1/DysamFacturas/backend/api.php?action=updatedata",

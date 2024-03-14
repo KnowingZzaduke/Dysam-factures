@@ -69,6 +69,7 @@ if (isset($_POST["action"]) || isset($_GET["action"])) {
                             "descripcion" => $item["descripcion"],
                             "vr_sin_iva" => $item["vr_sin_iva"],
                             "vr_con_iva" => $item["vr_con_iva"],
+                            "estado" => $item["estado"]
                         ];
                     }, $valuesData)
                 ];

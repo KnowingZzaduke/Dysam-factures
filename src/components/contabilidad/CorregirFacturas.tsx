@@ -23,6 +23,7 @@ import { useMemo, useState, useCallback, useEffect } from "react";
 import { Link } from "react-router-dom";
 import functions from "../../data/request";
 import { CheckIcon } from "../utilities/svgComponents/CheckIcon";
+import { FaFloppyDisk } from "react-icons/fa6";
 function TableData() {
   const [data, setData] = useState(null);
   const [showModalNotResults, setShowModalNotResults] = useState(false);
@@ -51,54 +52,58 @@ function TableData() {
     try {
       const response = await functions.loadingvalues();
       if (response?.data.salida === "exito") {
-        setData(response?.data?.data?.data);
+        const filterData = response?.data?.data?.data.filter(
+          (item) => item?.estado === "true" || "false"
+        );
+        if (filterData) {
+          const newData = filterData.map((item) => ({
+            ...item,
+            estado:
+              item.estado === "true"
+                ? true
+                : item.estado === "false"
+                ? false
+                : false,
+          }));
+          return setData(newData);
+        }
       }
     } catch (error) {
       console.log(error);
     }
   });
 
-  const handleCheckboxClick = (id: number) => {
+  const handleCheckboxClick = async (id: number) => {
     setData((prevData) =>
       prevData?.map((item) => {
         if (item.idvalores_facturas === id) {
-          return {
+          const updatedItem = {
             ...item,
             estado: !item.estado,
           };
+          const { idvalores_facturas, estado } = updatedItem;
+          updateData(idvalores_facturas, estado);
+          return updatedItem;
         }
         return item;
       })
     );
   };
-
-  const updateData = async () => {
+  const updateData = async (idvalores_facturas, estado) => {
+    console.log({ idvalores_facturas, estado });
     try {
-      const dataToUpdate = data
-        ?.filter((item) => item.estado === true)
-        .map((items) => ({
-          idvalores_factura: items.idvalores_facturas,
-          estado: items.estado,
-        }));
-      await functions.updatedata(dataToUpdate);
-      loadData();
+      const response = await functions.updatedata(idvalores_facturas, estado);
+      if (response?.data?.salida === "exito") {
+        loadData();
+      }
     } catch (error) {
       console.error("Error al actualizar los datos en la base de datos", error);
     }
   };
 
   useEffect(() => {
-    const filterTrueUpdate = data?.filter((item) => item.estado === true);
-    if (filterTrueUpdate?.length > 0) {
-      updateData();
-    }
-  }, [data]);
-
-  useEffect(() => {
     loadData();
-  }, [forceUpdate]);
-
-  useEffect(() => {}, [data]);
+  }, []);
 
   const checkbox = tv({
     slots: {
@@ -201,16 +206,23 @@ function TableData() {
                               </VisuallyHidden>
                               <Chip
                                 className={
-                                  item?.estado === true
+                                  item?.estado === true ||
+                                  item?.estado === "true"
                                     ? "bg-yellow-400 hover:cursor-pointer"
                                     : "bg-blue-400 hover:cursor-pointer"
                                 }
                                 color="primary"
                                 variant="faded"
                               >
-                                {item?.estado && (
+                                {item?.estado === "true" ||
+                                item?.estado === true ? (
                                   <div className="flex items-center gap-2">
                                     <p className="font-semibold">Aprobado</p>
+                                    <CheckIcon className="ml-1" />
+                                  </div>
+                                ) : (
+                                  <div className="flex items-center gap-2">
+                                    <p className="font-semibold">No aprobado</p>
                                     <CheckIcon className="ml-1" />
                                   </div>
                                 )}
