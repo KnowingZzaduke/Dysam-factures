@@ -36,6 +36,7 @@ const functions = {
         "http://127.0.0.1/DysamFacturas/backend/api.php?action=signup",
         formData
       );
+      console.log(response);
       return response;
     } catch (error) {
       console.log(error);
@@ -61,14 +62,20 @@ const functions = {
     }
   },
   sendfacture: async function (params: Params) {
+    console.log(params)
     const formData = new FormData();
+    formData.append("fecha", params.fecha);
+    formData.append("nit", params.nit);
+    formData.append("descripcion", params.descripcion);
     formData.append("total_sin_iva", params.totalACobrarSinIva.toString());
     formData.append("total_con_iva", params.totalConIva.toString());
+    formData.append("estado", false);
     try {
       const response = await axios.post<DataTableResponse>(
         "http://127.0.0.1/DysamFacturas/backend/api.php?action=sendfacture",
         formData
       );
+      console.log(response);
       return response;
     } catch (error) {
       console.log(error);
@@ -83,7 +90,6 @@ const functions = {
         "http://127.0.0.1/DysamFacturas/backend/api.php?action=updatedata",
         formData
       );
-      console.log(response);
       return response;
     } catch (error) {
       console.log(error);
@@ -93,6 +99,16 @@ const functions = {
     try {
       const response = await axios.get<DataTableResponse>(
         "http://127.0.0.1/DysamFacturas/backend/api.php?action=loadinginventory"
+      );
+      return response;
+    } catch (error) {
+      console.error(error);
+    }
+  },
+  loadingclients: async function () {
+    try {
+      const response = await axios.get<DataTableResponse>(
+        "http://127.0.0.1/DysamFacturas/backend/api.php?action=loadingclients"
       );
       return response;
     } catch (error) {
@@ -171,7 +187,7 @@ const functions = {
         "http://127.0.0.1/DysamFacturas/backend/api.php?action=deletereport",
         formData
       );
-      console.log(response)
+      console.log(response);
       return response;
     } catch (error) {
       console.log(error);

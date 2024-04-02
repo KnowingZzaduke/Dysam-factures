@@ -18,12 +18,16 @@ function Autenticacion({ children }: AuthChildren) {
     } else {
       const SESIONDECRYPT = functions.decryptdata(SESION);
       if (validateSesion()) {
+        console.log(SESIONDECRYPT);
         switch (SESIONDECRYPT.level) {
+          case 0:
+            navigate("/contabilidad/enviar-facturas");
+            break;
           case 1:
-            navigate("/facturacion/bienvenida");
+            navigate("/contabilidad/corregir-facturas");
             break;
           case 2:
-            navigate("/contabilidad/bienvenida");
+            navigate("/revision");
             break;
         }
       } else {

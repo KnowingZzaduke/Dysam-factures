@@ -1,4 +1,4 @@
-import { Navbar } from "@nextui-org/react";
+import Navbar from "../components/utilities/Navbar";
 import TablaRevision from "../components/revision/tablaRevision";
 import FooterDysam from "../components/utilities/FooterDysam";
 

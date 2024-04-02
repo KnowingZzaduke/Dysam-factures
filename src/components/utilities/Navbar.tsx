@@ -1,12 +1,5 @@
 import React, { useEffect, useState, useContext } from "react";
 import {
-  FaFileExport,
-  FaFileSignature,
-  FaRegUserCircle,
-  FaBars,
-  FaSignOutAlt,
-} from "react-icons/fa";
-import {
   Navbar,
   NavbarBrand,
   NavbarContent,
@@ -107,11 +100,8 @@ function Navegacion() {
   return (
     <Navbar onMenuOpenChange={setIsMenuOpen}>
       <NavbarContent>
-        <NavbarMenuToggle
-          aria-label={isMenuOpen ? "Close menu" : "Open menu"}
-        />
         <NavbarBrand>
-          <p className="font-bold text-inherit">Menú</p>
+          <p className="font-bold text-inherit">Dysam</p>
         </NavbarBrand>
       </NavbarContent>
 

@@ -15,6 +15,9 @@ function TablasContabilidad() {
     valorTotal: 0,
     totalTransporte: 0,
     totalOtrosCostos: 0,
+    fecha: "",
+    nit: "",
+    descripcion: "",
   });
 
   // Función para actualizar los valores desde el componente hijo
@@ -24,12 +27,12 @@ function TablasContabilidad() {
 
   const [showModalSendValues, setShowModalSendValues] = useState(false);
 
-  useEffect(() => {
-    console.log(operacionesTablas);
-  }, [operacionesTablas]);
   return (
     <div className="min-h-screen flex flex-col items-center gap-6 max-w-screen-xl	mx-auto">
-      <InfoTablaContabilidad />
+      <InfoTablaContabilidad
+        valores={operacionesTablas}
+        actualizarValores={actualizarValores}
+      />
       <PrimeraTablaContabilidad
         valores={operacionesTablas}
         actualizarValores={actualizarValores}

@@ -22,35 +22,52 @@ function SextaTablaContabilidad({ valores, setShowModalSendValues }: Props) {
   const infoSixthCells: number[][] = [];
 
   useEffect(() => {
-    setParams((prevData) => ({
-      ...prevData,
-      totalCostos:
+    setParams((prevData) => {
+      // Calcula el total de costos
+      const totalCostos =
         valores.equipos +
         valores.manoObraDirecta +
         valores.totalOtrosCostos +
         valores.totalTransporte +
-        valores.valorTotal,
-      administracion:
-        prevData?.totalCostos === undefined ? 0 : prevData.totalCostos * 0.05,
-      utilidadBrutaEstimada:
-        prevData?.totalCostos === undefined ? 0 : prevData.totalCostos * 0.5,
-      totalACobrarSinIva:
-        prevData?.totalCostos === undefined &&
-        prevData?.administracion === undefined &&
-        prevData?.utilidadBrutaEstimada === undefined
-          ? 0
-          : prevData.totalCostos +
-            prevData.administracion +
-            prevData.utilidadBrutaEstimada,
-      totalConIva:
-        prevData?.totalACobrarSinIva === undefined
-          ? 0
-          : prevData?.totalACobrarSinIva * 0.19 + prevData?.totalACobrarSinIva,
-    }));
+        valores.valorTotal;
+
+      // Calcula la administración como el 5% del total de costos y lo redondea
+      const administracion = totalCostos * 0.05;
+
+      // Calcula la utilidad bruta estimada como el 50% del total de costos y lo redondea
+      const utilidadBrutaEstimada = totalCostos * 0.5;
+
+      // Calcula el total a cobrar sin IVA sumando los costos, la administración y la utilidad bruta estimada y lo redondea
+      const totalACobrarSinIva =
+        parseFloat(totalCostos) +
+        parseFloat(administracion) +
+        parseFloat(utilidadBrutaEstimada);
+
+      // Calcula el total a cobrar con IVA agregando el 19% de IVA al total a cobrar sin IVA y lo redondea
+      const totalConIva = parseFloat(totalACobrarSinIva) * 1.19;
+
+      // Formatea los valores para agregar puntos como separadores de miles
+      const formatNumber = (value) => {
+        return parseFloat(value).toLocaleString("es-ES", {
+          minimumFractionDigits: 2,
+        });
+      };
+
+      return {
+        ...prevData,
+        totalCostos: totalCostos,
+        administracion: administracion,
+        utilidadBrutaEstimada: utilidadBrutaEstimada,
+        totalACobrarSinIva: totalACobrarSinIva,
+        totalConIva: totalConIva,
+        fecha: valores.fecha,
+        nit: valores.nit,
+        descripcion: valores.descripcion,
+      };
+    });
   }, [valores]);
 
   useEffect(() => {
-    console.log(params);
     if (params) {
       if (params.totalCostos !== 0) {
         setLoader(false);
@@ -68,12 +85,15 @@ function SextaTablaContabilidad({ valores, setShowModalSendValues }: Props) {
 
   async function handleSubmitParams() {
     if (params) {
+      console.log(params);
       try {
         const response = await functions.sendfacture(params);
-        console.log(response?.data);
         if (response?.data?.salida === "exito") {
           setShowModalSendValues(true);
           setLoader(true);
+          setTimeout(() => {
+            location.reload();
+          }, 3000)
         }
       } catch (error) {
         console.log(error);

@@ -149,13 +149,13 @@ function Signup() {
             selectedKeys={value}
             onSelectionChange={setValue}
           >
-            <SelectItem key="1" value="0">
+            <SelectItem key="0" value="0">
               Persona encargada de llenar las facturas
             </SelectItem>
-            <SelectItem key="2" value="1">
-              Persona encargada del visto buen
+            <SelectItem key="1" value="1">
+              Persona encargada del visto bueno
             </SelectItem>
-            <SelectItem key="3" value="2">
+            <SelectItem key="2" value="2">
               Contador/a
             </SelectItem>
           </Select>
@@ -201,7 +201,7 @@ function Signup() {
         )}
         {messageSuccess === true && (
           <div
-            className="alert alert-success flex align-center gap-2 my-3"
+            className="alert alert-success flex align-center justify-center gap-2 my-3"
             role="alert"
           >
             <div className="text-center">Usuario creado correctamente</div>

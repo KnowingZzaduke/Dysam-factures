@@ -19,7 +19,6 @@ function App() {
   const [alert, setAlert] = useState(false);
   const { data, setData } = useContext(DataContext);
   const navigate = useNavigate();
-  const [isReadyToRedirect, setIsReadyToRedirect] = useState(false);
   const [spiner, setSpiner] = useState(false);
 
   useEffect(() => {
@@ -83,14 +82,14 @@ function App() {
   }, [alert]);
 
   useEffect(() => {
-    console.log(data);
     if (data !== undefined) {
       if (data?.data.salida === "exito") {
-        console.log(data);
         if (data?.data.level === 1) {
-          navigate("/facturacion/bienvenida");
+          navigate("/contabilidad/corregir-facturas");
         } else if (data?.data.level === 2) {
-          navigate("/contabilidad/bienvenida");
+          navigate("/revision");
+        } else if (data?.data.level === 0) {
+          navigate("/contabilidad/enviar-facturas");
         }
       }
     }

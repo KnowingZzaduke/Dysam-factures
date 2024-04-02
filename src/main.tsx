@@ -15,6 +15,7 @@ import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import { NextUIProvider } from "@nextui-org/react";
 import Autenticacion from "./components/validacion/HOC";
 import TablasContabilidad from "./components/contabilidad/TablasContabilidad";
+import Revision from "./routes/Revision";
 const router = createBrowserRouter([
   {
     path: "/",
@@ -75,6 +76,14 @@ const router = createBrowserRouter([
         element: <CorregirFacturas />,
       },
     ],
+  },
+  {
+    path: "revision",
+    element: (
+      <Autenticacion>
+        <Revision />
+      </Autenticacion>
+    ),
   },
 ]);
 

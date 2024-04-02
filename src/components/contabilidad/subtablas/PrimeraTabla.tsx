@@ -4,21 +4,26 @@ import { registerLanguageDictionary, esMX } from "handsontable/i18n";
 import HyperFormula from "hyperformula";
 import "handsontable/dist/handsontable.full.css";
 import { infoFirthCells } from "../../../data/dataCells";
-registerAllModules();
-registerLanguageDictionary(esMX);
-type Props = {
-  valores: Operaciones;
-  actualizarValores: (nuevosValores: Operaciones) => void;
-};
 import { Inventario } from "../../../types/inventario";
 import { Operaciones } from "../../../types/operaciones";
 import { useEffect, useRef, useState } from "react";
 import { Button, Checkbox } from "@nextui-org/react";
 import functions from "../../../data/request";
+
+registerAllModules();
+registerLanguageDictionary(esMX);
+
+type Props = {
+  valores: Operaciones;
+  actualizarValores: (nuevosValores: Operaciones) => void;
+};
+
 function PrimeraTablaContabilidad({ valores, actualizarValores }: Props) {
   const hotComponentePrimeraTabla = useRef(null);
   const [isSelected, setIsSelected] = useState(false);
   const [datosInventario, setDataInventarios] = useState<Inventario[][]>([]);
+  const [selectOptions, setSelectOptions] = useState({});
+
   function ejecutarFormulas() {
     const guardarDatos =
       hotComponentePrimeraTabla?.current?.hotInstance?.getData();
@@ -42,13 +47,8 @@ function PrimeraTablaContabilidad({ valores, actualizarValores }: Props) {
     async function cargarDatosInventario() {
       try {
         const response = await functions.loadinginventory();
-        if (response?.data.data.salida === "exito") {
-          setDataInventarios((prevData) => ({
-            ...prevData,
-            codigo: response.data.data.data.map((item) => item),
-            descripcion: response.data.data.data.map((item) => item),
-            vunitario: response.data.data.data.map((item) => item),
-          }));
+        if (response?.data.salida === "exito") {
+          setDataInventarios(response.data.data.data);
         }
       } catch (error) {
         console.log(error);
@@ -58,7 +58,11 @@ function PrimeraTablaContabilidad({ valores, actualizarValores }: Props) {
   }, []);
 
   useEffect(() => {
-    console.log(datosInventario);
+    const selectOptionsData = datosInventario.reduce((acc, item, index) => {
+      acc[item?.vunitario] = item?.codigo + " - " + item?.descripcion;
+      return acc;
+    }, {});
+    setSelectOptions(selectOptionsData);
   }, [datosInventario]);
 
   useEffect(() => {
@@ -73,8 +77,6 @@ function PrimeraTablaContabilidad({ valores, actualizarValores }: Props) {
   }, [isSelected]);
 
   const hyperformulaInstance = HyperFormula.buildEmpty({
-    // to use an external HyperFormula instance,
-    // initialize it with the `'internal-use-in-handsontable'` license key
     licenseKey: "internal-use-in-handsontable",
   });
 
@@ -99,7 +101,7 @@ function PrimeraTablaContabilidad({ valores, actualizarValores }: Props) {
         }}
         className="-z-0 custom-table"
       >
-        <HotColumn type="select" selectOptions={{ 5: "Código A001" }} />
+        <HotColumn type="select" selectOptions={selectOptions} />
         <HotColumn type="numeric" />
         <HotColumn type="numeric" />
         <HotColumn type="numeric" />

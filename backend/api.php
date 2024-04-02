@@ -29,11 +29,21 @@ if (isset($_POST["action"]) || isset($_GET["action"])) {
             }
             break;
         case "sendfacture":
+            $fecha = $_POST["fecha"];
+            $nit = $_POST["nit"];
+            $descripcion = $_POST["descripcion"];
+            $vr_sin_iva = number_format(floatval(str_replace(',', '.', $_POST["total_sin_iva"])), 2, ',', '.');
+            $vr_con_iva = number_format(floatval(str_replace(',', '.', $_POST["total_con_iva"])), 2, ',', '.');            
+            $estado = $_POST["estado"];
             $data = [
-                "vr_sin_iva" => $_POST["total_sin_iva"],
-                "vr_con_iva" => $_POST["total_con_iva"]
+                "fecha" => $fecha,
+                "nit" => $nit,
+                "descripcion" => $descripcion,
+                "vr_sin_iva" => $vr_sin_iva,
+                "vr_con_iva" => $vr_con_iva,
+                "estado" => $estado
             ];
-            $db->insert("valores_facturas", $data);
+            $db->insert("valores", $data);
             echo json_encode(["salida" => "exito", "data" => "Factura creada correctamente"]);
             break;
         case "loadinginventory":
@@ -50,6 +60,23 @@ if (isset($_POST["action"]) || isset($_GET["action"])) {
                             "vunitario" => $item["vunitario"]
                         ];
                     }, $inventarioData)
+                ];
+                echo json_encode(["salida" => "exito", "data" => $response]);
+            }
+            break;
+        case "loadingclients":
+            $clientesdata = $db->get("clientes");
+
+            if (!$clientesdata || empty($clientesdata)) {
+                echo json_encode(["salida" => "error", "data" => "No se encontraron datos en el inventario"]);
+            } else {
+                $response = [
+                    "data" => array_map(function ($item) {
+                        return [
+                            "id_cliente" => $item["id_cliente"],
+                            "nombres" => $item["nombres"],
+                        ];
+                    }, $clientesdata)
                 ];
                 echo json_encode(["salida" => "exito", "data" => $response]);
             }
