@@ -56,7 +56,7 @@ function InfoTablaContabilidad({ valores, actualizarValores }: Props) {
 
   useEffect(() => {
     const selectOptionsData = dataClients.reduce((acc, item, index) => {
-      acc[item?.id_cliente] = item?.nombres;
+      acc[item?.nombres +  " " + "-" + " " + item?.id_cliente] = item?.nombres + " " + "-" + " " + item?.id_cliente;
       return acc;
     }, {});
     setSelectOptions(selectOptionsData);
