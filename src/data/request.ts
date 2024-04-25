@@ -75,7 +75,6 @@ const functions = {
         "http://127.0.0.1/DysamFacturas/backend/api.php?action=sendfacture",
         formData
       );
-      console.log(response);
       return response;
     } catch (error) {
       console.log(error);
@@ -90,6 +89,7 @@ const functions = {
         "http://127.0.0.1/DysamFacturas/backend/api.php?action=updatedata",
         formData
       );
+      console.log(response)
       return response;
     } catch (error) {
       console.log(error);
@@ -120,6 +120,7 @@ const functions = {
       const response = await axios.get<DataTableResponse>(
         "http://127.0.0.1/DysamFacturas/backend/api.php?action=loadingvalues"
       );
+      console.log(response);
       return response;
     } catch (error) {
       console.error(error);

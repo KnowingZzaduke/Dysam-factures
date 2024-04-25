@@ -1,6 +1,4 @@
 import React, { useContext, useState, useEffect, useMemo } from "react";
-import { DataContext } from "../../context/DataContext";
-import { TypeFormFile } from "../../types/file";
 import { cellSecondCells } from "../../data/numberCells";
 import {
   HeaderCells,

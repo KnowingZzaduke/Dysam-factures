@@ -49,7 +49,6 @@ function TableData() {
           (item) => item?.estado === "true" || item?.estado === "false"
         );
         if (filterData) {
-          console.log(filterData);
           const newData = filterData.map((item) => ({
             ...item,
             estado:
@@ -96,7 +95,6 @@ function TableData() {
 
   function eliminarFacturas(id: number) {
     console.log(id);
-    console.log("hola");
     setData((prevData) =>
       prevData?.map((item) => {
         if (item.idvalores_facturas === id) {
@@ -117,6 +115,7 @@ function TableData() {
     try {
       const response = await functions.deletereport(idvalores_facturas, estado);
       if (response?.data?.salida === "exito") {
+        console.log(response)
         loadData();
       }
     } catch (error) {

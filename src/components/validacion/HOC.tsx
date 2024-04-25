@@ -18,7 +18,6 @@ function Autenticacion({ children }: AuthChildren) {
     } else {
       const SESIONDECRYPT = functions.decryptdata(SESION);
       if (validateSesion()) {
-        console.log(SESIONDECRYPT);
         switch (SESIONDECRYPT.level) {
           case 0:
             navigate("/contabilidad/enviar-facturas");
