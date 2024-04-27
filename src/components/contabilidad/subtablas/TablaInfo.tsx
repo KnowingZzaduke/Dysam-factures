@@ -6,7 +6,7 @@ import "handsontable/dist/handsontable.full.css";
 import { infoCells } from "../../../data/dataCells";
 import { Clientes } from "../../../types/clientes";
 import functions from "../../../data/request";
-import { Button, Checkbox } from "@nextui-org/react";
+import { Button, Checkbox, Link } from "@nextui-org/react";
 import { Operaciones } from "../../../types/operaciones";
 registerAllModules();
 registerLanguageDictionary(esMX);
@@ -84,6 +84,9 @@ function InfoTablaContabilidad({ valores, actualizarValores }: Props) {
       <h1 className="text-2xl text-center my-4  font-bold">
         COTIZACIÓN SERVICIOS DYSAM SAS
       </h1>
+      <Link href="/contabilidad/corregir-facturas" className="py-4" target="_blank">
+        <Button type="button" color="warning" className="w-[150px]">Ver facturas</Button>
+      </Link>
       <HotTable
         language={esMX.languageCode}
         ref={hotComponenteTablaInfo}

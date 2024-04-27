@@ -17,9 +17,10 @@ const functions = {
 
     try {
       const response = await axios.post<SigninResponse>(
-        "http://127.0.0.1/DysamFacturas/backend/api.php?action=signin",
+        "http://127.0.0.1/Dysam-factures/backend/api.php?action=signin",
         formData
       );
+      console.log (response);
       return response;
     } catch (error) {
       console.log("Error");
@@ -33,7 +34,7 @@ const functions = {
     console.log(formData);
     try {
       const response = await axios.post<SigninResponse>(
-        "http://127.0.0.1/DysamFacturas/backend/api.php?action=signup",
+        "http://127.0.0.1/Dysam-factures/backend/api.php?action=signup",
         formData
       );
       console.log(response);
@@ -53,7 +54,7 @@ const functions = {
     formData.append("statusfile", form.file.statusfile);
     try {
       const response = await axios.post<SigninResponse>(
-        "http://127.0.0.1/DysamFacturas/backend/api.php?action=makereport",
+        "http://127.0.0.1/Dysam-factures/backend/api.php?action=makereport",
         formData
       );
       return response;
@@ -72,7 +73,7 @@ const functions = {
     formData.append("estado", false);
     try {
       const response = await axios.post<DataTableResponse>(
-        "http://127.0.0.1/DysamFacturas/backend/api.php?action=sendfacture",
+        "http://127.0.0.1/Dysam-factures/backend/api.php?action=sendfacture",
         formData
       );
       return response;
@@ -86,7 +87,7 @@ const functions = {
     formData.append("estado", estado);
     try {
       const response = await axios.post(
-        "http://127.0.0.1/DysamFacturas/backend/api.php?action=updatedata",
+        "http://127.0.0.1/Dysam-factures/backend/api.php?action=updatedata",
         formData
       );
       console.log(response)
@@ -98,7 +99,7 @@ const functions = {
   loadinginventory: async function () {
     try {
       const response = await axios.get<DataTableResponse>(
-        "http://127.0.0.1/DysamFacturas/backend/api.php?action=loadinginventory"
+        "http://127.0.0.1/Dysam-factures/backend/api.php?action=loadinginventory"
       );
       return response;
     } catch (error) {
@@ -108,7 +109,7 @@ const functions = {
   loadingclients: async function () {
     try {
       const response = await axios.get<DataTableResponse>(
-        "http://127.0.0.1/DysamFacturas/backend/api.php?action=loadingclients"
+        "http://127.0.0.1/Dysam-factures/backend/api.php?action=loadingclients"
       );
       return response;
     } catch (error) {
@@ -118,7 +119,7 @@ const functions = {
   loadingvalues: async function () {
     try {
       const response = await axios.get<DataTableResponse>(
-        "http://127.0.0.1/DysamFacturas/backend/api.php?action=loadingvalues"
+        "http://127.0.0.1/Dysam-factures/backend/api.php?action=loadingvalues"
       );
       console.log(response);
       return response;
@@ -129,7 +130,7 @@ const functions = {
   loadingreport: async function () {
     try {
       const response = await axios.get<DataTableResponse>(
-        "http://127.0.0.1/DysamFacturas/backend/api.php?action=loadingreport"
+        "http://127.0.0.1/Dysam-factures/backend/api.php?action=loadingreport"
       );
       return response;
     } catch (error) {
@@ -145,7 +146,7 @@ const functions = {
     formData.append("comment", form.comment);
     try {
       const response = await axios.post<SigninResponse>(
-        "http://127.0.0.1/DysamFacturas/backend/api.php?action=correctreport",
+        "http://127.0.0.1/Dysam-factures/backend/api.php?action=correctreport",
         formData
       );
       return response;
@@ -156,7 +157,7 @@ const functions = {
   loadingbillers: async function () {
     try {
       const response = await axios.get<SigninResponse>(
-        "http://127.0.0.1/DysamFacturas/backend/api.php?action=loadingbillers"
+        "http://127.0.0.1/Dysam-factures/backend/api.php?action=loadingbillers"
       );
       return response;
     } catch (error) {
@@ -171,7 +172,7 @@ const functions = {
     formData.append("commentf", form.comment);
     try {
       const response = await axios.post<SigninResponse>(
-        "http://127.0.0.1/DysamFacturas/backend/api.php?action=verifyreport",
+        "http://127.0.0.1/Dysam-factures/backend/api.php?action=verifyreport",
         formData
       );
       return response;
@@ -185,7 +186,7 @@ const functions = {
     formData.append("estado", estado);
     try {
       const response = await axios.post<SigninResponse>(
-        "http://127.0.0.1/DysamFacturas/backend/api.php?action=deletereport",
+        "http://127.0.0.1/Dysam-factures/backend/api.php?action=deletereport",
         formData
       );
       console.log(response);

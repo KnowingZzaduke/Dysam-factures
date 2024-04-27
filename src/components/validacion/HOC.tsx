@@ -7,9 +7,11 @@ import Cookies from "js-cookie";
 interface AuthChildren {
   children: React.ReactNode;
 }
+import { useLocation } from "react-router-dom";
 function Autenticacion({ children }: AuthChildren) {
   const { validateSesion } = useContext(DataContext);
   const navigate = useNavigate();
+  const location = useLocation();
   useEffect(() => {
     const SESION = Cookies.get("dysam-fac");
     if (SESION === undefined) {
@@ -18,16 +20,16 @@ function Autenticacion({ children }: AuthChildren) {
     } else {
       const SESIONDECRYPT = functions.decryptdata(SESION);
       if (validateSesion()) {
-        switch (SESIONDECRYPT.level) {
-          case 0:
+        if (SESIONDECRYPT.level === 0) {
+          if (location.pathname === "/contabilidad/enviar-facturas" || location.pathname === "/") {
             navigate("/contabilidad/enviar-facturas");
-            break;
-          case 1:
+          } else if (location.pathname === "/contabilidad/corregir-facturas") {
             navigate("/contabilidad/corregir-facturas");
-            break;
-          case 2:
-            navigate("/revision");
-            break;
+          }
+        } else if (SESIONDECRYPT.level === 1) {
+          navigate("/contabilidad/corregir-facturas");
+        } else if (SESIONDECRYPT.level === 2) {
+          navigate("/revision");
         }
       } else {
         if (SESIONDECRYPT.user === null) {
