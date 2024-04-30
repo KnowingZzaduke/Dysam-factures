@@ -31,6 +31,7 @@ function TableData() {
   const [showModalNotResults, setShowModalNotResults] = useState(false);
   const { isOpen, onOpen, onClose, onOpenChange } = useDisclosure();
   const [reverseData, setReverseData] = useState(false);
+  const [showConfirmationMessage, setShowConfirmationMessage] = useState(false);
   const { isSelected, isFocusVisible } = useCheckbox({
     defaultSelected: false,
   });
@@ -130,6 +131,11 @@ function TableData() {
       if (response?.data?.salida === "exito") {
         loadData();
         setShowTextConfirm(true);
+        setShowConfirmationMessage(true);
+        setTimeout(() => {
+          setShowConfirmationMessage(false);
+          onClose();
+        }, 3000);
       }
     } catch (error) {
       console.error("Error al actualizar los datos en la base de datos", error);
@@ -475,6 +481,13 @@ function TableData() {
                           }))
                         }
                       />
+                      {showConfirmationMessage === true ? (
+                        <p className="text-green-500 underline text-sm my-2 text-center">
+                          Datos actualizados correctamente
+                        </p>
+                      ) : (
+                        <></>
+                      )}
                     </div>
                   </ModalBody>
                   <ModalFooter>

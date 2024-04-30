@@ -132,30 +132,35 @@ function SextaTablaContabilidad({ valores, setShowModalSendValues }: Props) {
               <Input
                 type="text"
                 value={params?.totalCostos || "cargando"}
+                label="Total costos"
                 readOnly
                 color="success"
               />
               <Input
                 type="text"
                 value={params?.administracion || "cargando"}
+                label="Administración"
                 readOnly
                 color="success"
               />
               <Input
                 type="text"
                 value={params?.utilidadBrutaEstimada || "cargando"}
+                label="Utilidad bruta estimada"
                 readOnly
                 color="success"
               />
               <Input
                 type="text"
                 value={params?.totalACobrarSinIva || "cargando"}
+                label="Total sin Iva"
                 readOnly
                 color="success"
               />
               <Input
                 type="text"
                 value={params?.totalConIva || "cargando"}
+                label="Total con Iva"
                 readOnly
                 color="success"
               />
@@ -163,7 +168,7 @@ function SextaTablaContabilidad({ valores, setShowModalSendValues }: Props) {
             {showTrueSend === true ? (
               <div className="flex gap-2 justify-center mt-4 items-center">
                 <Spinner size="lg" color="primary" />
-                <p className="text-lg font-semibold">
+                <p className="text-sm font-semibold">
                   Cargando valores, espere por favor
                 </p>
               </div>

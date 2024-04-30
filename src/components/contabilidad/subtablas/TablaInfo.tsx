@@ -97,6 +97,9 @@ function InfoTablaContabilidad({ valores, actualizarValores }: Props) {
       <span className="text-red-500 my-2 text-sm">
         ¡Por favor colocar los valores sin puntos ni espacios!
       </span>
+      <span className="text-red-500 my-2 text-sm">
+        NOTA: Si se realizan cambios después de capturar valores, deverá volver a capturar los valores.
+      </span>
       <HotTable
         language={esMX.languageCode}
         ref={hotComponenteTablaInfo}
