@@ -18,16 +18,18 @@ import {
   Chip,
   VisuallyHidden,
   tv,
+  Input,
 } from "@nextui-org/react";
 import { useMemo, useState, useCallback, useEffect } from "react";
 import { Link } from "react-router-dom";
 import functions from "../../data/request";
 import { CheckIcon } from "../utilities/svgComponents/CheckIcon";
-import { FaFloppyDisk, FaRegTrashCan } from "react-icons/fa6";
+import { FaPenToSquare, FaRegTrashCan } from "react-icons/fa6";
+import Cookies from "js-cookie";
 function TableData() {
   const [data, setData] = useState(null);
   const [showModalNotResults, setShowModalNotResults] = useState(false);
-  const { isOpen, onOpen, onClose } = useDisclosure();
+  const { isOpen, onOpen, onClose, onOpenChange } = useDisclosure();
   const [reverseData, setReverseData] = useState(false);
   const { isSelected, isFocusVisible } = useCheckbox({
     defaultSelected: false,
@@ -35,11 +37,35 @@ function TableData() {
   const [page, setPage] = useState(1);
   const rowsPerPage = 10;
   const pages = Math.ceil(data?.length / rowsPerPage);
+  const [editValues, setEditValues] = useState({
+    idvalores_facturas: null,
+    fecha: null,
+    nit_y_cliente: null,
+    descripcion: null,
+    vr_sin_iva: null,
+    vr_con_iva: null,
+  });
   const items = useMemo(() => {
     const start = (page - 1) * rowsPerPage;
     const end = start + rowsPerPage;
     return data ? data.slice(start, end) : [];
   }, [page, data]);
+  const [activeOptions, setActiveOptions] = useState(true);
+  const [showTextConfirm, setShowTextConfirm] = useState(false);
+
+  useEffect(() => {
+    const SESION = Cookies.get("dysam-fac");
+    if (SESION === undefined) {
+      alert("Sin cookies, por favor contacta al programador");
+    } else {
+      const SESIONDECRYPT = functions.decryptdata(SESION);
+      if (SESIONDECRYPT.level === 0) {
+        setActiveOptions(false);
+      } else if (SESIONDECRYPT.level === 1) {
+        setActiveOptions(true);
+      }
+    }
+  }, []);
 
   const loadData = useCallback(async () => {
     try {
@@ -58,7 +84,7 @@ function TableData() {
                 ? false
                 : false,
           }));
-          return setData(newData);
+          return setData(newData.slice().reverse());
         }
       }
     } catch (error) {
@@ -75,18 +101,35 @@ function TableData() {
             estado: !item.estado,
           };
           const { idvalores_facturas, estado } = updatedItem;
-          updateData(idvalores_facturas, estado);
+          updateData(idvalores_facturas, estado, "", "", "", "", "");
           return updatedItem;
         }
         return item;
       })
     );
   };
-  const updateData = async (idvalores_facturas, estado) => {
+  const updateData = async (
+    idvalores_facturas,
+    estado,
+    fecha_factura,
+    cliente_y_nit,
+    descripcion,
+    v_sin_iva,
+    v_con_iva
+  ) => {
     try {
-      const response = await functions.updatedata(idvalores_facturas, estado);
+      const response = await functions.updatedata(
+        idvalores_facturas,
+        estado,
+        fecha_factura,
+        cliente_y_nit,
+        descripcion,
+        v_sin_iva,
+        v_con_iva
+      );
       if (response?.data?.salida === "exito") {
         loadData();
+        setShowTextConfirm(true);
       }
     } catch (error) {
       console.error("Error al actualizar los datos en la base de datos", error);
@@ -94,7 +137,6 @@ function TableData() {
   };
 
   function eliminarFacturas(id: number) {
-    console.log(id);
     setData((prevData) =>
       prevData?.map((item) => {
         if (item.idvalores_facturas === id) {
@@ -115,7 +157,6 @@ function TableData() {
     try {
       const response = await functions.deletereport(idvalores_facturas, estado);
       if (response?.data?.salida === "exito") {
-        console.log(response)
         loadData();
       }
     } catch (error) {
@@ -126,6 +167,27 @@ function TableData() {
   useEffect(() => {
     loadData();
   }, []);
+
+  const editFactures = (id: number) => {
+    const filterData = data?.filter((item) => item.idvalores_facturas === id);
+    if (filterData) {
+      filterData.map((item) => {
+        setEditValues((prevData) => {
+          const object = {
+            ...prevData,
+            idvalores_facturas: item.idvalores_facturas,
+            fecha: item.fecha,
+            nit_y_cliente: item.nit_y_cliente,
+            descripcion: item.descripcion,
+            vr_sin_iva: item.vr_sin_iva,
+            vr_con_iva: item.vr_con_iva,
+          };
+          return object;
+        });
+      });
+    }
+    onOpen();
+  };
 
   const checkbox = tv({
     slots: {
@@ -160,20 +222,24 @@ function TableData() {
             <h1 className="py-3 font-semibold" style={{ fontSize: "30px" }}>
               Tabla de facturas
             </h1>
-            <Button
-              color="warning"
-              onClick={() => {
-                setReverseData(!reverseData);
-                setData(data.slice().reverse());
-              }}
-              style={{ margin: "1rem 0" }}
-            >
-              {reverseData === false ? (
-                <p>Mostrar registros recientes</p>
-              ) : (
-                <p>Mostrar últimos registros</p>
-              )}
-            </Button>
+            <div className="flex gap-2 my-4">
+              <Button
+                color="warning"
+                onClick={() => {
+                  setReverseData(!reverseData);
+                  setData(data.slice().reverse());
+                }}
+              >
+                {reverseData === true ? (
+                  <p>Mostrar registros recientes</p>
+                ) : (
+                  <p>Mostrar últimos registros</p>
+                )}
+              </Button>
+              <Button color="primary" onPress={loadData}>
+                Cargar datos
+              </Button>
+            </div>
             <Table
               aria-label="Example table with client side pagination"
               bottomContent={
@@ -197,8 +263,7 @@ function TableData() {
             >
               <TableHeader>
                 <TableColumn key="fecha">FECHA DE LA FACTURA</TableColumn>
-                <TableColumn key="nit">NIT</TableColumn>
-                <TableColumn key="cliente">CLIENTE</TableColumn>
+                <TableColumn key="nit_y_cliente">CLIENTE Y NIT</TableColumn>
                 <TableColumn key="descripcion">DESCRIPCIÓN</TableColumn>
                 <TableColumn key="vr_sin_iva">V. SIN IVA</TableColumn>
                 <TableColumn key="vr_con_iva">VALOR CON IVA</TableColumn>
@@ -215,7 +280,12 @@ function TableData() {
                   >
                     {(columnKey) => (
                       <TableCell>
-                        {columnKey === "opciones" ? (
+                        {activeOptions === false && columnKey === "opciones" ? (
+                          <p className="font-semibold text-red-600">
+                            Sin acceso
+                          </p>
+                        ) : columnKey === "opciones" &&
+                          activeOptions === true ? (
                           <div className="flex gap-4 items-center">
                             <label>
                               <VisuallyHidden>
@@ -263,6 +333,13 @@ function TableData() {
                             >
                               <FaRegTrashCan className="text-black" />
                             </Button>
+                            <Button
+                              onClick={() =>
+                                editFactures(item?.idvalores_facturas)
+                              }
+                            >
+                              <FaPenToSquare />
+                            </Button>
                           </div>
                         ) : (
                           getKeyValue(item, columnKey)
@@ -302,6 +379,132 @@ function TableData() {
           </div>
         )}
       </div>
+      <Modal
+        isOpen={isOpen}
+        onOpenChange={onOpenChange}
+        scrollBehavior="outside"
+      >
+        {editValues && (
+          <form>
+            <ModalContent>
+              {(onClose) => (
+                <>
+                  <ModalHeader className="flex flex-col gap-1">
+                    Editar datos
+                  </ModalHeader>
+                  <ModalBody>
+                    <div className="flex flex-col gap-6">
+                      <Input
+                        type="text"
+                        label="Identificador de factura"
+                        defaultValue={
+                          editValues?.idvalores_facturas ||
+                          "Error al traer los datos"
+                        }
+                        value={editValues?.idvalores_facturas}
+                        readOnly
+                      />
+                      <Input
+                        type="text"
+                        label="Fecha"
+                        defaultValue={
+                          editValues?.fecha || "Error al traer los datos"
+                        }
+                        value={editValues?.fecha}
+                        onChange={(e) =>
+                          setEditValues((prevData) => ({
+                            ...prevData,
+                            fecha: e.target.value,
+                          }))
+                        }
+                      />
+                      <Input
+                        type="text"
+                        label="Cliente y Nit"
+                        defaultValue={
+                          editValues?.nit_y_cliente ||
+                          "Error al traer los datos"
+                        }
+                        value={editValues?.nit_y_cliente}
+                        onChange={(e) =>
+                          setEditValues((prevData) => ({
+                            ...prevData,
+                            nit_y_cliente: e.target.value,
+                          }))
+                        }
+                      />
+                      <Input
+                        type="text"
+                        label="Descripción"
+                        defaultValue={
+                          editValues?.descripcion || "Error al traer los datos"
+                        }
+                        value={editValues?.descripcion}
+                        onChange={(e) =>
+                          setEditValues((prevData) => ({
+                            ...prevData,
+                            descripcion: e.target.value,
+                          }))
+                        }
+                      />
+                      <Input
+                        type="text"
+                        label="Valor sin IVA"
+                        defaultValue={
+                          editValues?.vr_sin_iva || "Error al traer los datos"
+                        }
+                        value={editValues?.vr_sin_iva}
+                        onChange={(e) =>
+                          setEditValues((prevData) => ({
+                            ...prevData,
+                            vr_sin_iva: e.target.value,
+                          }))
+                        }
+                      />
+                      <Input
+                        type="text"
+                        label="Valor con IVA"
+                        defaultValue={
+                          editValues?.vr_con_iva || "Error al traer los datos"
+                        }
+                        value={editValues?.vr_con_iva}
+                        onChange={(e) =>
+                          setEditValues((prevData) => ({
+                            ...prevData,
+                            vr_con_iva: e.target.value,
+                          }))
+                        }
+                      />
+                    </div>
+                  </ModalBody>
+                  <ModalFooter>
+                    <Button
+                      color="danger"
+                      variant="light"
+                      onPress={() =>
+                        updateData(
+                          editValues.idvalores_facturas,
+                          "",
+                          editValues.fecha,
+                          editValues.nit_y_cliente,
+                          editValues.descripcion,
+                          editValues.vr_sin_iva,
+                          editValues.vr_con_iva
+                        )
+                      }
+                    >
+                      Actualizar
+                    </Button>
+                    <Button color="primary" onPress={onClose}>
+                      Cerrar
+                    </Button>
+                  </ModalFooter>
+                </>
+              )}
+            </ModalContent>
+          </form>
+        )}
+      </Modal>
     </div>
   );
 }

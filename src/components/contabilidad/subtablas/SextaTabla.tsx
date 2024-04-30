@@ -3,7 +3,7 @@ import { registerAllModules } from "handsontable/registry";
 import { registerLanguageDictionary, esMX } from "handsontable/i18n";
 import HyperFormula from "hyperformula";
 import "handsontable/dist/handsontable.full.css";
-import { Button, Spinner } from "@nextui-org/react";
+import { Button, Spinner, Input } from "@nextui-org/react";
 import functions from "../../../data/request";
 registerAllModules();
 registerLanguageDictionary(esMX);
@@ -20,6 +20,7 @@ function SextaTablaContabilidad({ valores, setShowModalSendValues }: Props) {
   const hotComponentRef = useRef(null);
   const [loader, setLoader] = useState(true);
   const infoSixthCells: number[][] = [];
+  const [showTrueSend, setShowTrueSend] = useState(true);
 
   useEffect(() => {
     setParams((prevData) => {
@@ -69,8 +70,12 @@ function SextaTablaContabilidad({ valores, setShowModalSendValues }: Props) {
 
   useEffect(() => {
     if (params) {
+      console.log(params);
       if (params.totalCostos !== 0) {
         setLoader(false);
+        setTimeout(() => {
+          setShowTrueSend(false);
+        }, 7000);
       }
       const arrayParams = Object.values(params);
       infoSixthCells.push(arrayParams);
@@ -85,7 +90,6 @@ function SextaTablaContabilidad({ valores, setShowModalSendValues }: Props) {
 
   async function handleSubmitParams() {
     if (params) {
-      console.log(params);
       try {
         const response = await functions.sendfacture(params);
         if (response?.data?.salida === "exito") {
@@ -93,7 +97,7 @@ function SextaTablaContabilidad({ valores, setShowModalSendValues }: Props) {
           setLoader(true);
           setTimeout(() => {
             location.reload();
-          }, 3000)
+          }, 3000);
         }
       } catch (error) {
         console.log(error);
@@ -119,47 +123,61 @@ function SextaTablaContabilidad({ valores, setShowModalSendValues }: Props) {
           <Spinner size="lg" color="primary" />
         </div>
       ) : (
-        <div className="flex justify-start flex-col w-full">
-          <HotTable
-            language={esMX.languageCode}
-            ref={hotComponentRef}
-            licenseKey="non-commercial-and-evaluation"
-            data={infoSixthCells}
-            colHeaders={[
-              "TOTAL COSTOS",
-              "ADMINISTACIÓN",
-              "UTILIDAD BRUTA ESTIMADA",
-              "TOTAL A COBRAR SIN IVA",
-              "TOTAL CON IVA",
-            ]}
-            rowHeaders={true}
-            columnSorting={true}
-            contextMenu={["row_above", "row_below"]}
-            autoWrapCol={true}
-            autoWrapRow={true}
-            mergeCells={false}
-            dragToScroll={true}
-            width="100%"
-            formulas={{
-              engine: hyperformulaInstance,
-              sheetName: "Sheet1",
-            }}
-            className="-z-0 custom-table"
-          >
-            <HotColumn type="numeric" />
-            <HotColumn type="numeric" />
-            <HotColumn type="numeric" />
-            <HotColumn type="numeric" />
-            <HotColumn readOnly className="bg-gray-300" type="numeric" />
-          </HotTable>
-          <Button
-            className="w-1/2 mb-6 mt-2 flex justify-center items-center"
-            color="warning"
-            onClick={handleSubmitParams}
-          >
-            <FaFileArrowUp />
-            <p>Guardar</p>
-          </Button>
+        <div className="flex justify-start flex-col w-full items-center lg:items-start">
+          <form className="w-[320px] lg:w-[450px] bg-white p-6 rounded-2xl border border-none">
+            <legend className="my-4 text-xl font-semibold text-center">
+              Valores
+            </legend>
+            <div className="flex flex-col gap-4">
+              <Input
+                type="text"
+                value={params?.totalCostos || "cargando"}
+                readOnly
+                color="success"
+              />
+              <Input
+                type="text"
+                value={params?.administracion || "cargando"}
+                readOnly
+                color="success"
+              />
+              <Input
+                type="text"
+                value={params?.utilidadBrutaEstimada || "cargando"}
+                readOnly
+                color="success"
+              />
+              <Input
+                type="text"
+                value={params?.totalACobrarSinIva || "cargando"}
+                readOnly
+                color="success"
+              />
+              <Input
+                type="text"
+                value={params?.totalConIva || "cargando"}
+                readOnly
+                color="success"
+              />
+            </div>
+            {showTrueSend === true ? (
+              <div className="flex gap-2 justify-center mt-4 items-center">
+                <Spinner size="lg" color="primary" />
+                <p className="text-lg font-semibold">
+                  Cargando valores, espere por favor
+                </p>
+              </div>
+            ) : (
+              <Button
+                className="w-full mb-2 mt-4 flex justify-center items-center"
+                color="warning"
+                onClick={handleSubmitParams}
+              >
+                <FaFileArrowUp />
+                <p>Guardar</p>
+              </Button>
+            )}
+          </form>
         </div>
       )}
     </div>

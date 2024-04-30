@@ -27,12 +27,12 @@ function InfoTablaContabilidad({ valores, actualizarValores }: Props) {
     for (let i = 0; i < guardarDatos.length; i++) {
       if (i === 0) {
         const arrayEquipos = guardarDatos[i];
-        if(arrayEquipos.length > 0){
+        if (arrayEquipos.length > 0) {
           const actualizarValoresEquipo = {
             ...valores,
             fecha: arrayEquipos[0],
             nit: arrayEquipos[1],
-            descripcion: arrayEquipos[2]
+            descripcion: arrayEquipos[2],
           };
           actualizarValores(actualizarValoresEquipo);
         }
@@ -56,7 +56,8 @@ function InfoTablaContabilidad({ valores, actualizarValores }: Props) {
 
   useEffect(() => {
     const selectOptionsData = dataClients.reduce((acc, item, index) => {
-      acc[item?.nombres +  " " + "-" + " " + item?.id_cliente] = item?.nombres + " " + "-" + " " + item?.id_cliente;
+      acc[item?.nombres + " " + "-" + " " + item?.id_cliente] =
+        item?.nombres + " " + "-" + " " + item?.id_cliente;
       return acc;
     }, {});
     setSelectOptions(selectOptionsData);
@@ -84,9 +85,18 @@ function InfoTablaContabilidad({ valores, actualizarValores }: Props) {
       <h1 className="text-2xl text-center my-4  font-bold">
         COTIZACIÓN SERVICIOS DYSAM SAS
       </h1>
-      <Link href="/contabilidad/corregir-facturas" className="py-4" target="_blank">
-        <Button type="button" color="warning" className="w-[150px]">Ver facturas</Button>
+      <Link
+        href="/contabilidad/corregir-facturas"
+        className="py-4"
+        target="_blank"
+      >
+        <Button type="button" color="warning" className="w-[150px]">
+          Ver facturas
+        </Button>
       </Link>
+      <span className="text-red-500 my-2 text-sm">
+        ¡Por favor colocar los valores sin puntos ni espacios!
+      </span>
       <HotTable
         language={esMX.languageCode}
         ref={hotComponenteTablaInfo}

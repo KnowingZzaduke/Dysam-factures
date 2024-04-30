@@ -28,7 +28,7 @@ function TablasContabilidad() {
   const [showModalSendValues, setShowModalSendValues] = useState(false);
 
   return (
-    <div className="min-h-screen flex flex-col items-center gap-6 max-w-screen-xl	mx-auto">
+    <div className="min-h-screen flex flex-col items-center gap-6 max-w-screen-xl	mx-4 xl:mx-auto">
       <InfoTablaContabilidad
         valores={operacionesTablas}
         actualizarValores={actualizarValores}

@@ -20,7 +20,7 @@ const functions = {
         "http://127.0.0.1/Dysam-factures/backend/api.php?action=signin",
         formData
       );
-      console.log (response);
+      console.log(response);
       return response;
     } catch (error) {
       console.log("Error");
@@ -63,7 +63,6 @@ const functions = {
     }
   },
   sendfacture: async function (params: Params) {
-    console.log(params)
     const formData = new FormData();
     formData.append("fecha", params.fecha);
     formData.append("nit", params.nit);
@@ -81,16 +80,28 @@ const functions = {
       console.log(error);
     }
   },
-  updatedata: async function (idvalores_facturas, estado) {
+  updatedata: async function (
+    idvalores_facturas,
+    estado,
+    fecha_factura,
+    cliente_y_nit,
+    descripcion,
+    v_sin_iva,
+    v_con_iva
+  ) {
     const formData = new FormData();
     formData.append("idvalores_facturas", idvalores_facturas);
     formData.append("estado", estado);
+    formData.append("fecha", fecha_factura);
+    formData.append("cliente_y_nit", cliente_y_nit);
+    formData.append("descripcion", descripcion);
+    formData.append("v_sin_iva", v_sin_iva);
+    formData.append("v_con_iva", v_con_iva);
     try {
       const response = await axios.post(
         "http://127.0.0.1/Dysam-factures/backend/api.php?action=updatedata",
         formData
       );
-      console.log(response)
       return response;
     } catch (error) {
       console.log(error);
@@ -121,7 +132,6 @@ const functions = {
       const response = await axios.get<DataTableResponse>(
         "http://127.0.0.1/Dysam-factures/backend/api.php?action=loadingvalues"
       );
-      console.log(response);
       return response;
     } catch (error) {
       console.error(error);
@@ -189,7 +199,6 @@ const functions = {
         "http://127.0.0.1/Dysam-factures/backend/api.php?action=deletereport",
         formData
       );
-      console.log(response);
       return response;
     } catch (error) {
       console.log(error);

@@ -33,11 +33,11 @@ if (isset($_POST["action"]) || isset($_GET["action"])) {
             $nit = $_POST["nit"];
             $descripcion = $_POST["descripcion"];
             $vr_sin_iva = number_format(floatval(str_replace(',', '.', $_POST["total_sin_iva"])), 2, ',', '.');
-            $vr_con_iva = number_format(floatval(str_replace(',', '.', $_POST["total_con_iva"])), 2, ',', '.');            
+            $vr_con_iva = number_format(floatval(str_replace(',', '.', $_POST["total_con_iva"])), 2, ',', '.');
             $estado = $_POST["estado"];
             $data = [
                 "fecha" => $fecha,
-                "nit" => $nit,
+                "nit_y_cliente" => $nit,
                 "descripcion" => $descripcion,
                 "vr_sin_iva" => $vr_sin_iva,
                 "vr_con_iva" => $vr_con_iva,
@@ -91,8 +91,7 @@ if (isset($_POST["action"]) || isset($_GET["action"])) {
                         return [
                             "idvalores_facturas" => $item["idvalores_facturas"],
                             "fecha" => $item["fecha"],
-                            "nit" => $item["nit"],
-                            "cliente" => $item["fecha"],
+                            "nit_y_cliente" => $item["nit_y_cliente"],
                             "descripcion" => $item["descripcion"],
                             "vr_sin_iva" => $item["vr_sin_iva"],
                             "vr_con_iva" => $item["vr_con_iva"],
@@ -107,21 +106,53 @@ if (isset($_POST["action"]) || isset($_GET["action"])) {
         case "updatedata":
             $idvalores_facturas = $_POST["idvalores_facturas"];
             $nuevoEstado = $_POST["estado"];
+            $fecha = $_POST["fecha"];
+            $clienteynit = $_POST["cliente_y_nit"];
+            $descripcion = $_POST["descripcion"];
+            $vr_sin_iva = $_POST["v_sin_iva"];
+            $vr_con_iva = $_POST["v_con_iva"];
 
-            if (isset($idvalores_facturas, $nuevoEstado)) {
-                // Aquí se realiza la consulta de actualización utilizando el ID recibido
-                $actualizacionExitosa = $db->where('idvalores_facturas', $idvalores_facturas)
-                    ->update("valores", ["estado" => $nuevoEstado]);
+            if (isset($idvalores_facturas)) {
+                // Obtener los campos que tienen valores válidos en la solicitud
+                $updateData = [];
+                if (isset($nuevoEstado) && $nuevoEstado !== '' && $nuevoEstado !== 'undefined') {
+                    $updateData["estado"] = $nuevoEstado;
+                }
+                if (isset($fecha) && $fecha !== '' && $fecha !== 'undefined') {
+                    $updateData["fecha"] = $fecha;
+                }
+                if (isset($clienteynit) && $clienteynit !== '' && $clienteynit !== 'undefined') {
+                    $updateData["nit_y_cliente"] = $clienteynit;
+                }
+                if (isset($descripcion) && $descripcion !== '' && $descripcion !== 'undefined') {
+                    $updateData["descripcion"] = $descripcion;
+                }
+                if (isset($vr_sin_iva) && $vr_sin_iva !== '' && $vr_sin_iva !== 'undefined') {
+                    $updateData["vr_sin_iva"] = $vr_sin_iva;
+                }
+                if (isset($vr_con_iva) && $vr_con_iva !== '' && $vr_con_iva !== 'undefined') {
+                    $updateData["vr_con_iva"] = $vr_con_iva;
+                }
 
-                if ($actualizacionExitosa) {
-                    echo json_encode(["salida" => "exito", "mensaje" => "Estado actualizado correctamente"]);
+                if (!empty($updateData)) {
+                    // Realizar la actualización solo si hay datos para actualizar
+                    $actualizacionExitosa = $db->where('idvalores_facturas', $idvalores_facturas)
+                        ->update("valores", $updateData);
+
+                    if ($actualizacionExitosa) {
+                        echo json_encode(["salida" => "exito", "mensaje" => "Datos actualizados correctamente"]);
+                    } else {
+                        echo json_encode(["salida" => "error", "mensaje" => "Error al actualizar los datos"]);
+                    }
                 } else {
-                    echo json_encode(["salida" => "error", "mensaje" => "Error al actualizar el estado"]);
+                    // No hay datos válidos para actualizar
+                    echo json_encode(["salida" => "info", "mensaje" => "No se proporcionaron datos válidos para actualizar"]);
                 }
             } else {
                 echo json_encode(["salida" => "error", "mensaje" => "Parámetros incompletos"]);
             }
             break;
+
         case "deletereport":
             $idvalores_facturas = $_POST["idvalores_facturas"];
             $nuevoEstado = $_POST["estado"];

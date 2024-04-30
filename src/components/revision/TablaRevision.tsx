@@ -24,11 +24,13 @@ import { Link } from "react-router-dom";
 import functions from "../../data/request";
 import { CheckIcon } from "../utilities/svgComponents/CheckIcon";
 import { FaFloppyDisk, FaRegTrashCan } from "react-icons/fa6";
+import * as XLSX from "xlsx";
 function TablaRevision() {
   const [data, setData] = useState(null);
   const [showModalNotResults, setShowModalNotResults] = useState(false);
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [reverseData, setReverseData] = useState(false);
+  const [loadingButton, setLoadingButton] = useState(false);
   const { isSelected, isFocusVisible } = useCheckbox({
     defaultSelected: false,
   });
@@ -58,13 +60,28 @@ function TablaRevision() {
                 ? false
                 : false,
           }));
-          return setData(newData);
+          return setData(newData.slice().reverse());
         }
       }
     } catch (error) {
       console.log(error);
     }
   });
+
+  const exportExcel = () => {
+    const book = XLSX.utils.book_new();
+    const sheet = XLSX.utils.json_to_sheet(data);
+    XLSX.utils.book_append_sheet(book, sheet, "Datos de facturas");
+    XLSX.writeFile(book, "DatosFacturas.xlsx");
+  };
+
+  useEffect(() => {
+    if (data?.length !== 0 || data !== null || data !== undefined) {
+      setLoadingButton(true);
+    } else {
+      setLoadingButton(false);
+    }
+  }, [data]);
 
   const handleCheckboxClick = async (id: number) => {
     setData((prevData) =>
@@ -167,20 +184,28 @@ function TablaRevision() {
             <h1 className="py-3 font-semibold" style={{ fontSize: "30px" }}>
               Tabla de facturas
             </h1>
-            <Button
-              color="warning"
-              onClick={() => {
-                setReverseData(!reverseData);
-                setData(data.slice().reverse());
-              }}
-              style={{ margin: "1rem 0" }}
-            >
-              {reverseData === false ? (
-                <p>Mostrar registros recientes</p>
+            <div className="flex gap-2 my-4">
+              <Button
+                color="warning"
+                onClick={() => {
+                  setReverseData(!reverseData);
+                  setData(data.slice().reverse());
+                }}
+              >
+                {reverseData === true ? (
+                  <p>Mostrar registros recientes</p>
+                ) : (
+                  <p>Mostrar últimos registros</p>
+                )}
+              </Button>
+              {loadingButton === true ? (
+                <Button color="success" onPress={exportExcel}>
+                  Exportar a Excel
+                </Button>
               ) : (
-                <p>Mostrar últimos registros</p>
+                <></>
               )}
-            </Button>
+            </div>
             <Table
               aria-label="Example table with client side pagination"
               bottomContent={
@@ -204,8 +229,7 @@ function TablaRevision() {
             >
               <TableHeader>
                 <TableColumn key="fecha">FECHA DE LA FACTURA</TableColumn>
-                <TableColumn key="nit">NIT</TableColumn>
-                <TableColumn key="cliente">CLIENTE</TableColumn>
+                <TableColumn key="nit_y_cliente">CLIENTE Y NIT</TableColumn>
                 <TableColumn key="descripcion">DESCRIPCIÓN</TableColumn>
                 <TableColumn key="vr_sin_iva">V. SIN IVA</TableColumn>
                 <TableColumn key="vr_con_iva">VALOR CON IVA</TableColumn>
@@ -229,11 +253,11 @@ function TablaRevision() {
                                 <input
                                   type="checkbox"
                                   checked={item?.estado || false}
-                                  onChange={() =>
-                                    handleCheckboxClick(
-                                      item?.idvalores_facturas
-                                    )
-                                  }
+                                  // onChange={() =>
+                                  //   handleCheckboxClick(
+                                  //     item?.idvalores_facturas
+                                  //   )
+                                  // }
                                 />
                               </VisuallyHidden>
                               <Chip
@@ -256,7 +280,9 @@ function TablaRevision() {
                                   </div>
                                 ) : (
                                   <div className="flex items-center gap-2">
-                                    <p className="font-semibold">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Enviado&nbsp;&nbsp;</p>
+                                    <p className="font-semibold">
+                                      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Enviado&nbsp;&nbsp;
+                                    </p>
                                     <CheckIcon className="ml-1" />
                                   </div>
                                 )}
